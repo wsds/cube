@@ -3,6 +3,8 @@ package com.cube.attract.about;
 import com.cube.attract.R;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -27,7 +29,7 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 	private LinearLayout leftLayout;
 	private LinearLayout rightLayout;
 	private LinearLayout animLayout;
-
+	final Context mContext = this;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,12 +92,12 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 					public void onAnimationEnd(Animation animation) {
 						leftLayout.setVisibility(View.GONE);
 						rightLayout.setVisibility(View.GONE);
-						// Intent intent = new
-						// Intent(TestWeiXinWhatsNewActivity.this,OtherActivity.class);
-						// TestWeiXinWhatsNewActivity.this.startActivity(intent);
-						// TestWeiXinWhatsNewActivity.this.finish();
-						// overridePendingTransition(R.anim.zoom_out_enter,
-						// R.anim.zoom_out_exit);
+						Intent about = new Intent(Intent.ACTION_MAIN);
+						about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+						about.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+						mContext.startActivity(about);
+						finish();
 					}
 				});
 				break;

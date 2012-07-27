@@ -50,7 +50,6 @@ public class MainActivity extends Activity {
 					/*about.addCategory(Intent.CATEGORY_HOME);*/
 					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
-					/*System.exit(0);*/
 					finish();
 					
 				}
