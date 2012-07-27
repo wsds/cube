@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import com.cube.attract.about.MyScrollLayout;
 import com.cube.common.Settings;
 
-public class MainActivity extends Activity {
+public class WelcomeActivity extends Activity {
 
 	Settings settings = Settings.getInstance();
 
@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Context mContext = this;
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_welcome);
 
 		ImageView mImageView2 = (ImageView) findViewById(R.id.imageView2);
 		Animation translate_title2Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_title2);
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 					Intent about = new Intent();
 //					about.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.WelcomeActivity");
+					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
 				}
 				else if(settings.isLogoin==""){

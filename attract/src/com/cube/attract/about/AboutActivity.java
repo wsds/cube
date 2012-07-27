@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+
+
 public class AboutActivity extends Activity implements OnViewChangeListener {
 
 	private MyScrollLayout mScrollLayout;
