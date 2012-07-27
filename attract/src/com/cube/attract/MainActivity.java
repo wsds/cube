@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Context mContext = this;
+		final Activity mActivity = this;
 		setContentView(R.layout.activity_main);
 
 		ImageView mImageView2 = (ImageView) findViewById(R.id.imageView2);
@@ -47,11 +48,9 @@ public class MainActivity extends Activity {
 				if(settings.isLogoin=="false"){
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					/*about.addCategory(Intent.CATEGORY_HOME);*/
 					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
-					/*System.exit(0);*/
-					finish();
+					mActivity.finish();
 					
 				}
 				else if(settings.isLogoin==""){
