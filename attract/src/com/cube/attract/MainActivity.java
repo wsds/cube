@@ -46,11 +46,12 @@ public class MainActivity extends Activity {
 				}
 				if(settings.isLogoin=="false"){
 					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					about.addCategory(Intent.CATEGORY_HOME);
+					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					/*about.addCategory(Intent.CATEGORY_HOME);*/
 					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
-					System.exit(0);
+					/*System.exit(0);*/
+					finish();
 					
 				}
 				else if(settings.isLogoin==""){
