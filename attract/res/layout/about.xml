@@ -46,7 +46,7 @@
                 android:textSize="18sp" />
         </RelativeLayout>
 
-        <RelativeLayout
+<!--         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@drawable/w03" />
@@ -69,7 +69,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/w07" />
+            android:background="@drawable/w07" /> -->
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -124,7 +124,7 @@
             android:padding="5.0dip"
             android:src="@drawable/page_indicator_bg" />
 
-        <ImageView
+       <!--  <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -162,7 +162,7 @@
             android:layout_gravity="center_vertical"
             android:clickable="true"
             android:padding="5.0dip"
-            android:src="@drawable/page_indicator_bg" />
+            android:src="@drawable/page_indicator_bg" /> -->
 
         <ImageView
             android:layout_width="wrap_content"

@@ -7,12 +7,13 @@ import com.cube.opengl.common.GlMatrix;
 
 final class SceneState {
 	
-	static final float angleFactor = 0.35f;
+	static final float angleFactor = 0.40f;
 	float dx, dy;
 	float dxSpeed, dySpeed;
 	GlMatrix baseMatrix = new GlMatrix();
 	
 	boolean lighting = true;
+	boolean blending = true;
 	int filter = 2;
 	
 	public void toggleLighting() {
