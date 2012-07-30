@@ -58,22 +58,21 @@ public class GlRenderer implements Renderer {
 	private final static FloatBuffer lightAmbBfr;
 	private final static FloatBuffer lightDifBfr;
 	private final static FloatBuffer lightPosBfr;
-	
+
 	private static float[] quadVertexLogo = new float[] { -1.0f, 0.2354f, 0, -1.0f, -0.2354f, 0, 1.0f, 0.2354f, 0, 1.0f, -0.2354f, 0 };
 
 	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
-	
+
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
-	
-	private static float[] quadVertexBackground = new float[] { -10.0f, 10.2354f, 0, -10.0f, -10.2354f, 0, 10.0f, 10.2354f, 0, 10.0f, -10.2354f, 0 };
+
+	private static float[] quadVertexBackground = new float[] { -8.0f, 8.0f, 0, -8.0f, -8.0f, 0, 8.0f, 8.0f, 0, 8.0f, -8.0f, 0 };
 
 	private static float[] quadTextureBackground = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
-	
+
 	private static FloatBuffer quadVertexBufferBackground;
 	private static FloatBuffer quadTextureBufferBackground;
-	
-	
+
 	static final SceneState sceneState;
 	private long lastMillis;
 
@@ -90,10 +89,10 @@ public class GlRenderer implements Renderer {
 		lightAmbBfr = FloatBuffer.wrap(lightAmb);
 		lightDifBfr = FloatBuffer.wrap(lightDif);
 		lightPosBfr = FloatBuffer.wrap(lightPos);
-		
+
 		quadVertexBufferLogo = FloatBuffer.wrap(quadVertexLogo);
 		quadTextureBufferLogo = FloatBuffer.wrap(quadTextureLogo);
-		
+
 		quadVertexBufferBackground = FloatBuffer.wrap(quadVertexBackground);
 		quadTextureBufferBackground = FloatBuffer.wrap(quadTextureBackground);
 
@@ -105,7 +104,7 @@ public class GlRenderer implements Renderer {
 		gl.glClearColor(0, 0, 0, 0);
 
 		gl.glClearDepthf(1.0f);
-		gl.glEnable(GL10.GL_DEPTH_TEST);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL10.GL_LEQUAL);
 
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
@@ -118,6 +117,10 @@ public class GlRenderer implements Renderer {
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
+
+		// blending
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -146,7 +149,6 @@ public class GlRenderer implements Renderer {
 			gl.glDisable(GL10.GL_LIGHTING);
 		}
 
-		
 		// update blending
 		if (sceneState.blending) {
 			gl.glEnable(GL10.GL_BLEND);
@@ -155,13 +157,13 @@ public class GlRenderer implements Renderer {
 			gl.glDisable(GL10.GL_BLEND);
 			gl.glEnable(GL10.GL_CULL_FACE);
 		}
-		
+
 		// draw cube
 
 		gl.glTranslatef(0, 0, -7);
 
 		sceneState.rotateModel(gl);
-		
+
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
@@ -196,16 +198,15 @@ public class GlRenderer implements Renderer {
 		lastMillis = currentMillis;
 	}
 
-	
-
-	
 	public void drawLogo(GL10 gl) {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(LOGO + 0));
 		gl.glLoadIdentity();
+
+		// gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glEnable(GL10.GL_BLEND);
-		gl.glDisable(GL10.GL_CULL_FACE);
-		gl.glTranslatef(0, 1.4f, -4.5f);
+
+		gl.glTranslatef(0, 1.2f, -3.8f);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -220,12 +221,12 @@ public class GlRenderer implements Renderer {
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 
 	}
-	
+
 	public void drawBackground(GL10 gl) {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
-		gl.glTranslatef(0, 0, -10.5f);
+		gl.glTranslatef(0, 0, -8.5f);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -266,7 +267,7 @@ public class GlRenderer implements Renderer {
 		texture[LOGO + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title1);
 		texture[LOGO + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title2);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.entry_background);
-		
+
 		for (int i = 0; i < textureNum; i++) {
 
 			// setup texture 0
