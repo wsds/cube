@@ -41,6 +41,9 @@ public class GLAnimation {
 	public int type = TRANSLATE;
 
 	public Callback callback = null;
+	
+	public static long INFINITE = -9999;
+	public long repeatTimes = 0;
 	public Translate translate = new Translate();
 	public Rotate rotate = new Rotate();
 	public Scale scale = new Scale();
@@ -54,6 +57,10 @@ public class GLAnimation {
 
 	public void setCallback(Callback callback) {
 		this.callback = callback;
+	}
+	
+	public void setRepeatTimes(long repeatTimes) {
+		this.repeatTimes = repeatTimes;
 	}
 
 	public void setTranslate(float dx, float dy, float dz, float dt) {
@@ -87,11 +94,16 @@ public class GLAnimation {
 
 	long lastMillis = 0;
 	long remainTime = 0;
-	long transformCount = 0;
+	long remainRepeatTimes = -9999;
+	public long transformCount = 0;
 
-	public void transformModel(GL10 gl) {
-
+	public long transformModel(GL10 gl) {
+		long nextRemainTime = 0;
 		if (transformCount == 0) {
+			if(remainRepeatTimes<-9998){
+				remainRepeatTimes = this.repeatTimes;
+			}
+			
 			if (this.type == TRANSLATE) {
 				remainTime = (long) translate.dt;
 			} else if (this.type == ROTATE) {
@@ -105,9 +117,22 @@ public class GLAnimation {
 			if (this.callback != null) {
 				this.callback.onEnd();
 			}
+			
 			for (int i = 0; i < this.next.size(); i++) {
-				GLAnimation nextAnimation=this.next.get(i);
-				nextAnimation.transformModel(gl);
+				GLAnimation nextAnimation = this.next.get(i);
+				nextRemainTime = nextRemainTime + nextAnimation.transformModel(gl);
+			}
+			
+			if(nextRemainTime==0){
+				if(remainRepeatTimes>1 || remainRepeatTimes<-9998){
+					for (int i = 0; i < this.next.size(); i++) {
+						GLAnimation nextAnimation = this.next.get(i);
+						nextAnimation.transformCount=0;
+					}
+					this.transformCount=-1;
+					remainRepeatTimes--;
+				}
+				
 			}
 
 		} else {
@@ -126,7 +151,7 @@ public class GLAnimation {
 				if (this.type == TRANSLATE) {
 					transform.translate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta, translate.dz / translate.dt * delta);
 				} else if (this.type == ROTATE) {
-					transform.rotate(rotate.dr / translate.dt * delta, rotate.fx, rotate.fy, rotate.fz);
+					transform.rotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy, rotate.fz);
 				} else if (this.type == SCALE) {
 
 				}
@@ -137,5 +162,7 @@ public class GLAnimation {
 		}
 		gl.glMultMatrixf(transform.data);
 		transformCount++;
+
+		return remainTime+nextRemainTime;
 	}
 }

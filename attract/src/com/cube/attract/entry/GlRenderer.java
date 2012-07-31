@@ -134,6 +134,9 @@ public class GlRenderer implements Renderer {
 	GLAnimation test3Animation = new GLAnimation();
 	GLAnimation test4Animation = new GLAnimation();
 	GLAnimation test5Animation = new GLAnimation();
+
+	GLAnimation rotate1Animation = new GLAnimation();
+	GLAnimation rotate2Animation = new GLAnimation();
 	GLAnimation cube1Animation = new GLAnimation();
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -154,6 +157,8 @@ public class GlRenderer implements Renderer {
 		cube1Animation.setTranslate(0.0f, -0.0f, 9.0f, 3000.0f);
 
 		testAnimation.addNextAnimation(test1Animation);
+		test1Animation.setRepeatTimes(5);
+		
 		test1Animation.setTranslate(-1f, -1f, -0f, 1000.0f);
 		test1Animation.addNextAnimation(test2Animation);
 		test2Animation.setTranslate(1f, 1f, -0f, 1000.0f);
@@ -163,16 +168,22 @@ public class GlRenderer implements Renderer {
 		test4Animation.setTranslate(-1f, 0f, -3f, 2000.0f);
 		test4Animation.addNextAnimation(test5Animation);
 		test5Animation.setTranslate(1f, 1f, 5f, 1000.0f);
+//
+//		test5Animation.setCallback(new GLAnimation.Callback() {
+//			public void onEnd() {
+//				Intent about = new Intent(Intent.ACTION_MAIN);
+//				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//				about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+//				context.startActivity(about);
+//				mActivity.finish();
+//			}
+//		});
+		rotate1Animation.setRotate(360f, 0, 0f, 1f, 1000f);
+		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
 		
-		test5Animation.setCallback(new GLAnimation.Callback() {
-		public void onEnd() {
-			Intent about = new Intent(Intent.ACTION_MAIN);
-			about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
-			context.startActivity(about);
-			mActivity.finish();
-		}
-	});
+		testAnimation.addNextAnimation(rotate2Animation);
+
+		rotate2Animation.setRotate(1440f, 0, 1f, 0f, 5000f);
 
 	}
 
@@ -271,7 +282,7 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		gl.glTranslatef(0, 0, -8.5f);
 
-		// test1Animation.transformModel(gl);
+		rotate1Animation.transformModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
