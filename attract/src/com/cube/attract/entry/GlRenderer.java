@@ -7,6 +7,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.cube.attract.R;
+import com.cube.opengl.common.GLAnimation;
 import com.cube.opengl.common.Utils;
 
 import android.content.Context;
@@ -123,6 +124,10 @@ public class GlRenderer implements Renderer {
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
+	
+	GLAnimation testAnimation=new GLAnimation();
+	GLAnimation cube1Animation=new GLAnimation();
+	
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		// reload textures
 		loadTexture(gl);
@@ -135,6 +140,9 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
+		
+		testAnimation.setTranslate(0.2f, -0.2f, -0.3f, 500.0f);
+		cube1Animation.setTranslate(0.0f, -0.0f, 9f, 3000.0f);
 	}
 
 	public void onDrawFrame(GL10 gl) {
@@ -161,6 +169,8 @@ public class GlRenderer implements Renderer {
 		// draw cube
 
 		gl.glTranslatef(0, 0, -7);
+		gl.glTranslatef(0, 0, -8);
+		cube1Animation.transformModel(gl);
 
 		sceneState.rotateModel(gl);
 
@@ -207,7 +217,9 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_BLEND);
 
 		gl.glTranslatef(0, 1.2f, -3.8f);
-
+		
+		testAnimation.transformModel(gl);
+		
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
