@@ -28,10 +28,10 @@ public class EntryActivity extends Activity{
         surface.setRenderer(renderer);
         setContentView(surface);
         
-        if (!toasted) {
-        	Toast.makeText(this, "touch and drag to rotate object", Toast.LENGTH_LONG).show();
-        	toasted = true;
-        }
+//        if (!toasted) {
+//        	Toast.makeText(this, "touch and drag to rotate object", Toast.LENGTH_LONG).show();
+//        	toasted = true;
+//        }
     }
     
 	@Override

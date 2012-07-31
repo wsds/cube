@@ -10,7 +10,9 @@ import com.cube.attract.R;
 import com.cube.opengl.common.GLAnimation;
 import com.cube.opengl.common.Utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
@@ -19,9 +21,11 @@ import android.opengl.GLSurfaceView.Renderer;
 public class GlRenderer implements Renderer {
 
 	private Context context;
+	private Activity mActivity;
 
 	public GlRenderer(Context context) {
 		this.context = context;
+		this.mActivity = (Activity) context;
 	}
 
 	private final static float[][] cubeVertexCoords = new float[][] { new float[] { // top
@@ -124,10 +128,14 @@ public class GlRenderer implements Renderer {
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
-	
-	GLAnimation testAnimation=new GLAnimation();
-	GLAnimation cube1Animation=new GLAnimation();
-	
+	GLAnimation testAnimation = new GLAnimation();
+	GLAnimation test1Animation = new GLAnimation();
+	GLAnimation test2Animation = new GLAnimation();
+	GLAnimation test3Animation = new GLAnimation();
+	GLAnimation test4Animation = new GLAnimation();
+	GLAnimation test5Animation = new GLAnimation();
+	GLAnimation cube1Animation = new GLAnimation();
+
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		// reload textures
 		loadTexture(gl);
@@ -140,9 +148,32 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
+
+		testAnimation.setTranslate(0.2f, -1.2f, -0.3f, 1000.0f);
+
+		cube1Animation.setTranslate(0.0f, -0.0f, 9.0f, 3000.0f);
+
+		testAnimation.addNextAnimation(test1Animation);
+		test1Animation.setTranslate(-1f, -1f, -0f, 1000.0f);
+		test1Animation.addNextAnimation(test2Animation);
+		test2Animation.setTranslate(1f, 1f, -0f, 1000.0f);
+		test2Animation.addNextAnimation(test3Animation);
+		test2Animation.addNextAnimation(test4Animation);
+		test3Animation.setTranslate(0.0f, -1f, -2f, 1000.0f);
+		test4Animation.setTranslate(-1f, 0f, -3f, 2000.0f);
+		test4Animation.addNextAnimation(test5Animation);
+		test5Animation.setTranslate(1f, 1f, 5f, 1000.0f);
 		
-		testAnimation.setTranslate(0.2f, -0.2f, -0.3f, 500.0f);
-		cube1Animation.setTranslate(0.0f, -0.0f, 9f, 3000.0f);
+		test5Animation.setCallback(new GLAnimation.Callback() {
+		public void onEnd() {
+			Intent about = new Intent(Intent.ACTION_MAIN);
+			about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+			context.startActivity(about);
+			mActivity.finish();
+		}
+	});
+
 	}
 
 	public void onDrawFrame(GL10 gl) {
@@ -217,9 +248,9 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_BLEND);
 
 		gl.glTranslatef(0, 1.2f, -3.8f);
-		
+
 		testAnimation.transformModel(gl);
-		
+
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -239,6 +270,8 @@ public class GlRenderer implements Renderer {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
 		gl.glTranslatef(0, 0, -8.5f);
+
+		// test1Animation.transformModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);

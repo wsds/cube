@@ -1,8 +1,12 @@
 package com.cube.opengl.common;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.opengles.GL10;
 
 public class GLAnimation {
+	ArrayList<GLAnimation> next = new ArrayList<GLAnimation>();
+
 	// inner class && data structure
 	public interface Callback {
 		public void onEnd();
@@ -30,7 +34,11 @@ public class GLAnimation {
 
 	// data
 	public String[] types = { "Translate", "Rotate", "Scale" };
-	public String type = types[0];
+
+	public int TRANSLATE = 0;
+	public int ROTATE = 1;
+	public int SCALE = 2;
+	public int type = TRANSLATE;
 
 	public Callback callback = null;
 	public Translate translate = new Translate();
@@ -40,6 +48,10 @@ public class GLAnimation {
 	public GlMatrix transform = new GlMatrix();
 
 	// initialize method
+	public void addNextAnimation(GLAnimation animation) {
+		this.next.add(animation);
+	}
+
 	public void setCallback(Callback callback) {
 		this.callback = callback;
 	}
@@ -50,7 +62,7 @@ public class GLAnimation {
 		this.translate.dz = dz;
 		this.translate.dt = dt;
 
-		this.type = "Translate";
+		this.type = TRANSLATE;
 	}
 
 	public void setRotate(float dr, float fx, float fy, float fz, float dt) {
@@ -60,14 +72,14 @@ public class GLAnimation {
 		this.rotate.fz = fz;
 		this.rotate.dt = dt;
 
-		this.type = "Rotate";
+		this.type = ROTATE;
 	}
 
 	public void setScale(float ds, float dt) {
 		this.scale.ds = ds;
 		this.scale.dt = dt;
 
-		this.type = "Scale";
+		this.type = SCALE;
 
 	}
 
@@ -78,28 +90,52 @@ public class GLAnimation {
 	long transformCount = 0;
 
 	public void transformModel(GL10 gl) {
+
 		if (transformCount == 0) {
-			remainTime = (long) translate.dt;
+			if (this.type == TRANSLATE) {
+				remainTime = (long) translate.dt;
+			} else if (this.type == ROTATE) {
+				remainTime = (long) rotate.dt;
+			} else if (this.type == SCALE) {
+				remainTime = (long) scale.dt;
+			}
 		}
 
-		long currentMillis = System.currentTimeMillis();
-
-		if (lastMillis != 0 && remainTime > 0) {
-			long delta = currentMillis - lastMillis;
-			if (remainTime > delta) {
-				remainTime = remainTime - delta;
-			} else {
-				delta = remainTime;
-				remainTime = 0;
+		if (remainTime == 0) {
+			if (this.callback != null) {
+				this.callback.onEnd();
+			}
+			for (int i = 0; i < this.next.size(); i++) {
+				GLAnimation nextAnimation=this.next.get(i);
+				nextAnimation.transformModel(gl);
 			}
 
-			transform.translate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta, translate.dz / translate.dt * delta);
+		} else {
+
+			long currentMillis = System.currentTimeMillis();
+
+			if (lastMillis != 0 && remainTime > 0) {
+				long delta = currentMillis - lastMillis;
+				if (remainTime > delta) {
+					remainTime = remainTime - delta;
+				} else {
+					delta = remainTime;
+					remainTime = 0;
+				}
+
+				if (this.type == TRANSLATE) {
+					transform.translate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta, translate.dz / translate.dt * delta);
+				} else if (this.type == ROTATE) {
+					transform.rotate(rotate.dr / translate.dt * delta, rotate.fx, rotate.fy, rotate.fz);
+				} else if (this.type == SCALE) {
+
+				}
+
+			}
+
+			lastMillis = currentMillis;
 		}
-
-		lastMillis = currentMillis;
-
 		gl.glMultMatrixf(transform.data);
 		transformCount++;
 	}
-
 }
