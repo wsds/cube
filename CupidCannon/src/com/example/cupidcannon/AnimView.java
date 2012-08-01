@@ -30,30 +30,18 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback,Runn
     }
     
     private void initDraw(){
-    	/*
-    	 mCanvas=mHolder.lockCanvas();
-    	 mCanvas.drawRect(0, 0, this.getWidth(), this.getHeight(), new Paint());
-    	 mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-    	 mCanvas.drawBitmap(mBitmap, 0, 0, mPaint);*/
-    	Canvas canvas=mHolder.lockCanvas();
-    	canvas.drawRect(0, 0, this.getWidth(), this.getHeight(), new Paint());
-    	Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_2);
+    
+    	mCanvas=mHolder.lockCanvas();
+    	
+    	mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_2);
+    	mCanvas.drawRect(0, 0, mBitmap.getWidth(), mBitmap.getHeight(), new Paint());
     	Matrix matrix = new Matrix();
     	matrix.setScale(1.0f, 1.0f);
-    	matrix.postTranslate(0, 0);
-    	canvas.drawBitmap(bmp, matrix, mPaint);
-    /*	matrix.postTranslate(0, 450);
-    	bmp = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_3);
-    	canvas.drawBitmap(bmp, matrix, mPaint);
-    	matrix.postTranslate(0, 500);
-    	bmp = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_1);
-    	canvas.drawBitmap(bmp, matrix, mPaint);
-    	matrix.postTranslate(0, 550);
-    	bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-    	canvas.drawBitmap(bmp, matrix, mPaint);*/
-    	mHolder.unlockCanvasAndPost(canvas);
-    	if(bmp!=null)
-    		bmp.recycle();
+    	matrix.postTranslate(-50, -100);
+    	mCanvas.drawBitmap(mBitmap, matrix, mPaint);
+    	mHolder.unlockCanvasAndPost(mCanvas);
+    	if(mBitmap!=null)
+    		mBitmap.recycle();
 
     }
      
