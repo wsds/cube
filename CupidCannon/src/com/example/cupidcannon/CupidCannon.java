@@ -17,7 +17,7 @@ public class CupidCannon extends Activity {
     		WindowManager.LayoutParams.FLAG_FULLSCREEN);
     //强制为竖屏   
     	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-  //      setContentView(this);
+        setContentView(new AnimView(this));
     }
     
 }
