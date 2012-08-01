@@ -2,10 +2,19 @@ package com.cube.attract.entry;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import com.cube.common.Settings;
 import com.cube.opengl.common.GlMatrix;
 
 
 final class SceneState {
+	
+	static SceneState instance = null;
+
+	static public SceneState getInstance() {
+		if (instance == null)
+			instance = new SceneState();
+		return instance;
+	}
 	
 	static final float angleFactor = 0.40f;
 	float dx, dy;
@@ -15,6 +24,17 @@ final class SceneState {
 	boolean lighting = true;
 	boolean blending = true;
 	int filter = 2;
+	
+	public boolean isClicked = false;
+
+	public int NONE = 0;
+	public int CUB = 1;
+	public int LOGO = 2;
+
+	public int eventType = CUB;
+	
+	int screenWidth; 
+	int screenHeight;
 	
 	public void toggleLighting() {
 		lighting = !lighting;
@@ -31,10 +51,10 @@ final class SceneState {
 			rotation.rotate(r * angleFactor, dy / r, dx / r, 0);
 			baseMatrix.premultiply(rotation);
 		}
-		GlRenderer.sceneState.dx = 0.0f;
-		GlRenderer.sceneState.dy = 0.0f;
+		dx = 0.0f;
+		dy = 0.0f;
 	}
-	
+	 
 	void rotateModel(GL10 gl) {
 		float r = (float)Math.sqrt(dx * dx + dy * dy);
 		if (r != 0) {

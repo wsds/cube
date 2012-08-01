@@ -1,39 +1,40 @@
 package com.cube.attract.entry;
 
-
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
-public class EntryActivity extends Activity{
+public class EntryActivity extends Activity {
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
-	
+
 	private GestureDetector gestureDetector;
-	
-	private static boolean toasted;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        gestureDetector = new GestureDetector(this, new GlAppGestureListener());
-        
-        surface = new GLSurfaceView(this);
-        renderer = new GlRenderer(this);
-        surface.setRenderer(renderer);
-        setContentView(surface);
-        
-//        if (!toasted) {
-//        	Toast.makeText(this, "touch and drag to rotate object", Toast.LENGTH_LONG).show();
-//        	toasted = true;
-//        }
-    }
-    
+
+	SceneState sceneState = SceneState.getInstance();
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
+
+		surface = new GLSurfaceView(this);
+		renderer = new GlRenderer(this);
+		surface.setRenderer(renderer);
+		setContentView(surface);
+
+		// if (!toasted) {
+		// Toast.makeText(this, "touch and drag to rotate object",
+		// Toast.LENGTH_LONG).show();
+		// toasted = true;
+		// }
+	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -48,73 +49,143 @@ public class EntryActivity extends Activity{
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode)
-		{
+		switch (keyCode) {
 		case KeyEvent.KEYCODE_L:
-			GlRenderer.sceneState.toggleLighting();
+			sceneState.toggleLighting();
 			break;
 		case KeyEvent.KEYCODE_F:
-			GlRenderer.sceneState.switchToNextFilter();
+			sceneState.switchToNextFilter();
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER:
-			GlRenderer.sceneState.saveRotation();
-			GlRenderer.sceneState.dxSpeed = 0.0f;
-			GlRenderer.sceneState.dySpeed = 0.0f;
+			sceneState.saveRotation();
+			sceneState.dxSpeed = 0.0f;
+			sceneState.dySpeed = 0.0f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_LEFT:
-			GlRenderer.sceneState.saveRotation();
-			GlRenderer.sceneState.dxSpeed -= 0.1f;
+			sceneState.saveRotation();
+			sceneState.dxSpeed -= 0.1f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			GlRenderer.sceneState.saveRotation();
-			GlRenderer.sceneState.dxSpeed += 0.1f;
+			sceneState.saveRotation();
+			sceneState.dxSpeed += 0.1f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_UP:
-			GlRenderer.sceneState.saveRotation();
-			GlRenderer.sceneState.dySpeed -= 0.1f;
+			sceneState.saveRotation();
+			sceneState.dySpeed -= 0.1f;
 			break;
 		case KeyEvent.KEYCODE_DPAD_DOWN:
-			GlRenderer.sceneState.saveRotation();
-			GlRenderer.sceneState.dySpeed += 0.1f;
+			sceneState.saveRotation();
+			sceneState.dySpeed += 0.1f;
 			break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
 	private float startX, startY;
-	
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
 			return true;
 		}
-		
+
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			GlRenderer.sceneState.dxSpeed = 0.0f;
-			GlRenderer.sceneState.dySpeed = 0.0f;
-			GlRenderer.sceneState.saveRotation();
+			sceneState.dxSpeed = 0.0f;
+			sceneState.dySpeed = 0.0f;
 			startX = event.getX();
 			startY = event.getY();
+
+			if (startY * 800 / sceneState.screenHeight < 150 && startY * 800 / sceneState.screenHeight > 80) {
+				sceneState.eventType = sceneState.LOGO;
+				renderer.logoDown.start(true);
+			} else {
+				sceneState.eventType = sceneState.CUB;
+				sceneState.saveRotation();
+			}
+
 			break;
 		case MotionEvent.ACTION_MOVE:
-			GlRenderer.sceneState.dx = event.getX() - startX;
-			GlRenderer.sceneState.dy = event.getY() - startY;
+
+			if (sceneState.eventType == sceneState.CUB) {
+				sceneState.dx = event.getX() - startX;
+				sceneState.dy = event.getY() - startY;
+			}
+			break;
+			
+		case MotionEvent.ACTION_UP:
+			if (sceneState.eventType == sceneState.LOGO) {
+				renderer.logoUp.start(true);
+			} 
 			break;
 		}
-		
+
 		return super.onTouchEvent(event);
 	}
 
-	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener
-    {
+	// @Override
+	// public boolean onTouchEvent(MotionEvent event) {
+	// if (gestureDetector.onTouchEvent(event)) {
+	// return true;
+	// }
+	//
+	// switch (event.getAction()) {
+	// case MotionEvent.ACTION_MOVE:
+	// float dx = event.getX() - startX;
+	// float dy = event.getY() - startY;
+	// if (sceneState.eventType == sceneState.LOGO) {
+	// } else if (sceneState.eventType == sceneState.CUB) {
+	// sceneState.dx = event.getX() - startX;
+	// sceneState.dy = event.getY() - startY;
+	// }
+	//
+	// if (sceneState.isClicked == true) {
+	// float delta = (dx * dx + dy * dy);
+	// if (delta > 1600) {
+	// sceneState.isClicked = false;
+	// }
+	// }
+	// break;
+	// case MotionEvent.ACTION_DOWN:
+	// sceneState.isClicked = true;
+	//
+	// startX = event.getX();
+	// startY = event.getY();
+	// Log.d("Point:", "startY:" + startY + "  startX:" + startX);
+	// if (startY < 150 && startY > 80) {
+	// sceneState.eventType = sceneState.LOGO;
+	// } else {
+	// sceneState.eventType = sceneState.CUB;
+	// sceneState.saveRotation();
+	//
+	// }
+	// break;
+	// case MotionEvent.ACTION_UP:
+	// if (sceneState.isClicked == true && sceneState.eventType ==
+	// sceneState.CUB) {
+	// } else if (sceneState.isClicked == false) {
+	//
+	// }
+	// break;
+	// case MotionEvent.ACTION_CANCEL:
+	// break;
+	// }
+	//
+	// return true;
+	// }
+
+	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			// measure speed in milliseconds
-			GlRenderer.sceneState.dxSpeed = velocityX / 1000;
-			GlRenderer.sceneState.dySpeed = velocityY / 1000;
+			if (sceneState.eventType == sceneState.LOGO) {
+			} else if (sceneState.eventType == sceneState.CUB) {
+				sceneState.dxSpeed = velocityX / 1000;
+				sceneState.dySpeed = velocityY / 1000;
+			}
+
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
-    }
-	
+	}
+
 }

@@ -78,7 +78,7 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer quadVertexBufferBackground;
 	private static FloatBuffer quadTextureBufferBackground;
 
-	static final SceneState sceneState;
+	SceneState sceneState = SceneState.getInstance();
 	private long lastMillis;
 
 	static {
@@ -101,7 +101,6 @@ public class GlRenderer implements Renderer {
 		quadVertexBufferBackground = FloatBuffer.wrap(quadVertexBackground);
 		quadTextureBufferBackground = FloatBuffer.wrap(quadTextureBackground);
 
-		sceneState = new SceneState();
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -124,22 +123,30 @@ public class GlRenderer implements Renderer {
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
 
 		// blending
-		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
-	GLAnimation testAnimation = new GLAnimation();
-	GLAnimation test1Animation = new GLAnimation();
-	GLAnimation test2Animation = new GLAnimation();
-	GLAnimation test3Animation = new GLAnimation();
-	GLAnimation test4Animation = new GLAnimation();
-	GLAnimation test5Animation = new GLAnimation();
+	public GLAnimation testAnimation = new GLAnimation();
+	public GLAnimation test1Animation = new GLAnimation();
+	public GLAnimation test2Animation = new GLAnimation();
+	public GLAnimation test3Animation = new GLAnimation();
+	public GLAnimation test4Animation = new GLAnimation();
+	public GLAnimation test5Animation = new GLAnimation();
 
-	GLAnimation rotate1Animation = new GLAnimation();
-	GLAnimation rotate2Animation = new GLAnimation();
-	GLAnimation cube1Animation = new GLAnimation();
+	public GLAnimation rotate1Animation = new GLAnimation();
+	public GLAnimation rotate2Animation = new GLAnimation();
+	public GLAnimation cube1Animation = new GLAnimation();
+	public GLAnimation cube2Animation = new GLAnimation();
+	
+	public GLAnimation logoDown = new GLAnimation();
+	public GLAnimation logoUp = new GLAnimation();
+	
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		sceneState.screenHeight=height;
+		sceneState.screenWidth=width;
+
 		// reload textures
 		loadTexture(gl);
 		// avoid division by zero
@@ -152,9 +159,11 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
 
-		testAnimation.setTranslate(0.2f, -1.2f, -0.3f, 1000.0f);
+		testAnimation.setTranslate(0.0f, 0f, -0.3f, 1000.0f);
 
 		cube1Animation.setTranslate(0.0f, -0.0f, 9.0f, 3000.0f);
+		cube1Animation.addNextAnimation(cube2Animation);
+		cube2Animation.setTranslate(0.0f, -0.5f, -1.0f, 3000.0f);
 
 		testAnimation.addNextAnimation(test1Animation);
 		test1Animation.setRepeatTimes(5);
@@ -168,22 +177,29 @@ public class GlRenderer implements Renderer {
 		test4Animation.setTranslate(-1f, 0f, -3f, 2000.0f);
 		test4Animation.addNextAnimation(test5Animation);
 		test5Animation.setTranslate(1f, 1f, 5f, 1000.0f);
-//
-//		test5Animation.setCallback(new GLAnimation.Callback() {
-//			public void onEnd() {
-//				Intent about = new Intent(Intent.ACTION_MAIN);
-//				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//				about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
-//				context.startActivity(about);
-//				mActivity.finish();
-//			}
-//		});
-		rotate1Animation.setRotate(360f, 0, 0f, 1f, 1000f);
+
+		rotate1Animation.setRotate(360f, 0, 0f, -1f, 30000f);
 		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
 		
 		testAnimation.addNextAnimation(rotate2Animation);
 
 		rotate2Animation.setRotate(1440f, 0, 1f, 0f, 5000f);
+		
+		logoDown.setTranslate(0f, 0.1f, -0.5f, 100.0f);
+		logoDown.start(false);
+		logoUp.setTranslate(0f, -0.1f, 0.5f, 100.0f);
+		logoUp.start(false);
+		
+		
+		logoUp.setCallback(new GLAnimation.Callback() {
+			public void onEnd() {
+				Intent about = new Intent(Intent.ACTION_MAIN);
+				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+				context.startActivity(about);
+				mActivity.finish();
+			}
+		});
 
 	}
 
@@ -261,6 +277,8 @@ public class GlRenderer implements Renderer {
 		gl.glTranslatef(0, 1.2f, -3.8f);
 
 		testAnimation.transformModel(gl);
+		logoDown.transformModel(gl);
+		logoUp.transformModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -328,8 +346,8 @@ public class GlRenderer implements Renderer {
 
 			// setup texture 0
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture[i], 0);
