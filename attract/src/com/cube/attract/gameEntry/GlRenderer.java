@@ -1,4 +1,4 @@
-package com.cube.attract.entry;
+package com.cube.attract.gameEntry;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,7 +19,6 @@ import android.graphics.Bitmap;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 public class GlRenderer implements Renderer {
 
@@ -67,14 +66,14 @@ public class GlRenderer implements Renderer {
 	private final static FloatBuffer lightDifBfr;
 	private final static FloatBuffer lightPosBfr;
 
-	private static float[] quadVertexLogo = new float[] { -1.0f, 0.2354f, 0, -1.0f, -0.2354f, 0, 1.0f, 0.2354f, 0, 1.0f, -0.2354f, 0 };
+	private static float[] quadVertexLogo = new float[] { -1.1f, 1f, 0, -1.1f, -1f, 0, 1.1f, 1f, 0, 1.1f, -1f, 0 };
 
 	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
 
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
 
-	private static float[] quadVertexBackground = new float[] { -8.0f, 8.0f, 0, -8.0f, -8.0f, 0, 8.0f, 8.0f, 0, 8.0f, -8.0f, 0 };
+	private static float[] quadVertexBackground = new float[] { -6.0f, 9.0f, 0, -6.0f, -9.0f, 0, 6.0f, 9.0f, 0, 6.0f, -9.0f, 0 };
 
 	private static float[] quadTextureBackground = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
 
@@ -121,7 +120,6 @@ public class GlRenderer implements Renderer {
 	       return mBuffer;
 	    }
 	}
-
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glClearColor(0, 0, 0, 0);
@@ -146,28 +144,19 @@ public class GlRenderer implements Renderer {
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
-	public GLAnimation testAnimation = new GLAnimation();
-	public GLAnimation test1Animation = new GLAnimation();
-	public GLAnimation test2Animation = new GLAnimation();
-	public GLAnimation test3Animation = new GLAnimation();
-	public GLAnimation test4Animation = new GLAnimation();
-	public GLAnimation test5Animation = new GLAnimation();
+	GLAnimation testAnimation = new GLAnimation();
+	GLAnimation test1Animation = new GLAnimation();
+	GLAnimation test2Animation = new GLAnimation();
+	GLAnimation test3Animation = new GLAnimation();
+	GLAnimation test4Animation = new GLAnimation();
+	GLAnimation test5Animation = new GLAnimation();
 
-	public GLAnimation rotate1Animation = new GLAnimation();
-	public GLAnimation rotate2Animation = new GLAnimation();
-	public GLAnimation cube1Animation = new GLAnimation();
-	public GLAnimation cube2Animation = new GLAnimation();
-	
-	public GLAnimation logoDown = new GLAnimation();
-	public GLAnimation logoUp = new GLAnimation();
-	
+	GLAnimation rotate1Animation = new GLAnimation();
+	GLAnimation rotate2Animation = new GLAnimation();
+	GLAnimation cube1Animation = new GLAnimation();
+	GLAnimation cube2Animation = new GLAnimation();
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
-		sceneState.screenHeight=height;
-		sceneState.screenWidth=width;
-		Log.e("screen", "sceneState.screenHeight="+height);
-		Log.e("screen", "sceneState.screenWidth="+width);
-
 		// reload textures
 		loadTexture(gl);
 		// avoid division by zero
@@ -188,7 +177,7 @@ public class GlRenderer implements Renderer {
 
 		testAnimation.addNextAnimation(test1Animation);
 		test1Animation.setRepeatTimes(5);
-		
+
 		test1Animation.setTranslate(-1f, -1f, -0f, 1000.0f);
 		test1Animation.addNextAnimation(test2Animation);
 		test2Animation.setTranslate(1f, 1f, -0f, 1000.0f);
@@ -198,29 +187,23 @@ public class GlRenderer implements Renderer {
 		test4Animation.setTranslate(-1f, 0f, -3f, 2000.0f);
 		test4Animation.addNextAnimation(test5Animation);
 		test5Animation.setTranslate(1f, 1f, 5f, 1000.0f);
-
+		//
+		// test5Animation.setCallback(new GLAnimation.Callback() {
+		// public void onEnd() {
+		// Intent about = new Intent(Intent.ACTION_MAIN);
+		// about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		// about.setClassName("com.cube.attract",
+		// "com.cube.attract.about.AboutActivity");
+		// context.startActivity(about);
+		// mActivity.finish();
+		// }
+		// });
 		rotate1Animation.setRotate(360f, 0, 0f, -1f, 30000f);
 		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
-		
+
 		testAnimation.addNextAnimation(rotate2Animation);
 
 		rotate2Animation.setRotate(1440f, 0, 1f, 0f, 5000f);
-		
-		logoDown.setTranslate(0f, 0.1f, -0.5f, 100.0f);
-		logoDown.start(false);
-		logoUp.setTranslate(0f, -0.1f, 0.5f, 100.0f);
-		logoUp.start(false);
-		
-		
-		logoUp.setCallback(new GLAnimation.Callback() {
-			public void onEnd() {
-				Intent about = new Intent(Intent.ACTION_MAIN);
-				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
-				context.startActivity(about);
-				mActivity.finish();
-			}
-		});
 
 	}
 
@@ -228,13 +211,12 @@ public class GlRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
-
-		// update lighting
-		if (sceneState.lighting) {
-			gl.glEnable(GL10.GL_LIGHTING);
-		} else {
-			gl.glDisable(GL10.GL_LIGHTING);
-		}
+		// // update lighting
+		// if (sceneState.lighting) {
+		// gl.glEnable(GL10.GL_LIGHTING);
+		// } else {
+		// gl.glDisable(GL10.GL_LIGHTING);
+		// }
 
 		// update blending
 		if (sceneState.blending) {
@@ -245,61 +227,22 @@ public class GlRenderer implements Renderer {
 			gl.glEnable(GL10.GL_CULL_FACE);
 		}
 
-		// draw cube
-
-		gl.glTranslatef(0, 0, -7);
-		gl.glTranslatef(0, 0, -8);
-		cube1Animation.transformModel(gl);
-
-		sceneState.rotateModel(gl);
-
-		gl.glEnable(GL10.GL_TEXTURE_2D);
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		for (int i = 0; i < 6; i++) // draw each face
-		{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
-			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, cubeVertexBfr[i]);
-			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
-			gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
-			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);
-		}
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
-		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glDisable(GL10.GL_TEXTURE_2D);
-
-		drawLogo(gl);
-		drawBackground(gl);
-		// get current millis
-		long currentMillis = System.currentTimeMillis();
-
-		// update rotations
-		if (lastMillis != 0) {
-			long delta = currentMillis - lastMillis;
-			sceneState.dx += sceneState.dxSpeed * delta;
-			sceneState.dy += sceneState.dySpeed * delta;
-			sceneState.dampenSpeed(delta);
-		}
-
-		// update millis
-		lastMillis = currentMillis;
+		drawPolygon(gl);
+//		drawBackground(gl);               
+		drawGirl(gl);
 	}
 
-	public void drawLogo(GL10 gl) {
+	public void drawPolygon(GL10 gl) {
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(LOGO + 0));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 0));
 		gl.glLoadIdentity();
 
 		// gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glEnable(GL10.GL_BLEND);
 
-		gl.glTranslatef(0, 1.2f, -3.8f);
+		gl.glTranslatef(0, -0.7f, -4.5f);
 
-		testAnimation.transformModel(gl);
-		logoDown.transformModel(gl);
-		logoUp.transformModel(gl);
+		// testAnimation.transformModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -315,13 +258,35 @@ public class GlRenderer implements Renderer {
 
 	}
 
+	public void drawGirl(GL10 gl) {
+
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(0));
+		gl.glLoadIdentity();
+		gl.glTranslatef(0, 0, -20.5f);
+
+		// rotate1Animation.transformModel(gl);
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBufferBackground);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, quadTextureBufferBackground);
+
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+
+	}
+
 	public void drawBackground(GL10 gl) {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
-		gl.glTranslatef(0, 0, -8.5f);
+		gl.glTranslatef(0, 0, -20.0f);
 
-		rotate1Animation.transformModel(gl);
+		// rotate1Animation.transformModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -339,33 +304,23 @@ public class GlRenderer implements Renderer {
 
 	private IntBuffer texturesBuffer;
 
-	public int LOGO = 6;
-	public int BACKGROUND = 8;
+	public int POLYGON = 1;
+	public int BACKGROUND = 2;
 
-	public int textureNum = 9;
+	public int textureNum = 3;
 
 	private void loadTexture(GL10 gl) {
-		// create textures
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texturesBuffer = IntBuffer.allocate(textureNum);
 		gl.glGenTextures(textureNum, texturesBuffer);
 
-		// load bitmap
 		Bitmap[] texture = new Bitmap[textureNum];
-		texture[0] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_1);
-		texture[1] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_2);
-		texture[2] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_3);
-		texture[3] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_4);
-		texture[4] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_5);
-		texture[5] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_6);
-
-		texture[LOGO + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title1);
-		texture[LOGO + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title2);
-		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.entry_background);
+		texture[0] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_2);
+		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon);
+		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.gameentry_background);
 
 		for (int i = 0; i < textureNum; i++) {
 
-			// setup texture 0
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);

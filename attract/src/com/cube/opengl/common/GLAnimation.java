@@ -89,7 +89,6 @@ public class GLAnimation {
 		this.scale.dt = dt;
 
 		this.type = SCALE;
-
 	}
 
 	// logic
@@ -178,7 +177,6 @@ public class GLAnimation {
 	public void reset() {
 		lastMillis=0;
 		isReset = true;
-//		transform.identity();
 		for (int i = 0; i < this.next.size(); i++) {
 			GLAnimation nextAnimation = this.next.get(i);
 			nextAnimation.reset();
