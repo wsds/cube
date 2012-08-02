@@ -15,6 +15,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback,Runn
 	
 	private int mWidth = 0;
 	private int mHeight = 0;
+	private int mBitmapWidth = 0;
+	private int mBitmapHeight = 0;
 	private SurfaceHolder mHolder = null;
     private Thread mThread = null; 
     private Bitmap mBitmap = null;
@@ -34,10 +36,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback,Runn
     	mCanvas=mHolder.lockCanvas();
     	
     	mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_2);
+    	mBitmapWidth = mBitmap.getWidth();
+    	mBitmapHeight = mBitmap.getHeight();
+    	
     	mCanvas.drawRect(0, 0, mBitmap.getWidth(), mBitmap.getHeight(), new Paint());
     	Matrix matrix = new Matrix();
     	matrix.setScale(1.0f, 1.0f);
-    	matrix.postTranslate(-50, -100);
+    	matrix.postTranslate(-120, -240);
     	mCanvas.drawBitmap(mBitmap, matrix, mPaint);
     	mHolder.unlockCanvasAndPost(mCanvas);
     	if(mBitmap!=null)
@@ -48,8 +53,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback,Runn
      
     @Override  
     public void surfaceCreated(SurfaceHolder holder) {  
-         mWidth=this.getWidth();  
-         mHeight=this.getHeight();
+         mWidth = this.getWidth();  
+         mHeight = this.getHeight();
          //mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
          //mCanvas.drawBitmap(mBitmap, 0, 0, mPaint);
          initDraw();
