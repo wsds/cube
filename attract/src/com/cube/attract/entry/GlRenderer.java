@@ -218,7 +218,6 @@ public class GlRenderer implements Renderer {
 				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 				context.startActivity(about);
-				mActivity.finish();
 			}
 		});
 
@@ -297,7 +296,7 @@ public class GlRenderer implements Renderer {
 
 		gl.glTranslatef(0, 1.2f, -3.8f);
 
-		testAnimation.transformModel(gl);
+//		testAnimation.transformModel(gl);
 		logoDown.transformModel(gl);
 		logoUp.transformModel(gl);
 

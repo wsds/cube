@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 				if(settings.isLogoin=="false"){
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 					
