@@ -42,8 +42,9 @@ public class CupidCannonActivity extends Activity {
 		private boolean isRunning = true;
 		private CanvasAnimation testAnim;
 		
-		final Bitmap memBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.RGB_565);
-		final Canvas mCanvas = new Canvas(memBm);
+		public Bitmap memBm = null;
+		//final Canvas mCanvas = new Canvas(memBm);
+		private Canvas mCanvas = null;
 		//puzzle. I have no idea about the definite meaning of the flags.
 		//I use it to create the second CanvasLayer.
 		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
@@ -64,7 +65,6 @@ public class CupidCannonActivity extends Activity {
 		private void initDraw() {
 
 			//Draw elements on the first layer.
-			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_2);
 			mBitmapWidth = mBitmap.getWidth();
@@ -84,23 +84,20 @@ public class CupidCannonActivity extends Activity {
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
 			
-		/*	if (mBitmap != null)
-				mBitmap.recycle();*/
+			if (mBitmap != null)
+				mBitmap.recycle();
 			
 			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_1);
-			
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mPaint.setColor(Color.BLUE);
 			mCanvas.drawRect(50, 50, 200, 200, mPaint);
-
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mPaint.setAlpha(0x40);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
-			
-		/*	if (mBitmap != null)
-				mBitmap.recycle();*/
+			if (mBitmap != null)
+				mBitmap.recycle();
 			
 		
 		//Draw elements on the second layer.	
@@ -111,14 +108,14 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.ic_launcher);
            mCanvas.drawBitmap(mBitmap, 300, 500, mPaint);
            mCanvas.restore();
-           
-         /*  Canvas renderer = null;
+
+           //Double bitmap represent method to solve the screen twinkle frequently problem.
+           Canvas renderer = null;
            renderer = mHolder.lockCanvas();
            renderer.drawBitmap(memBm, 0, 0, null);
            mHolder.unlockCanvasAndPost(renderer);
-
            if (memBm != null)
-        	   memBm.recycle();*/
+        	   memBm.recycle();
 		}
 		
 		private void initAnimationInstance(){
@@ -139,6 +136,8 @@ public class CupidCannonActivity extends Activity {
 			mWidth = this.getWidth();
 			mHeight = this.getHeight();
 			mPaint=new Paint();
+			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
+			mCanvas = new Canvas(memBm);
 			initAnimationInstance();
 			initDraw();
 			mThread.start();
