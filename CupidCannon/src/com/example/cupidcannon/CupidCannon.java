@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.common.CanvasAnimation;
+
 public class CupidCannon extends Activity {
 
 	@Override
@@ -37,13 +39,10 @@ public class CupidCannon extends Activity {
 		private Canvas mCanvas = null;
 		private Paint mPaint = null;
 		private boolean isRunning = true;
+		private CanvasAnimation testAnim;
 		
 		//puzzle. I have no idea about the definite meaning of the flags.
-	/*	private static final int LAYER_FLAGS = //Canvas.MATRIX_SAVE_FLAG | 
-                Canvas.CLIP_SAVE_FLAG | 
-                 //Canvas.HAS_ALPHA_LAYER_SAVE_FLAG 
-           Canvas.FULL_COLOR_LAYER_SAVE_FLAG | 
-                Canvas.CLIP_TO_LAYER_SAVE_FLAG;*/
+		//I use it to create the second CanvasLayer.
 		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
                 Canvas.CLIP_SAVE_FLAG |  
                 Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |  
@@ -82,8 +81,8 @@ public class CupidCannon extends Activity {
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
 			
-			if (mBitmap != null)
-				mBitmap.recycle();
+		/*	if (mBitmap != null)
+				mBitmap.recycle();*/
 			
 			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
@@ -97,8 +96,8 @@ public class CupidCannon extends Activity {
 			mPaint.setAlpha(0x40);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
 			
-			if (mBitmap != null)
-				mBitmap.recycle();
+		/*	if (mBitmap != null)
+				mBitmap.recycle();*/
 			
 		
 		//Draw elements on the second layer.	
@@ -110,37 +109,20 @@ public class CupidCannon extends Activity {
            mCanvas.drawBitmap(mBitmap, 300, 500, mPaint);
            mCanvas.restore();
            mHolder.unlockCanvasAndPost(mCanvas);
-      
 
 		}
-		private void testDraw() {
-		/*	mCanvas = mHolder.lockCanvas();
-			
-			mCanvas.saveLayerAlpha(0, 0, mWidth, mHeight, 0x88, LAYER_FLAGS);
-
-			mBitmap = BitmapFactory.decodeResource(getResources(),
-					R.drawable.ic_launcher);
-			mBitmapWidth = mBitmap.getWidth();
-			mBitmapHeight = mBitmap.getHeight();
-			mCanvas.drawColor(Color.TRANSPARENT);
-			mCanvas.drawRect(0, 0, mWidth, mHeight,
-					new Paint());
-			Matrix matrix = new Matrix();
-			matrix.setScale(1.0f, 1.0f);
-			matrix.postTranslate(0, 0);
-			mCanvas.drawBitmap(mBitmap, matrix, mPaint);
-			mCanvas.restore();
-			mHolder.unlockCanvasAndPost(mCanvas);
-			if (mBitmap != null)
-				mBitmap.recycle();	*/
-/*			mCanvas = mHolder.lockCanvas();
-            mCanvas.saveLayerAlpha(0, 0, mWidth, mHeight, 0x00, LAYERS_FLAGS);  
-            mPaint.setColor(Color.BLUE); 
-            mCanvas.drawColor(Color.TRANSPARENT);
-            mCanvas.drawCircle(125, 125, 75, mPaint);  
-            mCanvas.restore();
-            mHolder.unlockCanvasAndPost(mCanvas);*/
-			
+		
+		private void initAnimationInstance(){
+			testAnim = new CanvasAnimation();
+			testAnim.setElements(mBitmap, mPaint);
+			testAnim.setTranslate(300, 300, 3000);
+			testAnim.setCurrentPosition(0, 0, 0);
+			testAnim.setRepeatTimes(2);
+			testAnim.setTranslate(300, 300, 3);
+			testAnim.start(true);
+		}
+		private void drawAinmationInstance() {
+			testAnim.transformModel(mCanvas);
 		}
 
 		@Override
@@ -148,6 +130,7 @@ public class CupidCannon extends Activity {
 			mWidth = this.getWidth();
 			mHeight = this.getHeight();
 			mPaint=new Paint();
+			initAnimationInstance();
 			initDraw();
 			mThread.start();
 
@@ -170,7 +153,14 @@ public class CupidCannon extends Activity {
 		@Override
 		public void run() {
 			while (isRunning) {
-				testDraw();
+				//Add security lock
+				//synchronized (mHolder) {
+					//Get the canvas and lock it
+					mCanvas = mHolder.lockCanvas();
+					//drawAinmationInstance();
+					//Unlock the canvas and post it on the screen
+					mHolder.unlockCanvasAndPost(mCanvas);
+				//}
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
