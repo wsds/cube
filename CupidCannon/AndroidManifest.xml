@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.cupidcannon"
+    package="com.cube.attract"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:name=".CupidCannon"
+            android:name="com.cube.attract.game.cupidcannon.CupidCannon"
             android:label="@string/title_activity_cupid_cannon" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.example.common;
+package com.cube.canvas.common;
 
 import java.util.ArrayList;
 

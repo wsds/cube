@@ -1,4 +1,4 @@
-package com.example.cupidcannon;
+package com.cube.attract.game.cupidcannon;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +13,8 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.example.common.CanvasAnimation;
+import com.cube.attract.R;
+import com.cube.canvas.common.CanvasAnimation;
 
 public class CupidCannon extends Activity {
 
