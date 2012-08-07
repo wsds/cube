@@ -43,7 +43,6 @@ public class CupidCannonActivity extends Activity {
 		private CanvasAnimation testAnim;
 		
 		public Bitmap memBm = null;
-		//final Canvas mCanvas = new Canvas(memBm);
 		private Canvas mCanvas = null;
 		//puzzle. I have no idea about the definite meaning of the flags.
 		//I use it to create the second CanvasLayer.
@@ -58,7 +57,7 @@ public class CupidCannonActivity extends Activity {
 			// TODO Auto-generated constructor stub
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
-			mThread = new Thread(this);// 创建一个绘图线程
+			//mThread = new Thread(this);// 创建一个绘图线程
 
 		}
 
@@ -69,21 +68,19 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.girl_4_2);
 			mBitmapWidth = mBitmap.getWidth();
 			mBitmapHeight = mBitmap.getHeight();
-			
 			mCanvas.drawRect(0, 0, mBitmapWidth, mBitmapHeight, mPaint);
 			Matrix matrix = new Matrix();
 			matrix.setScale(0.67f, 0.67f);
 			matrix.postTranslate(0, -29);
 			mCanvas.drawBitmap(mBitmap, matrix, mPaint);
+			if (mBitmap != null)
+				mBitmap.recycle();
 			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_1);
-			
 			mCanvas.drawRect(50, 50, 200, 200, mPaint);
-
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
-			
 			if (mBitmap != null)
 				mBitmap.recycle();
 			
@@ -114,14 +111,16 @@ public class CupidCannonActivity extends Activity {
            renderer = mHolder.lockCanvas();
            renderer.drawBitmap(memBm, 0, 0, null);
            mHolder.unlockCanvasAndPost(renderer);
-           if (memBm != null)
-        	   memBm.recycle();
+          
 		}
 		
 		private void initAnimationInstance(){
 			testAnim = new CanvasAnimation();
-			testAnim.setElements(mBitmap, mPaint);
-			testAnim.setTranslate(300, 300, 3000);
+			/*mBitmap = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_1);*/
+			testAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_1), new Paint());
+			testAnim.setTranslate(10, 10, 30000);
 			testAnim.setCurrentPosition(0, 0, 0);
 			testAnim.setRepeatTimes(2);
 			testAnim.setTranslate(300, 300, 3);
@@ -130,6 +129,21 @@ public class CupidCannonActivity extends Activity {
 		private void drawAinmationInstance() {
 			testAnim.transformModel(mCanvas);
 		}
+		
+		private void testDraw() {
+		mBitmap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.girl_4_2);
+		mBitmapWidth = mBitmap.getWidth();
+		mBitmapHeight = mBitmap.getHeight();
+		mCanvas.drawRect(0, 0, mBitmapWidth, mBitmapHeight, mPaint);
+		Matrix matrix = new Matrix();
+		matrix.setScale(0.67f, 0.67f);
+		matrix.postTranslate(0, -29);
+		mCanvas.drawBitmap(mBitmap, matrix, mPaint);
+		if (mBitmap != null)
+			mBitmap.recycle();
+		}
+		
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
@@ -140,6 +154,9 @@ public class CupidCannonActivity extends Activity {
 			mCanvas = new Canvas(memBm);
 			initAnimationInstance();
 			initDraw();
+			//Optimize mThread start
+			isRunning = true;
+			mThread = new Thread(this);// 创建一个绘图线程
 			mThread.start();
 
 		}
@@ -161,14 +178,22 @@ public class CupidCannonActivity extends Activity {
 		@Override
 		public void run() {
 			while (isRunning) {
-				//Add security lock
-				//synchronized (mHolder) {
-					//Get the canvas and lock it
-					//mCanvas = mHolder.lockCanvas();
-					//drawAinmationInstance();
-					//Unlock the canvas and post it on the screen
-					//mHolder.unlockCanvasAndPost(mCanvas);
-				//}
+				
+				//testDraw();
+				drawAinmationInstance();
+				Canvas renderer = null;
+				synchronized (mHolder) {
+				    try {  
+				      	renderer = mHolder.lockCanvas();  
+				        if (renderer != null) {  
+				        renderer.drawBitmap(memBm, 0, 0, null);  
+				        }  
+				    } finally {  
+				         if (renderer != null)  
+				         mHolder.unlockCanvasAndPost(renderer);  
+				    } 
+				}
+		    
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
