@@ -37,11 +37,13 @@ public class CupidCannonActivity extends Activity {
 		private SurfaceHolder mHolder = null;
 		private Thread mThread = null;
 		private Bitmap mBitmap = null;
-		private Canvas mCanvas = null;
+		
 		private Paint mPaint = null;
 		private boolean isRunning = true;
 		private CanvasAnimation testAnim;
 		
+		final Bitmap memBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.RGB_565);
+		final Canvas mCanvas = new Canvas(memBm);
 		//puzzle. I have no idea about the definite meaning of the flags.
 		//I use it to create the second CanvasLayer.
 		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
@@ -62,7 +64,7 @@ public class CupidCannonActivity extends Activity {
 		private void initDraw() {
 
 			//Draw elements on the first layer.
-			mCanvas = mHolder.lockCanvas();
+			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_2);
 			mBitmapWidth = mBitmap.getWidth();
@@ -109,8 +111,14 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.ic_launcher);
            mCanvas.drawBitmap(mBitmap, 300, 500, mPaint);
            mCanvas.restore();
-           mHolder.unlockCanvasAndPost(mCanvas);
+           
+         /*  Canvas renderer = null;
+           renderer = mHolder.lockCanvas();
+           renderer.drawBitmap(memBm, 0, 0, null);
+           mHolder.unlockCanvasAndPost(renderer);
 
+           if (memBm != null)
+        	   memBm.recycle();*/
 		}
 		
 		private void initAnimationInstance(){
@@ -157,10 +165,10 @@ public class CupidCannonActivity extends Activity {
 				//Add security lock
 				//synchronized (mHolder) {
 					//Get the canvas and lock it
-					mCanvas = mHolder.lockCanvas();
+					//mCanvas = mHolder.lockCanvas();
 					//drawAinmationInstance();
 					//Unlock the canvas and post it on the screen
-					mHolder.unlockCanvasAndPost(mCanvas);
+					//mHolder.unlockCanvasAndPost(mCanvas);
 				//}
 				try {
 					Thread.sleep(10);
