@@ -38,16 +38,20 @@ public class GlRenderer implements Renderer {
 	private final static FloatBuffer lightDifBfr;
 	private final static FloatBuffer lightPosBfr;
 
-	private static float[] quadVertexLogo = new float[] { -1.1f, 1f, 0, -1.1f, -1f, 0, 1.1f, 1f, 0, 1.1f, -1f, 0 };
+	private static float[] quadVertexLogo = new float[] { -1.1f, 1f, 0, -1.1f,
+			-1f, 0, 1.1f, 1f, 0, 1.1f, -1f, 0 };
 
-	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
+	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1,
+			0 };
 
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
 
-	private static float[] quadVertexGirl = new float[] { -9.0f, 16.0f, 0, -9.0f, -16.0f, 0, 9.0f, 16.0f, 0, 9.0f, -16.0f, 0 };
+	private static float[] quadVertexGirl = new float[] { -9.0f, 16.0f, 0,
+			-9.0f, -16.0f, 0, 9.0f, 16.0f, 0, 9.0f, -16.0f, 0 };
 
-	private static float[] quadTextureGirl = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
+	private static float[] quadTextureGirl = new float[] { 0, 1, 0, 0, 1, 1, 1,
+			0 };
 
 	private static FloatBuffer quadVertexBufferGirl;
 	private static FloatBuffer quadTextureBufferGirl;
@@ -111,9 +115,9 @@ public class GlRenderer implements Renderer {
 	GLAnimation girlRotateFront = new GLAnimation();
 
 	public void initializeAnimations() {
-		girlGoBack.setTranslate(0, -10, -15, 200f);
+		girlGoBack.setTranslate(0, -11.5f, -5.5f, 200f);
 		girlGoBack.start(false);
-		girlGoFront.setTranslate(0, 10, 15, 200f);
+		girlGoFront.setTranslate(0, 11.5f, 5.5f, 200f);
 		girlGoFront.start(false);
 		girlRotateBack.setRotate(15, 1, 0, 0, 200f);
 		girlRotateBack.start(false);
@@ -130,7 +134,8 @@ public class GlRenderer implements Renderer {
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
+		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f,
+				100.0f);
 
 		initializeAnimations();
 	}
@@ -140,16 +145,17 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glDisable(GL10.GL_CULL_FACE);
-		 if (sceneState.blending) {
-		 gl.glEnable(GL10.GL_BLEND);
-		 gl.glDisable(GL10.GL_CULL_FACE);
-		 } else {
-		 gl.glDisable(GL10.GL_BLEND);
-		 gl.glEnable(GL10.GL_CULL_FACE);
-		 }
+		if (sceneState.blending) {
+			gl.glEnable(GL10.GL_BLEND);
+			gl.glDisable(GL10.GL_CULL_FACE);
+		} else {
+			gl.glDisable(GL10.GL_BLEND);
+			gl.glEnable(GL10.GL_CULL_FACE);
+		}
 
-		 drawPolygon(gl);
+		drawPolygon(gl);
 		drawGirls(gl);
+
 	}
 
 	public void drawPolygon(GL10 gl) {
@@ -184,7 +190,6 @@ public class GlRenderer implements Renderer {
 
 		sceneState.pictureViewGallary.movement();
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
-		int drawTimes = 0;
 		for (int i = 0; i < sceneState.pictureViewGallary.viewsNum; i++) {
 			int index = 0;
 			index = (i) % sceneState.pictureViewGallary.viewsNum;
@@ -196,15 +201,19 @@ public class GlRenderer implements Renderer {
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(girlNumber));
 			gl.glLoadIdentity();
 
+			girlGoBack.transformModel(gl);
+			girlGoFront.transformModel(gl);
+			girlRotateBack.transformModel(gl);
+			girlRotateFront.transformModel(gl);
 			// gl.glEnable(GL10.GL_BLEND);
-			gl.glTranslatef(0, 0f, -72f);
+			gl.glTranslatef(0, 0f, -63f);
 
 			gl.glTranslatef((float) x, (float) y, (float) z);
-			float angle = (float) (-sceneState.pictureViewGallary.pictureView[i].angle * 180 / PI)%360;
-//			if (angle < 180 && angle > 0) {
-//				continue;
-//			}
-			drawTimes++;
+			float angle = (float) (-sceneState.pictureViewGallary.pictureView[i].radian * 180 / PI) % 360;
+			// if (angle < 180 && angle > 0) {
+			// continue;
+			// }
+
 			gl.glRotatef(angle, 0, -1, 0);
 
 			gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -227,7 +236,8 @@ public class GlRenderer implements Renderer {
 		// update rotations
 		if (lastMillis != 0) {
 			long delta = currentMillis - lastMillis;
-			sceneState.pictureViewGallary.dAngle += sceneState.pictureViewGallary.dxSpeed * delta;
+			sceneState.pictureViewGallary.dAngle += sceneState.pictureViewGallary.dxSpeed
+					* delta;
 			sceneState.pictureViewGallary.dampenSpeed(delta);
 		}
 
@@ -235,8 +245,10 @@ public class GlRenderer implements Renderer {
 		lastMillis = currentMillis;
 		if (lastMillis != 0) {
 			long delta = currentMillis - lastMillis;
-			sceneState.pictureViewGallary.dx += sceneState.pictureViewGallary.dxSpeed * delta;
-			sceneState.pictureViewGallary.dy += sceneState.pictureViewGallary.dySpeed * delta;
+			sceneState.pictureViewGallary.dx += sceneState.pictureViewGallary.dxSpeed
+					* delta;
+			sceneState.pictureViewGallary.dy += sceneState.pictureViewGallary.dySpeed
+					* delta;
 			sceneState.pictureViewGallary.dampenSpeed(delta);
 		}
 		sceneState.pictureViewGallary.isStopmoving();
@@ -256,19 +268,28 @@ public class GlRenderer implements Renderer {
 		gl.glGenTextures(textureNum, texturesBuffer);
 
 		Bitmap[] texture = new Bitmap[textureNum];
-		texture[0] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_1);
-		texture[1] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_2);
-		texture[2] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_3);
-		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon);
-		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.gameentry_background);
+		texture[0] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.girl4_1);
+		texture[1] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.girl4_2);
+		texture[2] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.girl4_3);
+		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.polygon);
+		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.gameentry_background);
 
 		for (int i = 0; i < textureNum; i++) {
 
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
-			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
+					GL10.GL_NEAREST);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
+					GL10.GL_NEAREST);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+					GL10.GL_CLAMP_TO_EDGE);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+					GL10.GL_CLAMP_TO_EDGE);
 			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture[i], 0);
 
 			texture[i].recycle();

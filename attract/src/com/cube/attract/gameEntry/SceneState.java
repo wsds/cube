@@ -15,7 +15,7 @@ final class SceneState {
 		return instance;
 	}
 
-	boolean blending = true;
+	boolean blending = false;
 
 	public boolean isClicked = false;
 
@@ -90,7 +90,7 @@ final class SceneState {
 		}
 
 		public PictureView[] pictureView;
-		public int viewsNum = 8;
+		public int viewsNum = 9;
 
 		float radius = 25f;
 		double PI = Math.PI;
@@ -103,7 +103,7 @@ final class SceneState {
 				pictureView[i] = new PictureView();
 				pictureView[i].girlNumber = i % 3;
 				double angle = 2 * PI / viewsNum * i;
-				pictureView[i].angle = angle;
+				pictureView[i].radian = angle;
 				pictureView[i].pAngle = angle;
 
 				pictureView[i].x = radius * Math.sin(angle);
@@ -120,17 +120,17 @@ final class SceneState {
 			float moveAngle = (float) moveFactor * dAngle;
 
 			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].angle = pictureView[i].pAngle + moveAngle;
+				pictureView[i].radian = pictureView[i].pAngle + moveAngle;
 
-				pictureView[i].x = radius * Math.sin(pictureView[i].angle);
+				pictureView[i].x = radius * Math.sin(pictureView[i].radian);
 				pictureView[i].y = 0;
-				pictureView[i].z = radius * Math.cos(pictureView[i].angle);
+				pictureView[i].z = radius * Math.cos(pictureView[i].radian);
 			}
 		}
 
 		public void saveMovement() {
 			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].pAngle = pictureView[i].angle;
+				pictureView[i].pAngle = pictureView[i].radian;
 			}
 			dAngle = 0.0f;
 		}
@@ -139,7 +139,7 @@ final class SceneState {
 			if (dxSpeed != 0.0f) {
 				dxSpeed *= (1.0f - 0.001f * deltaMillis);
 
-				if (Math.abs(dxSpeed) < 0.061f) {
+				if (Math.abs(dxSpeed) < 0.361f) {
 					stopmove();
 				}
 			}
@@ -151,7 +151,7 @@ final class SceneState {
 			public double y;
 			public double z;
 			public int girlNumber;
-			public double angle;
+			public double radian;
 		}
 	}
 

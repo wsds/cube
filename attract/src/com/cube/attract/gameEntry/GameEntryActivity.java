@@ -45,7 +45,7 @@ public class GameEntryActivity extends Activity{
 
 
 	private float startX, startY;
-	
+	float TOUCH_SCAL_FACTOR = 180f/320;
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
@@ -74,7 +74,7 @@ public class GameEntryActivity extends Activity{
 			sceneState.pictureViewGallary.dx = event.getX() - startX;
 			sceneState.pictureViewGallary.dy = event.getY() - startY;
 			if (sceneState.eventType == sceneState.GIRL) {
-				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx;
+				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx*TOUCH_SCAL_FACTOR;
 			}
 			break;
 			
