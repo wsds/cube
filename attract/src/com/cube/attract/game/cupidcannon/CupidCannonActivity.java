@@ -41,6 +41,7 @@ public class CupidCannonActivity extends Activity {
 		private Paint mPaint = null;
 		private boolean isRunning = true;
 		private CanvasAnimation testAnim;
+		private CanvasAnimation cupidAnim;
 		
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
@@ -129,16 +130,27 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.girl_4_1);*/
 			testAnim.setElements(BitmapFactory.decodeResource(getResources(),
 					R.drawable.ic_launcher), new Paint());
-			testAnim.setTranslate(0, 200, 1000);
-			//testAnim.setRotate(60, 0, 0, 10000);
 			testAnim.setCurrentPosition(300, 100, 60);
+			testAnim.setTranslate(0, 200, 10000);
+			//testAnim.setRotate(60, 0, 0, 10000);
 			testAnim.setRepeatTimes(3);
 			testAnim.start(true);
+			
+			cupidAnim = new CanvasAnimation();
+			cupidAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.cupid), new Paint());
+			cupidAnim.setCurrentPosition(mWidth/2 - cupidAnim.mAnimBitmapWidth,
+					mHeight -cupidAnim.mAnimBitmapHeight/2, -90);
+			cupidAnim.setRotate(180, mWidth/2, mHeight, 10000);
+			cupidAnim.setRepeatTimes(3);
+			cupidAnim.start(true);
+			
 		}
 		private void drawAinmationInstance() {
 			//mCanvas.
 			drawBackground();
 			testAnim.transformModel(mCanvas);
+			cupidAnim.transformModel(mCanvas);
 		}
 		private void drawBackground() {
 			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());	
