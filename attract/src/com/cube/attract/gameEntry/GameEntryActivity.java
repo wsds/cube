@@ -54,6 +54,8 @@ public class GameEntryActivity extends Activity{
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
+			sceneState.pictureViewGallary.dxSpeed = 0.0f;
+			sceneState.pictureViewGallary.dySpeed = 0.0f;
 			startX = event.getX();
 			startY = event.getY();
 
@@ -69,10 +71,10 @@ public class GameEntryActivity extends Activity{
 
 			break;
 		case MotionEvent.ACTION_MOVE:
-			float dx = event.getX() - startX;
-			float dy = event.getY() - startY;
+			sceneState.pictureViewGallary.dx = event.getX() - startX;
+			sceneState.pictureViewGallary.dy = event.getY() - startY;
 			if (sceneState.eventType == sceneState.GIRL) {
-				sceneState.pictureViewGallary.dAngle = dx;
+				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx;
 			}
 			break;
 			
@@ -91,6 +93,11 @@ public class GameEntryActivity extends Activity{
     {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+			sceneState.pictureViewGallary.dxSpeed = velocityX / 1000;
+			sceneState.pictureViewGallary.dySpeed = velocityY / 1000;
+			
+
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
     }

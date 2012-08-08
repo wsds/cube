@@ -35,6 +35,13 @@ final class SceneState {
 			initailizepictureView();
 		}
 
+
+
+
+		 float dySpeed;
+
+		float dx;
+		
 		public float stopFactor = 0.312f;
 		public int minNum = 0;
 		public double minX = 10000;

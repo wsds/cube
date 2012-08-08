@@ -140,15 +140,15 @@ public class GlRenderer implements Renderer {
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glDisable(GL10.GL_CULL_FACE);
-		// if (sceneState.blending) {
-		// gl.glEnable(GL10.GL_BLEND);
-		// gl.glDisable(GL10.GL_CULL_FACE);
-		// } else {
-		// gl.glDisable(GL10.GL_BLEND);
-		// gl.glEnable(GL10.GL_CULL_FACE);
-		// }
+		 if (sceneState.blending) {
+		 gl.glEnable(GL10.GL_BLEND);
+		 gl.glDisable(GL10.GL_CULL_FACE);
+		 } else {
+		 gl.glDisable(GL10.GL_BLEND);
+		 gl.glEnable(GL10.GL_CULL_FACE);
+		 }
 
-		// drawPolygon(gl);
+		 drawPolygon(gl);
 		drawGirls(gl);
 	}
 
@@ -233,6 +233,12 @@ public class GlRenderer implements Renderer {
 
 		// update millis
 		lastMillis = currentMillis;
+		if (lastMillis != 0) {
+			long delta = currentMillis - lastMillis;
+			sceneState.pictureViewGallary.dx += sceneState.pictureViewGallary.dxSpeed * delta;
+			sceneState.pictureViewGallary.dy += sceneState.pictureViewGallary.dySpeed * delta;
+			sceneState.pictureViewGallary.dampenSpeed(delta);
+		}
 		sceneState.pictureViewGallary.isStopmoving();
 
 	}
