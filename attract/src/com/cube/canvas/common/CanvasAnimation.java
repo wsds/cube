@@ -18,6 +18,7 @@ public class CanvasAnimation {
 			public float CurrentX = 0;
 			public float CurrentY = 0;
 			public float CurrentAngle = 0;
+			public Matrix positionMatrix = null;
 		}
 		public class Translate {
 			public float dx = 0;
@@ -56,8 +57,11 @@ public class CanvasAnimation {
 		public Scale scale = new Scale();
 		public CurrentPosition currentPosition = new CurrentPosition();
 		
+		
 		public Bitmap mAnimBitmap = null;
 		public Paint mAnimPaint = null;
+		public float mAnimBitmapWidth = 0.0f;
+		public float mAnimBitmapHeight = 0.0f;
 		public Matrix transformMatrix = new Matrix();
 
 		boolean isStarted = true;
@@ -74,13 +78,31 @@ public class CanvasAnimation {
 		public void setElements(Bitmap bitmap, Paint paint){	
 			mAnimBitmap = bitmap;
 			mAnimPaint = paint;
+			mAnimBitmapWidth = mAnimBitmap.getWidth();
+			mAnimBitmapHeight = mAnimBitmap.getHeight();
 		}
 		public void setCurrentPosition(float currentX, float currentY, float currentAngle){
 			
 			currentPosition.CurrentX = currentX;
 			currentPosition.CurrentY = currentY;
 			currentPosition.CurrentAngle = currentAngle;
+			/*float [] array = { 1.0f, 0.0f, currentX,
+								0.0f, 1.0f, currentY,
+								0.0f, 0.0f, 1.0f};*/
+			currentPosition.positionMatrix = new Matrix();
+			//currentPosition.positionMatrix.setValues(array);
+			transformMatrix.postTranslate(currentX, currentY);
+			
+			transformMatrix.postRotate(currentAngle, 
+					currentX + mAnimBitmapWidth/2, currentY + mAnimBitmapHeight/2);
+			//Save the initial position. 
+			float [] array = {	0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f	};
+			transformMatrix.getValues(array);
+			currentPosition.positionMatrix.setValues(array);
 		}
+		
 		public void setRepeatTimes(long repeatTimes) {
 			this.repeatTimes = repeatTimes;
 		}
@@ -152,6 +174,7 @@ public class CanvasAnimation {
 				if (nextRemainTime == 0) {
 					if (remainRepeatTimes > 1 || remainRepeatTimes < -9998) {
 						reset();
+						
 						if (remainRepeatTimes > 1)
 							remainRepeatTimes--;	//I wonder if this will overflow
 					}
@@ -175,13 +198,10 @@ public class CanvasAnimation {
 
 					if (this.type == TRANSLATE) {
 						transformMatrix.postTranslate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta );
-						//renew current position
-						currentPosition.CurrentX += translate.dx / translate.dt * delta;
-						currentPosition.CurrentY += translate.dy / translate.dt * delta;
+						
 					} else if (this.type == ROTATE) {
 						transformMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
-						//renew current position
-						//currentPosition.CurrentAngle = 
+						
 					} else if (this.type == SCALE) {
 
 					}
@@ -204,6 +224,14 @@ public class CanvasAnimation {
 		public void reset() {
 			lastMillis=0;
 			isReset = true;
+			
+			//When this animation is reseted, the animation replay from it initial state.
+			float [] array = {	0.0f, 0.0f, 0.0f,
+					0.0f, 0.0f, 0.0f,
+					0.0f, 0.0f, 0.0f	};
+			currentPosition.positionMatrix.getValues(array);
+			transformMatrix.setValues(array);
+			
 			for (int i = 0; i < this.next.size(); i++) {
 				CanvasAnimation nextAnimation = this.next.get(i);
 				nextAnimation.reset();
