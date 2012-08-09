@@ -251,9 +251,11 @@ public class GlRenderer implements Renderer {
 					* delta;
 			sceneState.pictureViewGallary.dampenSpeed(delta);
 		}
-		sceneState.pictureViewGallary.isStopmoving();
+//		sceneState.pictureViewGallary.isStopmoving();
 
 	}
+	
+	
 
 	private IntBuffer texturesBuffer;
 
