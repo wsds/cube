@@ -45,31 +45,23 @@
                 android:textColor="@color/TextColor"
                 android:textSize="18sp" />
         </RelativeLayout>
-
-<!--         <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/w03" />
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/w04" />
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/w05" />
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/w06" />
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/w07" /> -->
+        <!--
+			<RelativeLayout android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:background="@drawable/w03" /> <RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:background="@drawable/w04" /> <RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:background="@drawable/w05" /> <RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:background="@drawable/w06" /> <RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:background="@drawable/w07" />
+        -->
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -78,8 +70,8 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/w01" >
+            android:layout_height="fill_parent" 
+            android:background="@drawable/about_background">
 
             <Button
                 android:id="@+id/startBtn"
@@ -91,7 +83,7 @@
                 android:layout_marginBottom="98dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/button_bg"
+                
                 android:text="开始探寻美色之旅"
                 android:textColor="@color/TextColor"
                 android:textSize="18sp" />
@@ -123,46 +115,28 @@
             android:clickable="true"
             android:padding="5.0dip"
             android:src="@drawable/page_indicator_bg" />
-
-       <!--  <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:padding="5.0dip"
-            android:src="@drawable/page_indicator_bg" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:padding="5.0dip"
-            android:src="@drawable/page_indicator_bg" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:padding="5.0dip"
-            android:src="@drawable/page_indicator_bg" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:padding="5.0dip"
-            android:src="@drawable/page_indicator_bg" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:padding="5.0dip"
-            android:src="@drawable/page_indicator_bg" /> -->
+        <!--
+			<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:clickable="true"
+			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
+			<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:clickable="true"
+			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
+			<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:clickable="true"
+			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
+			<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:clickable="true"
+			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
+			<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:clickable="true"
+			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
+        -->
 
         <ImageView
             android:layout_width="wrap_content"
@@ -185,38 +159,19 @@
         android:id="@+id/animLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@drawable/about_down"
         android:visibility="gone" >
 
         <LinearLayout
-            android:id="@+id/leftLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/whatsnew_left" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/whatsnew_left_m" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/rightLayout"
+            android:id="@+id/downLayout"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
 
             <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/whatsnew_right_m" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/whatsnew_right" />
+                android:scaleType="center"
+                android:src="@drawable/about_up" />
         </LinearLayout>
     </LinearLayout>
 

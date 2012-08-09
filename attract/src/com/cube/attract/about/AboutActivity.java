@@ -26,9 +26,10 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 	private Button startBtn;
 	private RelativeLayout mainRLayout;
 	private LinearLayout pointLLayout;
-	private LinearLayout leftLayout;
-	private LinearLayout rightLayout;
 	private LinearLayout animLayout;
+	private LinearLayout downLayout;
+	
+	
 	final Context mContext = this;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,7 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 		startBtn = (Button) findViewById(R.id.startBtn);
 		startBtn.setOnClickListener(onClick);
 		animLayout = (LinearLayout) findViewById(R.id.animLayout);
-		leftLayout = (LinearLayout) findViewById(R.id.leftLayout);
-		rightLayout = (LinearLayout) findViewById(R.id.rightLayout);
+		downLayout = (LinearLayout) findViewById(R.id.downLayout);
 		count = mScrollLayout.getChildCount();
 		imgs = new ImageView[count];
 		for (int i = 0; i < count; i++) {
@@ -66,18 +66,11 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 				mScrollLayout.setVisibility(View.GONE);
 				pointLLayout.setVisibility(View.GONE);
 				animLayout.setVisibility(View.VISIBLE);
-				mainRLayout.setBackgroundResource(R.drawable.whatsnew_bg);
-				Animation leftOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_left);
-				Animation rightOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_right);
-				// Animation leftOutAnimation =
-				// AnimationUtils.loadAnimation(getApplicationContext(),
-				// R.anim.fadedout_to_left_down);
-				// Animation rightOutAnimation =
-				// AnimationUtils.loadAnimation(getApplicationContext(),
-				// R.anim.fadedout_to_right_down);
-				leftLayout.setAnimation(leftOutAnimation);
-				rightLayout.setAnimation(rightOutAnimation);
-				leftOutAnimation.setAnimationListener(new AnimationListener() {
+				mainRLayout.setBackgroundResource(R.drawable.w01);
+				Animation downOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
+				
+				downLayout.setAnimation(downOutAnimation);
+				downOutAnimation.setAnimationListener(new AnimationListener() {
 					@Override
 					public void onAnimationStart(Animation animation) {
 						mainRLayout.setBackgroundColor(getResources().getColor(R.color.bgColor));
@@ -90,8 +83,8 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 
 					@Override
 					public void onAnimationEnd(Animation animation) {
-						leftLayout.setVisibility(View.GONE);
-						rightLayout.setVisibility(View.GONE);
+						downLayout.setVisibility(View.GONE);
+						animLayout.setVisibility(View.GONE);
 						Intent about = new Intent(Intent.ACTION_MAIN);
 						about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
