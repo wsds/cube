@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -242,6 +244,44 @@ public class CupidCannonActivity extends Activity {
 				}
 		    
 			}
+		}
+		
+		float startX = 0;
+	    float startY = 0;
+	    double moveLongth = 0;
+		@Override
+		public boolean onTouchEvent(MotionEvent event) {
+		    /** 拿到触摸的状态 **/
+		    int action = event.getAction();
+		    float currentX = 0;
+			float currentY = 0;
+		    switch (action) {
+		    // 触摸按下的事件
+		    case MotionEvent.ACTION_DOWN:
+			Log.v("test", "ACTION_DOWN");
+			startX = event.getX();
+			startY = event.getY();
+			break;
+		    // 触摸移动的事件
+		    case MotionEvent.ACTION_MOVE:
+			Log.v("test", "ACTION_MOVE");
+			currentX = event.getX();
+			currentY = event.getY();
+			moveLongth = Math.sqrt((currentX - startX)*(currentX - startX)
+					+ (currentY - startY)*(currentY - startY));
+			break;
+		    // 触摸抬起的事件
+		    case MotionEvent.ACTION_UP:
+			Log.v("test", "ACTION_UP");
+			currentX = event.getX();
+			currentY = event.getY();
+			moveLongth = Math.sqrt((currentX - startX)*(currentX - startX)
+					+ (currentY - startY)*(currentY - startY));
+			break;
+		    }
+
+		    // return super.onTouchEvent(event);
+		    return true;
 		}
 
 	}
