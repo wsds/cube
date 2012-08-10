@@ -42,12 +42,15 @@ public class CupidCannonActivity extends Activity {
 		
 		private Paint mPaint = null;
 		private boolean isRunning = true;
-		private CanvasAnimation testAnim;
-		private CanvasAnimation cupidAnim;
+		private CanvasAnimation bulletAnim;
+		private CanvasAnimation artilleryAnim;
+		private CanvasAnimation batteryAnim;
 		
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
 		public Bitmap backgroundBm = null;
+		public float[] rotateCenter = {0.0f, 0.0f};
+		public Bitmap backgroundStage = null;
 		public Matrix testMatrix = new Matrix();
 		public float [] testMatrixArray; 
 		
@@ -66,6 +69,8 @@ public class CupidCannonActivity extends Activity {
 			mHolder.addCallback(this);
 			backgroundBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_2);
+			backgroundStage = BitmapFactory.decodeResource(getResources(),
+					R.drawable.button_bar);
 			//mThread = new Thread(this);// 创建一个绘图线程
 
 		}
@@ -123,39 +128,68 @@ public class CupidCannonActivity extends Activity {
            renderer = mHolder.lockCanvas();
            renderer.drawBitmap(memBm, 0, 0, null);
            mHolder.unlockCanvasAndPost(renderer);
+         
           
 		}
 		
 		private void initAnimationInstance(){
-			testAnim = new CanvasAnimation();
-			/*mBitmap = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_4_1);*/
-			testAnim.setElements(BitmapFactory.decodeResource(getResources(),
-					R.drawable.ic_launcher), new Paint());
-			testAnim.setCurrentPosition(300, 100, 60);
-			testAnim.setTranslate(0, 200, 10000);
-			//testAnim.setRotate(60, 0, 0, 10000);
-			testAnim.setRepeatTimes(3);
-			testAnim.start(true);
 			
-			cupidAnim = new CanvasAnimation();
-			cupidAnim.setElements(BitmapFactory.decodeResource(getResources(),
-					R.drawable.cupid), new Paint());
-			cupidAnim.setCurrentPosition(mWidth/2 - cupidAnim.mAnimBitmapWidth,
-					mHeight -cupidAnim.mAnimBitmapHeight/2, -90);
-			cupidAnim.setRotate(180, mWidth/2, mHeight, 10000);
-			cupidAnim.setRepeatTimes(3);
-			cupidAnim.start(true);
+			Matrix initMatrix = new Matrix();
+			
+			bulletAnim = new CanvasAnimation();
+			bulletAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.bullet), new Paint());
+			bulletAnim.setCurrentPosition(300, 100, 0);
+			bulletAnim.setTranslate(0, 200, 10000);
+			bulletAnim.setRepeatTimes(3);
+			bulletAnim.start(true);
+			
+			artilleryAnim = new CanvasAnimation();
+			artilleryAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.artillery), new Paint());
+			initMatrix.setTranslate((mWidth - artilleryAnim.mAnimBitmapWidth)/2,
+					mHeight + 5 - artilleryAnim.mAnimBitmapHeight + 20);
+			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
+			artilleryAnim.setStartMatrix(initMatrix);
+			/*artilleryAnim.setCurrentPosition(mWidth/2 - artilleryAnim.mAnimBitmapWidth,
+					mHeight -artilleryAnim.mAnimBitmapHeight/2, -90);*/
+			artilleryAnim.setRotate(180, rotateCenter[0], rotateCenter[1], 10000);
+			artilleryAnim.setRepeatTimes(3);
+			artilleryAnim.start(true);
+			
+			batteryAnim = new CanvasAnimation();
+			batteryAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.battery), new Paint());
+			initMatrix.setTranslate(mWidth/2 + 4 - batteryAnim.mAnimBitmapWidth/2,
+					mHeight + 5 - batteryAnim.mAnimBitmapHeight/2);
+			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
+			batteryAnim.setStartMatrix(initMatrix);
+			/*batteryAnim.setCurrentPosition(mWidth/2 - batteryAnim.mAnimBitmapWidth/2,
+					mHeight - batteryAnim.mAnimBitmapHeight/2, -90);*/
+			batteryAnim.setRotate(180, rotateCenter[0], rotateCenter[1], 10000);
+			batteryAnim.setRepeatTimes(3);
+			batteryAnim.start(true);
 			
 		}
 		private void drawAinmationInstance() {
 			//mCanvas.
 			drawBackground();
-			testAnim.transformModel(mCanvas);
-			cupidAnim.transformModel(mCanvas);
+			bulletAnim.transformModel(mCanvas);
+			/*mCanvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
+					R.drawable.battery), rotateCenter[0] - batteryAnim.mAnimBitmapWidth/2,
+					rotateCenter[1] - batteryAnim.mAnimBitmapHeight/2, new Paint());
+			mCanvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
+					R.drawable.artillery), mWidth/2 - artilleryAnim.mAnimBitmapWidth/2, 
+					rotateCenter[1] - artilleryAnim.mAnimBitmapHeight + 20, new Paint());*/
+			batteryAnim.transformModel(mCanvas);
+			artilleryAnim.transformModel(mCanvas);
 		}
 		private void drawBackground() {
-			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());	
+			
+			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
+			Matrix testMatrix = new Matrix();
+			testMatrix.postTranslate(-(480-mWidth)/2, mHeight-290);
+			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
 		}
 		
 		private void testDraw() {
@@ -177,6 +211,8 @@ public class CupidCannonActivity extends Activity {
 		public void surfaceCreated(SurfaceHolder holder) {
 			mWidth = this.getWidth();
 			mHeight = this.getHeight();
+			rotateCenter[0] = mWidth/2 + 3;
+			rotateCenter[1] = mHeight + 3;
 			mPaint=new Paint();
 			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 			mCanvas = new Canvas(memBm);
@@ -208,22 +244,10 @@ public class CupidCannonActivity extends Activity {
 			while (isRunning) {
 				
 				//testDraw();
-				//Acquire start time.
-				long startTime = System.currentTimeMillis();
+
 				drawAinmationInstance();
 				
-			    //Acquire end time.  
-		/*	    long endTime = System.currentTimeMillis();  
-			      
-			    //Calculate the interval time  
-			    int diffTime  = (int)(endTime - startTime);  
-			      
-			    //Ensure every update interval is 20 millseconds.  
-			    while(diffTime <= 20) {  
-			        diffTime = (int)(System.currentTimeMillis() - startTime);  
-			        //Thread wait  
-			        Thread.yield();  
-			    }*/
+	
 				try {
 					Thread.sleep(3);
 				} catch (InterruptedException e) {

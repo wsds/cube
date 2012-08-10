@@ -18,7 +18,7 @@ public class CanvasAnimation {
 			public float CurrentX = 0;
 			public float CurrentY = 0;
 			public float CurrentAngle = 0;
-			public Matrix positionMatrix = null;
+			public Matrix positionMatrix = new Matrix();
 		}
 		public class Translate {
 			public float dx = 0;
@@ -89,10 +89,9 @@ public class CanvasAnimation {
 			/*float [] array = { 1.0f, 0.0f, currentX,
 								0.0f, 1.0f, currentY,
 								0.0f, 0.0f, 1.0f};*/
-			currentPosition.positionMatrix = new Matrix();
+			//currentPosition.positionMatrix = new Matrix();
 			//currentPosition.positionMatrix.setValues(array);
 			transformMatrix.postTranslate(currentX, currentY);
-			
 			transformMatrix.postRotate(currentAngle, 
 					currentX + mAnimBitmapWidth/2, currentY + mAnimBitmapHeight/2);
 			//Save the initial position. 
@@ -101,6 +100,16 @@ public class CanvasAnimation {
 								0.0f, 0.0f, 0.0f	};
 			transformMatrix.getValues(array);
 			currentPosition.positionMatrix.setValues(array);
+		}
+		
+		public void setStartMatrix(Matrix matrix) {
+			float [] array = {	0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f	};
+			matrix.getValues(array);
+			transformMatrix.setValues(array);
+			currentPosition.positionMatrix.setValues(array);	
+			
 		}
 		
 		public void setRepeatTimes(long repeatTimes) {
