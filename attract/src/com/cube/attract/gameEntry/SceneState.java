@@ -51,36 +51,18 @@ final class SceneState {
 		public float dxSpeed = 0;
 		public float dAngle = 0;
 		public float dy = 0;
-
+		
+		public double diff =0;
+		public int start = 0;
 		public void stopmove() {
 
-			double halfRerRadian = PI/viewsNum;
-			int start = 0;
-			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].radian = pictureView[i].radian%(2*PI);
-				if (pictureView[i].radian > -PI / 2 - halfRerRadian
-						&& pictureView[i].radian < -PI / 2 + halfRerRadian || pictureView[i].radian > -PI*3 / 2 - halfRerRadian
-						&& pictureView[i].radian < -PI*3 / 2 + halfRerRadian) {
-					start = i;
-					Log.i("i", String.valueOf(i));
 
-				}
-			}
-			for(int j=0;j<viewsNum;j++){
-				int pos = (start+j)%viewsNum;
-				double radian =-PI/2+2 * PI / viewsNum * pos;
-				pictureView[pos].radian = radian;
-				pictureView[pos].pAngle = radian;
-
-				pictureView[pos].x = radius * Math.sin(radian);
-
-				pictureView[pos].z = radius * Math.cos(radian);
-			}
+			dAngle =(float) (diff+pictureView[start].radian-2*PI*start/viewsNum);
+			
 			dxSpeed = 0.0f;
 		}
 
-		public boolean isStopping = false;
-		public int stop = 10;
+
 
 //		public boolean isStopmoving() {
 //			if (isStopping == false) {
@@ -106,7 +88,7 @@ final class SceneState {
 //		}
 
 		public PictureView[] pictureView;
-		public int viewsNum = 8;//8各面可以将第一幅图片置为屏幕正中。8各面就不行
+		public int viewsNum = 9;
 
 		float radius = 25f;
 		double PI = Math.PI;
@@ -118,7 +100,7 @@ final class SceneState {
 			for (int i = 0; i < viewsNum; i++) {
 				pictureView[i] = new PictureView();
 				pictureView[i].girlNumber = i % 3;
-				double radian =-PI/2+2 * PI / viewsNum * i;
+				double radian =2 * PI / viewsNum * i;
 				pictureView[i].radian = radian;
 				pictureView[i].pAngle = radian;
 
@@ -135,6 +117,23 @@ final class SceneState {
 		public void movement() {
 			float moveAngle = (float) moveFactor * dAngle;
 
+			double halfRefRadian = PI/viewsNum;
+
+			for (int i = 0; i < viewsNum; i++) {
+				pictureView[i].radian = pictureView[i].radian - Math.floor(pictureView[i].radian/(2*PI))*2*PI;
+				if (pictureView[i].radian > 2*PI - halfRefRadian){
+					start = i;
+					Log.i("i", String.valueOf(i));
+					diff = 2*PI - pictureView[i].radian; 
+				}
+				else if(pictureView[i].radian < halfRefRadian){
+					start = i;
+					Log.i("i", String.valueOf(i));
+					diff =-pictureView[i].radian;
+				}
+			}
+//			pictureView[start].radian-2 * PI / viewsNum * start;
+			
 			for (int i = 0; i < viewsNum; i++) {
 				pictureView[i].radian = pictureView[i].pAngle + moveAngle;
 
@@ -144,12 +143,12 @@ final class SceneState {
 			}
 		}
 
-		public void saveMovement() {
-			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].pAngle = pictureView[i].radian;
-			}
-			dAngle = 0.0f;
-		}
+//		public void saveMovement() {
+//			for (int i = 0; i < viewsNum; i++) {
+//				pictureView[i].pAngle = pictureView[i].radian;
+//			}
+//			dAngle = 0.0f;
+//		}
 
 		public void dampenSpeed(long deltaMillis) {
 			if (dxSpeed != 0.0f) {

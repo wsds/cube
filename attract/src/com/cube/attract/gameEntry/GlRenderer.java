@@ -276,8 +276,10 @@ public class GlRenderer implements Renderer {
 				R.drawable.girl4_2);
 		texture[2] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.girl4_3);
+//		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
+//				R.drawable.polygon);
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
-				R.drawable.polygon);
+				R.drawable.six);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.gameentry_background);
 

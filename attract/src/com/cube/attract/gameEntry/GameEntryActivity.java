@@ -52,16 +52,16 @@ public class GameEntryActivity extends Activity {
 
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			sceneState.pictureViewGallary.dxSpeed = 0.0f;
-			sceneState.pictureViewGallary.dySpeed = 0.0f;
+//			sceneState.pictureViewGallary.dxSpeed = 0.0f;
+//			sceneState.pictureViewGallary.dySpeed = 0.0f;
 			startX = event.getX();
 			startY = event.getY();
 
 			if (startY * 800 / sceneState.screenHeight < 450) {
 				sceneState.eventType = sceneState.GIRL;
 
-				sceneState.pictureViewGallary.dxSpeed = 0.0f;
-				sceneState.pictureViewGallary.saveMovement();
+//				sceneState.pictureViewGallary.dxSpeed = 0.0f;
+//				sceneState.pictureViewGallary.saveMovement();
 				renderer.girlGoBack.start(true);
 				renderer.girlRotateBack.start(true);
 			} else {
