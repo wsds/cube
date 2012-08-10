@@ -57,8 +57,20 @@ final class SceneState {
 		public void stopmove() {
 
 
-			dAngle =(float) (diff+pictureView[start].radian-2*PI*start/viewsNum);
-			
+			for (int i = 0; i < viewsNum; i++) {
+				int temp = (i + start)% viewsNum;
+				pictureView[temp].radian=2 * PI / viewsNum * i;
+
+//				pictureView[i].girlNumber = i % 3;
+//				double radian =2 * PI / viewsNum * i;
+//				pictureView[i].radian = radian;
+				pictureView[temp].pAngle = pictureView[temp].radian;
+
+//				pictureView[temp].x = radius * Math.sin(pictureView[temp].radian);
+////				pictureView[i].y = 0;
+//				pictureView[temp].z = radius * Math.cos(pictureView[temp].radian);
+			}
+			dAngle = 0;
 			dxSpeed = 0.0f;
 		}
 
@@ -108,8 +120,7 @@ final class SceneState {
 				pictureView[i].y = 0;
 				pictureView[i].z = radius * Math.cos(radian);
 			}
-			int i=0;
-			i++;
+
 		}
 
 		public float moveFactor = 0.002f;
