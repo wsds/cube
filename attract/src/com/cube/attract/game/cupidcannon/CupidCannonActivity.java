@@ -41,9 +41,14 @@ public class CupidCannonActivity extends Activity {
 		private Paint mPaint = null;
 		private boolean isRunning = true;
 		private CanvasAnimation testAnim;
+		private CanvasAnimation cupidAnim;
 		
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
+		public Bitmap backgroundBm = null;
+		public Matrix testMatrix = new Matrix();
+		public float [] testMatrixArray; 
+		
 		//puzzle. I have no idea about the definite meaning of the flags.
 		//I use it to create the second CanvasLayer.
 		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
@@ -57,15 +62,20 @@ public class CupidCannonActivity extends Activity {
 			// TODO Auto-generated constructor stub
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
+			backgroundBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_2);
 			//mThread = new Thread(this);// 创建一个绘图线程
 
 		}
 
 		private void initDraw() {
-
+			
+			//testMatrix.getValues(testMatrixArray);
+			
 			//Draw elements on the first layer.
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_2);
+			
 			mBitmapWidth = mBitmap.getWidth();
 			mBitmapHeight = mBitmap.getHeight();
 			mCanvas.drawRect(0, 0, mBitmapWidth, mBitmapHeight, mPaint);
@@ -119,15 +129,31 @@ public class CupidCannonActivity extends Activity {
 			/*mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_1);*/
 			testAnim.setElements(BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_4_1), new Paint());
-			testAnim.setTranslate(10, 10, 30000);
-			testAnim.setCurrentPosition(0, 0, 0);
-			testAnim.setRepeatTimes(2);
-			testAnim.setTranslate(300, 300, 3);
+					R.drawable.ic_launcher), new Paint());
+			testAnim.setCurrentPosition(300, 100, 60);
+			testAnim.setTranslate(0, 200, 10000);
+			//testAnim.setRotate(60, 0, 0, 10000);
+			testAnim.setRepeatTimes(3);
 			testAnim.start(true);
+			
+			cupidAnim = new CanvasAnimation();
+			cupidAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.cupid), new Paint());
+			cupidAnim.setCurrentPosition(mWidth/2 - cupidAnim.mAnimBitmapWidth,
+					mHeight -cupidAnim.mAnimBitmapHeight/2, -90);
+			cupidAnim.setRotate(180, mWidth/2, mHeight, 10000);
+			cupidAnim.setRepeatTimes(3);
+			cupidAnim.start(true);
+			
 		}
 		private void drawAinmationInstance() {
+			//mCanvas.
+			drawBackground();
 			testAnim.transformModel(mCanvas);
+			cupidAnim.transformModel(mCanvas);
+		}
+		private void drawBackground() {
+			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());	
 		}
 		
 		private void testDraw() {
@@ -153,7 +179,7 @@ public class CupidCannonActivity extends Activity {
 			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 			mCanvas = new Canvas(memBm);
 			initAnimationInstance();
-			initDraw();
+			//initDraw();
 			//Optimize mThread start
 			isRunning = true;
 			mThread = new Thread(this);// 创建一个绘图线程
@@ -180,7 +206,28 @@ public class CupidCannonActivity extends Activity {
 			while (isRunning) {
 				
 				//testDraw();
+				//Acquire start time.
+				long startTime = System.currentTimeMillis();
 				drawAinmationInstance();
+				
+			    //Acquire end time.  
+		/*	    long endTime = System.currentTimeMillis();  
+			      
+			    //Calculate the interval time  
+			    int diffTime  = (int)(endTime - startTime);  
+			      
+			    //Ensure every update interval is 20 millseconds.  
+			    while(diffTime <= 20) {  
+			        diffTime = (int)(System.currentTimeMillis() - startTime);  
+			        //Thread wait  
+			        Thread.yield();  
+			    }*/
+				try {
+					Thread.sleep(3);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Canvas renderer = null;
 				synchronized (mHolder) {
 				    try {  
@@ -194,12 +241,6 @@ public class CupidCannonActivity extends Activity {
 				    } 
 				}
 		    
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}
 
