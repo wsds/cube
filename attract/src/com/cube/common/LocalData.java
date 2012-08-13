@@ -19,7 +19,7 @@ public class LocalData {
 
 	public String status = "null";
 
-	public ArrayList<Game> games = new ArrayList<Game>();
+	public Game game = new Game();
 
 	public class Game {
 
@@ -28,7 +28,7 @@ public class LocalData {
 		public class ActiveGirl {
 			public long id = 0;
 
-			public String url = "http://cubeservice.sinaapp.com/girls/4-1.jpg";
+			public String url = "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg";
 
 			public String status = "";
 
@@ -53,12 +53,12 @@ public class LocalData {
 
 			public class Picture {
 				public long id = 0;
-				public String url = "http://cubeservice.sinaapp.com/girls/4-1.jpg";
+				public String url = "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg";
 				public ArrayList<Point> points = new ArrayList<Point>();
 
 				public class Point {
-					public long x;
-					public long y;
+					public long x=0;
+					public long y = 0;
 					public String status = "";
 				}
 			}

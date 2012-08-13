@@ -13,8 +13,8 @@ public class ServerData {
 
 	public String APIVersion = "1.0";
 
-	public String UpdataTime = "2012.09.01";
-	
+	public String UpdateTime = "2012.09.01";
+
 	public ArrayList<String> activeGames = new ArrayList<String>();
 
 	public ArrayList<Girl> girls = new ArrayList<Girl>();
@@ -37,15 +37,16 @@ public class ServerData {
 		public class Picture {
 			public long id = 0;
 
-			public String url = "http://cubeservice.sinaapp.com/girls/4-1.jpg";
-			
-			public String status="";
-			
+			public String url = "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg";
+
+			public String status = "";
+
 			public ArrayList<Point> points = new ArrayList<Point>();
+
 			public class Point {
-				public long x;
-				public long y;
-				public String status="";
+				public long x = 0;
+				public long y = 0;
+				public String status = "";
 			}
 		}
 	}

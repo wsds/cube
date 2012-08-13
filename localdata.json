@@ -1,0 +1,78 @@
+﻿
+{
+	"username" : "null",
+	"weibo" : "null",
+	"isLogin" : "false",
+	"status" : "hull",	
+	"games" :
+	{
+		"activeGirls" : [
+			{
+				"id" : 0,
+				"url" : "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg",
+				"status" : "",
+				"games" : [
+					{
+						"gameName" : "CupidCannon",
+						"isCompleted" : "false",
+						"isLocked" : "false",
+						"isShared" : "false",
+						"highScore" : 0
+					}
+				]
+			},
+			{
+				"id" : 1,
+				"url" : "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg",
+				"status" : "",
+				"games" : [
+					{
+						"gameName" : "CupidCannon",
+						"isCompleted" : "false",
+						"isLocked" : "false",
+						"isShared" : "false",
+						"highScore" : 0
+					}
+				]
+			}
+		],
+		"cupidCannon" :
+		{
+			"status" : "",
+			"picture" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_2.jpg",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						}
+					]
+				}
+			]
+		}
+	}
+}
