@@ -197,7 +197,7 @@ public class CupidCannonActivity extends Activity {
 				@Override
 				public void onEnd() {
 					// TODO Auto-generated method stub
-					cannonFlag++;
+					
 					batteryAnimEven.start(true);
 					batteryAnimOdd.start(false);
 				}
@@ -218,7 +218,7 @@ public class CupidCannonActivity extends Activity {
 				@Override
 				public void onEnd() {
 					// TODO Auto-generated method stub
-					cannonFlag++;
+					
 					batteryAnimOdd.start(true);
 					batteryAnimEven.start(false);
 				}
@@ -233,7 +233,7 @@ public class CupidCannonActivity extends Activity {
 			
 		}
 		
-		public int cannonFlag = 1;
+		
 		private void drawAinmationInstance() {
 			
 			drawBackground();
