@@ -35,16 +35,9 @@ public class DataService extends Service {
 	public String urlServerData = "http://cubeservice.sinaapp.com/girls/attrat/serverdata.json";
 
 	public void initializeServerData() {
-		// String serverDataStr = WebInterface.get(urlServerData);
-		// Log.d(TAG, "ServerData is: " + serverDataStr);
-		// JSONObject serverDataJSON = WebInterface.getJSON(urlServerData);
-		// Log.d(TAG, "ServerData is: " + serverDataJSON);
 		for (int i = 0; i < datas.size(); i++) {
 			Data data = datas.get(i);
 			data.getWebData();
 		}
-
-		// ServerData serverData = ServerData.getInstance();
-		// serverData.getWebData();
 	}
 }

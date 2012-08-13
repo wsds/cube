@@ -69,6 +69,12 @@ public class ServerData extends Data {
 			APIVersion = this.JSON.getString("apiversion");
 			updateTime = this.JSON.getString("updateTime");
 
+			JSONArray activeGamesJSON = this.JSON.getJSONArray("activeGames");
+			for (int i = 0; i < activeGamesJSON.length(); i++) {
+				String activeGame = activeGamesJSON.getString(i);
+				activeGames.add(activeGame);
+			}
+
 			JSONArray girlsJSON = this.JSON.getJSONArray("girls");
 			for (int i = 0; i < girlsJSON.length(); i++) {
 				JSONObject girlJSON = (JSONObject) girlsJSON.get(i);

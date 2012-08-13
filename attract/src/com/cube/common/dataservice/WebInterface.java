@@ -24,7 +24,7 @@ public class WebInterface {
 		try {
 			httpResponse = new DefaultHttpClient().execute(httpGet);
 			if (isHttpSuccessExecuted(httpResponse)) {
-				str = EntityUtils.toString(httpResponse.getEntity());
+				str = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
 				int start = str.indexOf(123);
 				str = str.substring(start);//work around here to normalize the JSONStr
 				JSONObject result = new JSONObject(str);
