@@ -1,17 +1,14 @@
 package com.cube.common.dataservice;
 
-import com.cube.attract.R;
+import org.json.JSONObject;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class DataService extends Service {
-	private static final String TAG = "MyService";
-	MediaPlayer player;
+	private static final String TAG = "DataService";
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -20,24 +17,26 @@ public class DataService extends Service {
 
 	@Override
 	public void onCreate() {
-		Toast.makeText(this, "My Service Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate");
-
-		player = MediaPlayer.create(this, R.raw.shake);// 运行例子是，需要替换音乐的名称
-		player.setLooping(false); // Set looping
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onDestroy");
-		player.stop();
 	}
 
 	@Override
 	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onStart");
-		player.start();
+		initializeServerData();
+	}
+
+	public String urlServerData = "http://cubeservice.sinaapp.com/girls/attrat/serverdata.json";
+
+	public void initializeServerData() {
+//		String serverDataStr = WebInterface.get(urlServerData);
+//		Log.d(TAG, "ServerData is: " + str);
+		JSONObject serverDataJSON = WebInterface.getJSON(urlServerData);
+		Log.d(TAG, "ServerData is: " + serverDataJSON);
 	}
 }

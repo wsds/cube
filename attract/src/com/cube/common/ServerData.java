@@ -2,8 +2,11 @@ package com.cube.common;
 
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
 public class ServerData {
 	static ServerData instance = null;
+	JSONObject JSON = null;
 
 	static public ServerData getInstance() {
 		if (instance == null)
