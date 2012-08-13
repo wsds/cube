@@ -38,11 +38,32 @@ public class GlRenderer implements Renderer {
 	private final static FloatBuffer lightDifBfr;
 	private final static FloatBuffer lightPosBfr;
 
-	private static float[] quadVertexLogo = new float[] { -1.1f, 1f, 0, -1.1f,
-			-1f, 0, 1.1f, 1f, 0, 1.1f, -1f, 0 };
+	// private static float[] quadVertexLogo = new float[] { -1.1f, 1f, 0,
+	// -1.1f,
+	// -1f, 0, 1.1f, 1f, 0, 1.1f, -1f, 0 };
+	final static float UNIT_SIZE = 0.35f;
+	static float[] quadVertexLogo = new float[] { 
+		0 * UNIT_SIZE, 0 * UNIT_SIZE,0, 
+		0 * UNIT_SIZE, 1 * UNIT_SIZE, 0,
+		0.8f * UNIT_SIZE,0.5f * UNIT_SIZE, 0,
+		0.8f * UNIT_SIZE, -0.5f * UNIT_SIZE, 0,
+		0 * UNIT_SIZE, -1 * UNIT_SIZE, 0,
+		-0.8f * UNIT_SIZE,-0.5f * UNIT_SIZE, 0,
+		-0.8f * UNIT_SIZE, 0.5f * UNIT_SIZE, 0 };
 
-	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1,
-			0 };
+	private static ByteBuffer mIndexBuffer; // 顶点构建索引数据缓冲
+
+	private static float[] quadTextureLogo = new float[] { 0.5f, 0.5f, 1f, 0.25f,0.5f, 0,
+		0.5f, 0.5f,1f, 0.75f,1f, 0.25f,
+		0.5f, 0.5f,0.5f, 1f, 1f, 0.75f,
+		0.5f, 0.5f,0, 0.75f,0.5f, 1f,
+		0.5f, 0.5f,0, 0.25f,0, 0.75f,
+		0.5f, 0.5f,0.5f, 0,0, 0.25f,};
+	
+/*	private static float[] quadTextureLogo = new float[] { 0.5f, 0.5f, 0.5f, 0,
+			1f, 0.25f, 1f, 0.75f,
+			0.5f, 1f, 0, 0.75f,
+			0, 0.25f };*/
 
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
@@ -59,6 +80,19 @@ public class GlRenderer implements Renderer {
 	SceneState sceneState = SceneState.getInstance();
 
 	static {
+
+        byte indices[]=new byte[]{
+            	0,2,1,
+            	0,3,2,
+            	0,4,3,
+            	0,5,4,
+            	0,6,5,
+            	0,1,6
+            };
+		// 创建三角形构造索引数据缓冲
+		mIndexBuffer = ByteBuffer.allocateDirect(indices.length);
+		mIndexBuffer.put(indices);// 向缓冲区中放入三角形构造索引数据
+		mIndexBuffer.position(0);// 设置缓冲区起始位置
 
 		lightAmbBfr = BufferUtil.floatToBuffer(lightAmb);
 		lightDifBfr = BufferUtil.floatToBuffer(lightDif);
@@ -153,19 +187,24 @@ public class GlRenderer implements Renderer {
 			gl.glEnable(GL10.GL_CULL_FACE);
 		}
 
-		drawPolygon(gl);
+		drawPolygon(gl,0,-0.316f);
+		drawPolygon(gl,-1.6f*UNIT_SIZE,-0.31616f);
+		drawPolygon(gl,1.6f*UNIT_SIZE,-0.31616f);
+		drawPolygon(gl,-0.8f*UNIT_SIZE,-0.316f-1.5f*UNIT_SIZE);
+		drawPolygon(gl,0.8f*UNIT_SIZE,-0.316f-1.5f*UNIT_SIZE);
+		drawPolygon(gl,0,-0.316f-3*UNIT_SIZE);
 		drawGirls(gl);
 
 	}
 
-	public void drawPolygon(GL10 gl) {
+	public void drawPolygon(GL10 gl,float xaxis,float yaxis) {
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 0));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 1));
 		gl.glLoadIdentity();
 
 		gl.glEnable(GL10.GL_BLEND);
 
-		gl.glTranslatef(0, -0.7f, -4.5f);
+		gl.glTranslatef(xaxis, yaxis, -4.5f);
 
 		// testAnimation.transformModel(gl);
 
@@ -175,7 +214,8 @@ public class GlRenderer implements Renderer {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBufferLogo);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, quadTextureBufferLogo);
 
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+		gl.glDrawArrays(GL10.GL_TRIANGLES, 0, 4);
+//		gl.glDrawElements(GL10.GL_TRIANGLES, 18, GL10.GL_UNSIGNED_BYTE, mIndexBuffer);
 
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -251,18 +291,16 @@ public class GlRenderer implements Renderer {
 					* delta;
 			sceneState.pictureViewGallary.dampenSpeed(delta);
 		}
-//		sceneState.pictureViewGallary.isStopmoving();
+		// sceneState.pictureViewGallary.isStopmoving();
 
 	}
-	
-	
 
 	private IntBuffer texturesBuffer;
 
 	public int POLYGON = 3;
-	public int BACKGROUND = 4;
+	public int BACKGROUND = 5;
 
-	public int textureNum = 5;
+	public int textureNum = 6;
 
 	private void loadTexture(GL10 gl) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -276,10 +314,14 @@ public class GlRenderer implements Renderer {
 				R.drawable.girl4_2);
 		texture[2] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.girl4_3);
+		// texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
+		// R.drawable.polygon);
 //		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
-//				R.drawable.polygon);
+//				R.drawable.six);
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
-				R.drawable.six);
+				R.drawable.polygon_locked);
+		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.polygon_cupid);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.gameentry_background);
 

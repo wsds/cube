@@ -3,6 +3,8 @@ package com.cube.attract.gameEntry;
 import com.cube.attract.gameEntry.SceneState;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -12,6 +14,8 @@ public class GameEntryActivity extends Activity {
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
 
+	Context mContext;
+	Activity mActivity;
 	private GestureDetector gestureDetector;
 
 	SceneState sceneState = SceneState.getInstance();
@@ -22,6 +26,9 @@ public class GameEntryActivity extends Activity {
 
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
+		mContext = this;
+		mActivity = this;
+		
 		surface = new GLSurfaceView(this);
 		renderer = new GlRenderer(this);
 		surface.setRenderer(renderer);
@@ -57,16 +64,48 @@ public class GameEntryActivity extends Activity {
 			startX = event.getX();
 			startY = event.getY();
 
-			if (startY * 800 / sceneState.screenHeight < 450) {
+			float normalY = startY * 800 / sceneState.screenHeight;
+			float normalX = startX * 480 / sceneState.screenWidth;
+			if (normalY < 430) {
 				sceneState.eventType = sceneState.GIRL;
 
 //				sceneState.pictureViewGallary.dxSpeed = 0.0f;
 //				sceneState.pictureViewGallary.saveMovement();
 				renderer.girlGoBack.start(true);
 				renderer.girlRotateBack.start(true);
-			} else {
-				sceneState.eventType = sceneState.NONE;
 			}
+			else if(normalY<505){
+				if(normalX>181 && normalX<300){
+					//2
+					Intent about = new Intent(Intent.ACTION_MAIN);
+					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					about.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+					mContext.startActivity(about);
+					mActivity.finish();
+				}
+				else if(normalX>60)
+				{
+					//1
+				}
+				else if(normalX<420)
+				{
+					//3
+				}
+			}
+			else if(normalY<620 && normalY>545){
+				if(normalX>120 && normalX<239){
+					//4
+				}
+				else if(normalX>239 && normalX<361){
+					//5
+				}
+			}
+			else if(normalY>650 && normalX<737){
+				if(normalX>181 && normalX<300){
+					//6
+				}
+			}
+
 
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -84,6 +123,7 @@ public class GameEntryActivity extends Activity {
 				renderer.girlGoFront.start(true);
 				renderer.girlRotateFront.start(true);
 			}
+			sceneState.eventType = sceneState.NONE;
 			break;
 		case MotionEvent.ACTION_CANCEL:
 			break;

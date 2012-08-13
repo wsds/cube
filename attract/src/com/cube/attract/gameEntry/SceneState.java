@@ -17,7 +17,7 @@ final class SceneState {
 		return instance;
 	}
 
-	boolean blending = false;
+	boolean blending = true;
 
 	public boolean isClicked = false;
 
@@ -60,15 +60,7 @@ final class SceneState {
 			for (int i = 0; i < viewsNum; i++) {
 				int temp = (i + start)% viewsNum;
 				pictureView[temp].radian=2 * PI / viewsNum * i;
-
-//				pictureView[i].girlNumber = i % 3;
-//				double radian =2 * PI / viewsNum * i;
-//				pictureView[i].radian = radian;
 				pictureView[temp].pAngle = pictureView[temp].radian;
-
-//				pictureView[temp].x = radius * Math.sin(pictureView[temp].radian);
-////				pictureView[i].y = 0;
-//				pictureView[temp].z = radius * Math.cos(pictureView[temp].radian);
 			}
 			dAngle = 0;
 			dxSpeed = 0.0f;
