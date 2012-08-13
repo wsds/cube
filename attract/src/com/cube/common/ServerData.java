@@ -2,6 +2,10 @@ package com.cube.common;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.cube.common.dataservice.Data;
 
 public class ServerData extends Data {
@@ -21,7 +25,7 @@ public class ServerData extends Data {
 
 	public String APIVersion = "1.0";
 
-	public String UpdateTime = "2012.09.01";
+	public String updateTime = "2012.09.01";
 
 	public ArrayList<String> activeGames = new ArrayList<String>();
 
@@ -61,6 +65,47 @@ public class ServerData extends Data {
 
 	@Override
 	public void parseJSON() {
+		try {
+			APIVersion = this.JSON.getString("apiversion");
+			updateTime = this.JSON.getString("updateTime");
 
+			JSONArray girlsJSON = this.JSON.getJSONArray("girls");
+			for (int i = 0; i < girlsJSON.length(); i++) {
+				JSONObject girlJSON = (JSONObject) girlsJSON.get(i);
+				Girl girl = new Girl();
+				girls.add(girl);
+				girl.name = girlJSON.getString("name");
+				girl.weibo = girlJSON.getString("weibo");
+
+				JSONObject mSNSIndexJSON = girlJSON.getJSONObject("mSNSIndex");
+				{
+					girl.mSNSIndex.liked = mSNSIndexJSON.getLong("liked");
+					girl.mSNSIndex.shared = mSNSIndexJSON.getLong("shared");
+				}
+
+				JSONArray picturesJSON = girlJSON.getJSONArray("pictures");
+				for (int j = 0; j < picturesJSON.length(); j++) {
+					JSONObject pictureJSON = (JSONObject) picturesJSON.get(j);
+					Girl.Picture picture = new Girl().new Picture();
+					girl.pictures.add(picture);
+					picture.id = pictureJSON.getLong("id");
+					picture.url = pictureJSON.getString("url");
+					picture.status = pictureJSON.getString("status");
+
+					JSONArray pointsJSON = pictureJSON.getJSONArray("points");
+					for (int k = 0; k < pointsJSON.length(); k++) {
+						JSONObject pointJSON = (JSONObject) pointsJSON.get(k);
+						Girl.Picture.Point point = new Girl().new Picture().new Point();
+						picture.points.add(point);
+						point.x = pointJSON.getLong("x");
+						point.y = pointJSON.getLong("y");
+						point.status = pointJSON.getString("status");
+					}
+				}
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }

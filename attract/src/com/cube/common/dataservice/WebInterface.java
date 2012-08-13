@@ -9,6 +9,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +48,7 @@ public class WebInterface {
 		try {
 			httpResponse = new DefaultHttpClient().execute(httpGet);
 			if (isHttpSuccessExecuted(httpResponse)) {
-				str = EntityUtils.toString(httpResponse.getEntity());
+				str = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
 				int start = str.indexOf(123);
 				str = str.substring(start);//work around here to normalize the JSONStr
 				result = new JSONObject(str);
@@ -77,7 +78,7 @@ public class WebInterface {
 
 			httpResponse = new DefaultHttpClient().execute(httpRequest);
 			if (isHttpSuccessExecuted(httpResponse)) {
-				String str = EntityUtils.toString(httpResponse.getEntity());
+				String str = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
 
 				JSONObject result = new JSONObject(str);
 				str = result.optString("data");
