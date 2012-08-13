@@ -86,11 +86,7 @@ public class CanvasAnimation {
 			currentPosition.CurrentX = currentX;
 			currentPosition.CurrentY = currentY;
 			currentPosition.CurrentAngle = currentAngle;
-			/*float [] array = { 1.0f, 0.0f, currentX,
-								0.0f, 1.0f, currentY,
-								0.0f, 0.0f, 1.0f};*/
-			//currentPosition.positionMatrix = new Matrix();
-			//currentPosition.positionMatrix.setValues(array);
+			
 			transformMatrix.postTranslate(currentX, currentY);
 			transformMatrix.postRotate(currentAngle, 
 					currentX + mAnimBitmapWidth/2, currentY + mAnimBitmapHeight/2);
@@ -173,6 +169,9 @@ public class CanvasAnimation {
 			if (remainTime == 0) {
 				if (this.callback != null) {
 					this.callback.onEnd();
+					if (this.isStarted == false) {
+						return 0;
+					}
 				}
 
 				for (int i = 0; i < this.next.size(); i++) {

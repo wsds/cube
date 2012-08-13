@@ -43,8 +43,10 @@ public class CupidCannonActivity extends Activity {
 		private Paint mPaint = null;
 		private boolean isRunning = true;
 		private CanvasAnimation bulletAnim;
-		private CanvasAnimation artilleryAnim;
-		private CanvasAnimation batteryAnim;
+		private CanvasAnimation artilleryAnimOdd;
+		private CanvasAnimation artilleryAnimEven;
+		private CanvasAnimation batteryAnimOdd;
+		private CanvasAnimation batteryAnimEven;
 		
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
@@ -144,45 +146,107 @@ public class CupidCannonActivity extends Activity {
 			bulletAnim.setRepeatTimes(3);
 			bulletAnim.start(true);
 			
-			artilleryAnim = new CanvasAnimation();
-			artilleryAnim.setElements(BitmapFactory.decodeResource(getResources(),
+			artilleryAnimOdd = new CanvasAnimation();
+			artilleryAnimOdd.setCallback(new CanvasAnimation.Callback() {
+				
+				@Override
+				public void onEnd() {
+					// TODO Auto-generated method stub
+					//cannonFlag++;
+					artilleryAnimEven.start(true);
+					artilleryAnimOdd.start(false);
+					
+				}
+			});
+			artilleryAnimOdd.setElements(BitmapFactory.decodeResource(getResources(),
 					R.drawable.artillery), new Paint());
-			initMatrix.setTranslate((mWidth - artilleryAnim.mAnimBitmapWidth)/2,
-					mHeight + 5 - artilleryAnim.mAnimBitmapHeight + 20);
+			initMatrix.setTranslate((mWidth - artilleryAnimOdd.mAnimBitmapWidth)/2,
+					mHeight + 5 - artilleryAnimOdd.mAnimBitmapHeight + 20);
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
-			artilleryAnim.setStartMatrix(initMatrix);
-			/*artilleryAnim.setCurrentPosition(mWidth/2 - artilleryAnim.mAnimBitmapWidth,
-					mHeight -artilleryAnim.mAnimBitmapHeight/2, -90);*/
-			artilleryAnim.setRotate(180, rotateCenter[0], rotateCenter[1], 10000);
-			artilleryAnim.setRepeatTimes(3);
-			artilleryAnim.start(true);
+			artilleryAnimOdd.setStartMatrix(initMatrix);
+			artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 5000);
+			artilleryAnimOdd.setRepeatTimes(artilleryAnimOdd.INFINITE);
+			artilleryAnimOdd.start(true);
 			
-			batteryAnim = new CanvasAnimation();
-			batteryAnim.setElements(BitmapFactory.decodeResource(getResources(),
+			artilleryAnimEven = new CanvasAnimation();
+			artilleryAnimEven.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.artillery), new Paint());
+			artilleryAnimEven.setCallback(new CanvasAnimation.Callback() {
+				
+				@Override
+				public void onEnd() {
+					// TODO Auto-generated method stub
+					//cannonFlag++;
+					artilleryAnimOdd.start(true);
+					artilleryAnimEven.start(false);
+				}
+			});
+			initMatrix.setTranslate((mWidth - artilleryAnimEven.mAnimBitmapWidth)/2,
+					mHeight + 5 - artilleryAnimEven.mAnimBitmapHeight + 20);
+			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
+			artilleryAnimEven.setStartMatrix(initMatrix);
+			artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 5000);
+			artilleryAnimEven.setRepeatTimes(artilleryAnimEven.INFINITE);
+			artilleryAnimEven.start(false);
+			
+			batteryAnimOdd = new CanvasAnimation();
+			batteryAnimOdd.setElements(BitmapFactory.decodeResource(getResources(),
 					R.drawable.battery), new Paint());
-			initMatrix.setTranslate(mWidth/2 + 4 - batteryAnim.mAnimBitmapWidth/2,
-					mHeight + 5 - batteryAnim.mAnimBitmapHeight/2);
+			batteryAnimOdd.setCallback(new CanvasAnimation.Callback() {
+				
+				@Override
+				public void onEnd() {
+					// TODO Auto-generated method stub
+					cannonFlag++;
+					batteryAnimEven.start(true);
+					batteryAnimOdd.start(false);
+				}
+			});
+			initMatrix.setTranslate(mWidth/2 + 4 - batteryAnimOdd.mAnimBitmapWidth/2,
+					mHeight + 5 - batteryAnimOdd.mAnimBitmapHeight/2);
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
-			batteryAnim.setStartMatrix(initMatrix);
-			/*batteryAnim.setCurrentPosition(mWidth/2 - batteryAnim.mAnimBitmapWidth/2,
-					mHeight - batteryAnim.mAnimBitmapHeight/2, -90);*/
-			batteryAnim.setRotate(180, rotateCenter[0], rotateCenter[1], 10000);
-			batteryAnim.setRepeatTimes(3);
-			batteryAnim.start(true);
+			batteryAnimOdd.setStartMatrix(initMatrix);
+			batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 5000);
+			batteryAnimOdd.setRepeatTimes(batteryAnimOdd.INFINITE);
+			batteryAnimOdd.start(true);
+			
+			batteryAnimEven = new CanvasAnimation();
+			batteryAnimEven.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.battery), new Paint());
+			batteryAnimEven.setCallback(new CanvasAnimation.Callback() {
+				
+				@Override
+				public void onEnd() {
+					// TODO Auto-generated method stub
+					cannonFlag++;
+					batteryAnimOdd.start(true);
+					batteryAnimEven.start(false);
+				}
+			});
+			initMatrix.setTranslate(mWidth/2 + 4 - batteryAnimEven.mAnimBitmapWidth/2,
+					mHeight + 5 - batteryAnimEven.mAnimBitmapHeight/2);
+			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
+			batteryAnimEven.setStartMatrix(initMatrix);
+			batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 5000);
+			batteryAnimEven.setRepeatTimes(batteryAnimEven.INFINITE);
+			batteryAnimEven.start(false);
 			
 		}
+		
+		public int cannonFlag = 1;
 		private void drawAinmationInstance() {
-			//mCanvas.
+			
 			drawBackground();
 			bulletAnim.transformModel(mCanvas);
-			/*mCanvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
-					R.drawable.battery), rotateCenter[0] - batteryAnim.mAnimBitmapWidth/2,
-					rotateCenter[1] - batteryAnim.mAnimBitmapHeight/2, new Paint());
-			mCanvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
-					R.drawable.artillery), mWidth/2 - artilleryAnim.mAnimBitmapWidth/2, 
-					rotateCenter[1] - artilleryAnim.mAnimBitmapHeight + 20, new Paint());*/
-			batteryAnim.transformModel(mCanvas);
-			artilleryAnim.transformModel(mCanvas);
+
+			batteryAnimOdd.transformModel(mCanvas);	
+			batteryAnimEven.transformModel(mCanvas);
+			batteryAnimOdd.transformModel(mCanvas);	
+			
+			artilleryAnimOdd.transformModel(mCanvas);
+			artilleryAnimEven.transformModel(mCanvas);
+			artilleryAnimOdd.transformModel(mCanvas);
+			
 		}
 		private void drawBackground() {
 			
