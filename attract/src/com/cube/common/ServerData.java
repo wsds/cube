@@ -2,11 +2,16 @@ package com.cube.common;
 
 import java.util.ArrayList;
 
-import org.json.JSONObject;
+import com.cube.common.dataservice.Data;
 
-public class ServerData {
+public class ServerData extends Data {
+	ServerData() {
+		super.url = "http://cubeservice.sinaapp.com/girls/attrat/serverdata.json";
+		super.key = "ServerData";
+		super.registService();
+	}
+
 	static ServerData instance = null;
-	JSONObject JSON = null;
 
 	static public ServerData getInstance() {
 		if (instance == null)
@@ -52,5 +57,10 @@ public class ServerData {
 				public String status = "";
 			}
 		}
+	}
+
+	@Override
+	public void parseJSON() {
+
 	}
 }

@@ -10,5 +10,6 @@ public class Settings {
 	}
 	
 	public String isLogoin = "false";
+	ServerData serverData = ServerData.getInstance();
 
 }
