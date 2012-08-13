@@ -75,7 +75,8 @@ public class GameEntryActivity extends Activity {
 				renderer.girlRotateBack.start(true);
 			}
 			else if(normalY<505){
-				if(normalX>181 && normalX<300){
+				if(normalX>181 && normalX<300&&!sceneState.isLocked[1]){
+					
 					//2
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -83,25 +84,25 @@ public class GameEntryActivity extends Activity {
 					mContext.startActivity(about);
 					mActivity.finish();
 				}
-				else if(normalX>60)
+				else if(normalX>60&&!sceneState.isLocked[0])
 				{
 					//1
 				}
-				else if(normalX<420)
+				else if(normalX<420&&!sceneState.isLocked[2])
 				{
 					//3
 				}
 			}
 			else if(normalY<620 && normalY>545){
-				if(normalX>120 && normalX<239){
+				if(normalX>120 && normalX<239&&!sceneState.isLocked[3]){
 					//4
 				}
-				else if(normalX>239 && normalX<361){
+				else if(normalX>239 && normalX<361&&!sceneState.isLocked[4]){
 					//5
 				}
 			}
 			else if(normalY>650 && normalX<737){
-				if(normalX>181 && normalX<300){
+				if(normalX>181 && normalX<300&&!sceneState.isLocked[5]){
 					//6
 				}
 			}

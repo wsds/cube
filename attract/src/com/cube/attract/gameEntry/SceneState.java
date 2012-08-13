@@ -17,13 +17,16 @@ final class SceneState {
 		return instance;
 	}
 
-	boolean blending = true;
+	boolean blending = false;
 
 	public boolean isClicked = false;
 
 	public int NONE = 0;
 	public int CUB = 1;
 	public int GIRL = 2;
+	boolean[] isLocked = new boolean[6];
+	
+
 
 	public int eventType = CUB;
 
