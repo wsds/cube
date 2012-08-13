@@ -5,13 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 
-import com.cube.attract.about.MyScrollLayout;
 import com.cube.common.Settings;
 
 public class MainActivity extends Activity {
@@ -24,6 +23,7 @@ public class MainActivity extends Activity {
 		final Context mContext = this;
 		final Activity mActivity = this;
 		setContentView(R.layout.activity_main);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); 
 
 		ImageView mImageView2 = (ImageView) findViewById(R.id.imageView2);
 		Animation translate_title2Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_title2);
@@ -48,7 +48,8 @@ public class MainActivity extends Activity {
 				if(settings.isLogoin=="false"){
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+//					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 					

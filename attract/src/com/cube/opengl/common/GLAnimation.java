@@ -121,6 +121,7 @@ public class GLAnimation {
 
 		if (remainTime == 0) {
 			if (this.callback != null) {
+				this.isStarted = false;
 				this.callback.onEnd();
 			}
 
