@@ -51,6 +51,11 @@ public class CupidCannonActivity extends Activity {
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
 		public Bitmap backgroundBm = null;
+		public Bitmap powerTube1 = null;
+		public Bitmap powerTube2 = null;
+		public Bitmap powerTube3 = null;
+		public float[] powerTubeBaseAdress = {0.0f, 0.0f};
+		public final  int POWERSENSITY = 20;
 		public float[] rotateCenter = {0.0f, 0.0f};
 		public Bitmap backgroundStage = null;
 		public Matrix testMatrix = new Matrix();
@@ -73,8 +78,13 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.girl_4_2);
 			backgroundStage = BitmapFactory.decodeResource(getResources(),
 					R.drawable.button_bar);
-			//mThread = new Thread(this);// 创建一个绘图线程
-
+			powerTube1 = BitmapFactory.decodeResource(getResources(),
+					R.drawable.blue_part1);
+			powerTube2 = BitmapFactory.decodeResource(getResources(),
+					R.drawable.blue_part2);
+			powerTube3 = BitmapFactory.decodeResource(getResources(),
+					R.drawable.blue_part3);
+			
 		}
 
 		private void initDraw() {
@@ -152,7 +162,7 @@ public class CupidCannonActivity extends Activity {
 				@Override
 				public void onEnd() {
 					// TODO Auto-generated method stub
-					//cannonFlag++;
+					
 					artilleryAnimEven.start(true);
 					artilleryAnimOdd.start(false);
 					
@@ -233,7 +243,27 @@ public class CupidCannonActivity extends Activity {
 			
 		}
 		
-		
+		private void drawBackground() {
+			
+			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
+			Matrix testMatrix = new Matrix();
+			testMatrix.setTranslate(-(480-mWidth)/2, mHeight-290);
+			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
+			if (powerTubeEnable){
+				int tubeLength = (int) moveLength/POWERSENSITY;
+				if (tubeLength > 32)
+					tubeLength = 32;
+				testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1]);
+				mCanvas.drawBitmap(powerTube1, testMatrix, new Paint());
+				for (int i=1; i<= tubeLength; i++){
+					testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - i*7);
+					mCanvas.drawBitmap(powerTube2, testMatrix, new Paint());
+				}
+				testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - tubeLength*7 - 14);
+				mCanvas.drawBitmap(powerTube3, testMatrix, new Paint());
+			}
+			
+		}
 		private void drawAinmationInstance() {
 			
 			drawBackground();
@@ -248,13 +278,7 @@ public class CupidCannonActivity extends Activity {
 			artilleryAnimOdd.transformModel(mCanvas);
 			
 		}
-		private void drawBackground() {
-			
-			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
-			Matrix testMatrix = new Matrix();
-			testMatrix.postTranslate(-(480-mWidth)/2, mHeight-290);
-			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
-		}
+		
 		
 		private void testDraw() {
 		mBitmap = BitmapFactory.decodeResource(getResources(),
@@ -275,6 +299,8 @@ public class CupidCannonActivity extends Activity {
 		public void surfaceCreated(SurfaceHolder holder) {
 			mWidth = this.getWidth();
 			mHeight = this.getHeight();
+			powerTubeBaseAdress[0] = 28;
+			powerTubeBaseAdress[1] = mHeight - 30;
 			rotateCenter[0] = mWidth/2 + 3;
 			rotateCenter[1] = mHeight + 3;
 			mPaint=new Paint();
@@ -334,9 +360,10 @@ public class CupidCannonActivity extends Activity {
 			}
 		}
 		
-		float startX = 0;
-	    float startY = 0;
-	    double moveLongth = 0;
+		public boolean powerTubeEnable = false;
+		public float startX = 0;
+		public float startY = 0;
+		public double moveLength = 0;
 		@Override
 		public boolean onTouchEvent(MotionEvent event) {
 		    /** 拿到触摸的状态 **/
@@ -347,6 +374,7 @@ public class CupidCannonActivity extends Activity {
 		    // 触摸按下的事件
 		    case MotionEvent.ACTION_DOWN:
 			Log.v("test", "ACTION_DOWN");
+			powerTubeEnable = true;
 			startX = event.getX();
 			startY = event.getY();
 			break;
@@ -355,7 +383,7 @@ public class CupidCannonActivity extends Activity {
 			Log.v("test", "ACTION_MOVE");
 			currentX = event.getX();
 			currentY = event.getY();
-			moveLongth = Math.sqrt((currentX - startX)*(currentX - startX)
+			moveLength = Math.sqrt((currentX - startX)*(currentX - startX)
 					+ (currentY - startY)*(currentY - startY));
 			break;
 		    // 触摸抬起的事件
@@ -363,8 +391,9 @@ public class CupidCannonActivity extends Activity {
 			Log.v("test", "ACTION_UP");
 			currentX = event.getX();
 			currentY = event.getY();
-			moveLongth = Math.sqrt((currentX - startX)*(currentX - startX)
+			moveLength = Math.sqrt((currentX - startX)*(currentX - startX)
 					+ (currentY - startY)*(currentY - startY));
+			powerTubeEnable = false;
 			break;
 		    }
 
