@@ -120,6 +120,11 @@ public class CupidCannonActivity extends Activity {
 					mHeight + 5 - artilleryAnimOdd.mAnimBitmapHeight + 20);
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			artilleryAnimOdd.setStartMatrix(initMatrix);
+			//configure the artillery even trace matrix
+			initMatrix.setTranslate(207, 650);
+			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
+			artilleryAnimOdd.setTraceMatrix(initMatrix);
+			
 			artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 5000);
 			artilleryAnimOdd.setRepeatTimes(artilleryAnimOdd.INFINITE);
 			artilleryAnimOdd.start(true);
@@ -141,6 +146,11 @@ public class CupidCannonActivity extends Activity {
 					mHeight + 5 - artilleryAnimEven.mAnimBitmapHeight + 20);
 			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 			artilleryAnimEven.setStartMatrix(initMatrix);
+			//configure the artillery even trace matrix
+			initMatrix.setTranslate(207, 650);
+			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
+			artilleryAnimEven.setTraceMatrix(initMatrix);
+			
 			artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 5000);
 			artilleryAnimEven.setRepeatTimes(artilleryAnimEven.INFINITE);
 			artilleryAnimEven.start(false);
@@ -162,6 +172,11 @@ public class CupidCannonActivity extends Activity {
 					mHeight + 5 - batteryAnimOdd.mAnimBitmapHeight/2);
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			batteryAnimOdd.setStartMatrix(initMatrix);
+			//configure the battery odd trace matrix
+			initMatrix.setTranslate(rotateCenter[0], 670);
+			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
+			batteryAnimOdd.setTraceMatrix(initMatrix);
+			
 			batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 5000);
 			batteryAnimOdd.setRepeatTimes(batteryAnimOdd.INFINITE);
 			batteryAnimOdd.start(true);
@@ -183,6 +198,11 @@ public class CupidCannonActivity extends Activity {
 					mHeight + 5 - batteryAnimEven.mAnimBitmapHeight/2);
 			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 			batteryAnimEven.setStartMatrix(initMatrix);
+			//configure the battery even trace matrix
+			initMatrix.setTranslate(rotateCenter[0], 670);
+			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
+			batteryAnimEven.setTraceMatrix(initMatrix);
+			
 			batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 5000);
 			batteryAnimEven.setRepeatTimes(batteryAnimEven.INFINITE);
 			batteryAnimEven.start(false);
@@ -225,29 +245,7 @@ public class CupidCannonActivity extends Activity {
 								0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 1.0f
 	    	};
-	    	/*float [] array3 = {	0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f,
-								0.0f, 0.0f, 0.0f,
-	    	};*/
-	    	//matrix.postTranslate(207, 600);
-	    	/*if (artilleryAnimOdd.isStarted == true){
-	    		matrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
-	    		matrix.getValues(array1);
-	    		artilleryAnimOdd.transformMatrix.getValues(array2);
-	    	}
-	    	else{
-	    		matrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
-	    		matrix.getValues(array1);
-	    		artilleryAnimEven.transformMatrix.getValues(array2);	
-	    	}
-	    	for (int i=0; i<3; i++){
-	    		for (int j=0; j<3; j++){
-	    			for (int k=0; k<3; k++){
-	    				array3[3*i + j] += array2[3*i + k] * array1[3*k + j];
-	    				//array3[3*i + j] += array2[3*k + j] * array1[3*i + k];
-	    			}
-	    		}
-	    	}*/
+	    	
 	    	float [] array3 = {	1.0f, 0.0f, 100.0f,
 								0.0f, 1.0f, 100.0f,
 								0.0f, 0.0f, 1.0f
@@ -269,7 +267,7 @@ public class CupidCannonActivity extends Activity {
 	    	matrix.setValues(array3);
 	    	mCanvas.drawBitmap(bulletBm, matrix, new Paint());
 		}
-		private void drawAinmationInstance() {
+		private void drawAnimationInstance() {
 			
 			drawBackground();
 			if (bulletAnim != null)
@@ -287,19 +285,7 @@ public class CupidCannonActivity extends Activity {
 		}
 		
 		
-		private void testDraw() {
-		mBitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.girl_4_2);
-		mBitmapWidth = mBitmap.getWidth();
-		mBitmapHeight = mBitmap.getHeight();
-		mCanvas.drawRect(0, 0, mBitmapWidth, mBitmapHeight, mPaint);
-		Matrix matrix = new Matrix();
-		matrix.setScale(0.67f, 0.67f);
-		matrix.postTranslate(0, -29);
-		mCanvas.drawBitmap(mBitmap, matrix, mPaint);
-		if (mBitmap != null)
-			mBitmap.recycle();
-		}
+	
 		
 
 		@Override
@@ -314,7 +300,7 @@ public class CupidCannonActivity extends Activity {
 			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 			mCanvas = new Canvas(memBm);
 			initAnimationInstance();
-			//initDraw();
+		
 			//Optimize mThread start
 			isRunning = true;
 			mThread = new Thread(this);// 创建一个绘图线程
@@ -342,7 +328,7 @@ public class CupidCannonActivity extends Activity {
 				
 				//testDraw();
 
-				drawAinmationInstance();
+				drawAnimationInstance();
 				
 	
 				try {
@@ -422,28 +408,19 @@ public class CupidCannonActivity extends Activity {
 									0.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 0.0f
 		    	};
-		    	float [] array4 = {	1.0f, 0.0f, 0.0f,
-									0.0f, 1.0f, 0.0f,
-									0.0f, 0.0f, 1.0f
-				};
-				float [] array5 = {	1.0f, 0.0f, 0.0f,
-									0.0f, 1.0f, 0.0f,
-									0.0f, 0.0f, 1.0f
-				};
-				float [] array6 = {	1.0f, 0.0f, 0.0f,
-									0.0f, 1.0f, 0.0f,
-									0.0f, 0.0f, 1.0f
-				};
-		    	matrix.setTranslate(207, 630);
+				
+		    	//matrix.setTranslate(207, 630);
 		    	if (artilleryAnimOdd.isStarted == true){
-		    		matrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
-		    		matrix.getValues(array1);
-		    		artilleryAnimOdd.traceMatrix.getValues(array2);
+		    		//matrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
+		    		//matrix.getValues(array1);
+		    		artilleryAnimOdd.traceMatrix.getValues(array1);
+		    		batteryAnimOdd.traceMatrix.getValues(array2);
 		    	}
 		    	else{
-		    		matrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
-		    		matrix.getValues(array1);
-		    		artilleryAnimEven.traceMatrix.getValues(array2);	
+		    		//matrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
+		    		//matrix.getValues(array1);
+		    		artilleryAnimEven.traceMatrix.getValues(array1);
+		    		batteryAnimEven.traceMatrix.getValues(array2);	
 		    	}
 		    	for (int i=0; i<3; i++){
 		    		for (int j=0; j<3; j++){
@@ -453,15 +430,17 @@ public class CupidCannonActivity extends Activity {
 		    			}
 		    		}
 		    	}
-		    	matrix.setValues(array3);
+		    	matrix.setValues(array1);
+		    	vector[0] = array2[2] - rotateCenter[0];
+		    	vector[1] = array2[5] - rotateCenter[1];
 		    	/*artilleryAnimOdd.transformMatrix.getValues(array2);
 		    	vector[0] = array2[0]*rotateCenter[0] + array2[1]*630 + array2[2] - rotateCenter[0];
 		    	vector[1] = array2[3]*rotateCenter[0] + array2[4]*630 + array2[5] - rotateCenter[1];*/
 		    	bulletAnim = new CanvasAnimation();
 		    	bulletAnim.setElements(bulletBm, new Paint());
 		    	bulletAnim.setStartMatrix(matrix);
-				//bulletAnim.setAccelerate(vector[0], vector[1], -0.0004f, 1000);
-		    	bulletAnim.setAccelerate(0, -1, -0.0004f, 1000);
+				bulletAnim.setAccelerate(vector[0], vector[1], -0.0004f, 1000);
+		    	//bulletAnim.setAccelerate(0, -1, -0.0004f, 1000);
 				bulletAnim.setRepeatTimes(1);
 				bulletAnim.start(true);
 				bulletEnable = false;		

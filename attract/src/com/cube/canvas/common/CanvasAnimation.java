@@ -73,6 +73,7 @@ public class CanvasAnimation {
 		public float mAnimBitmapHeight = 0.0f;
 		public Matrix transformMatrix = new Matrix();
 		public Matrix traceMatrix = new Matrix();
+		public Matrix backupTraceMatrix = new Matrix();
 
 		public boolean isStarted = true;
 
@@ -112,10 +113,20 @@ public class CanvasAnimation {
 			float [] array = {	1.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 1.0f	};
-			traceMatrix.setValues(array);
+			
 			matrix.getValues(array);
 			transformMatrix.setValues(array);
 			currentPosition.positionMatrix.setValues(array);	
+			
+		}
+		public void setTraceMatrix(Matrix matrix) {
+			float [] array = {	1.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 1.0f	};
+			
+			matrix.getValues(array);
+			traceMatrix.setValues(array);
+			backupTraceMatrix.setValues(array);	
 			
 		}
 		
@@ -268,16 +279,17 @@ public class CanvasAnimation {
 			lastMillis=0;
 			isReset = true;
 			
-			//When this animation is reseted, the animation replay from it initial state.
+			//When this animation is reseted, the animation replay from its initial state.
 			float [] array = {	0.0f, 0.0f, 0.0f,
 					0.0f, 0.0f, 0.0f,
 					0.0f, 0.0f, 0.0f	};
+			//restore the start position to make the animation play from its initial state.
 			currentPosition.positionMatrix.getValues(array);
 			transformMatrix.setValues(array);
-			/*float [] array1 = {	1.0f, 0.0f, 0.0f,
-								0.0f, 1.0f, 0.0f,
-								0.0f, 0.0f, 1.0f};
-			traceMatrix.setValues(array1);*/
+			//restore the particular point's initial state .
+			backupTraceMatrix.getValues(array);
+			traceMatrix.setValues(array);
+			
 			
 			for (int i = 0; i < this.next.size(); i++) {
 				CanvasAnimation nextAnimation = this.next.get(i);
