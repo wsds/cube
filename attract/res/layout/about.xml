@@ -155,24 +155,18 @@
             android:src="@drawable/page_indicator_bg" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/animLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@drawable/about_down"
-        android:visibility="gone" >
-
-        <LinearLayout
-            android:id="@+id/downLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
-
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="center"
-                android:src="@drawable/about_up" />
-        </LinearLayout>
-    </LinearLayout>
+   <FrameLayout 
+    android:id="@+id/zipperlayout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:visibility="gone"
+    >
+    <com.cjg.lalian.LalianView
+        android:id="@+id/zipperview"
+    	android:layout_width="fill_parent"
+   		android:layout_height="fill_parent"
+   	/>
+</FrameLayout>
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -26,8 +27,8 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 	private Button startBtn;
 	private RelativeLayout mainRLayout;
 	private LinearLayout pointLLayout;
-	private LinearLayout animLayout;
-	private LinearLayout downLayout;
+	private FrameLayout zipperLayout;
+//	private LinearLayout downLayout;
 	
 	
 	final Context mContext = this;
@@ -44,8 +45,10 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 		mainRLayout = (RelativeLayout) findViewById(R.id.mainRLayout);
 		startBtn = (Button) findViewById(R.id.startBtn);
 		startBtn.setOnClickListener(onClick);
-		animLayout = (LinearLayout) findViewById(R.id.animLayout);
-		downLayout = (LinearLayout) findViewById(R.id.downLayout);
+		zipperLayout = (FrameLayout)findViewById(R.id.zipperlayout);
+			
+//		animLayout = (LinearLayout) findViewById(R.id.animLayout);
+//		downLayout = (LinearLayout) findViewById(R.id.downLayout);
 		count = mScrollLayout.getChildCount();
 		imgs = new ImageView[count];
 		for (int i = 0; i < count; i++) {
@@ -69,8 +72,7 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 				mainRLayout.setBackgroundResource(R.drawable.w01);
 				Animation downOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_down);
 				
-				downLayout.setAnimation(downOutAnimation);
-				downOutAnimation.setAnimationListener(new AnimationListener() {
+				downLayout.setAnimation(downOutAnimation);				downOutAnimation.setAnimationListener(new AnimationListener() {
 					@Override
 					public void onAnimationStart(Animation animation) {
 						mainRLayout.setBackgroundColor(getResources().getColor(R.color.bgColor));
