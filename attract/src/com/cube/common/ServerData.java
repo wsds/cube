@@ -12,6 +12,8 @@ public class ServerData extends Data {
 	ServerData() {
 		super.url = "http://cubeservice.sinaapp.com/girls/attrat/serverdata.json";
 		super.key = "ServerData";
+		super.app = "attract";
+		super.username = "";
 		super.registService();
 	}
 

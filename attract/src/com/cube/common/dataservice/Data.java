@@ -2,10 +2,10 @@ package com.cube.common.dataservice;
 
 import org.json.JSONObject;
 
-import android.util.Log;
+import android.content.Context;
 
 public abstract class Data {
-	private static final String TAG = "DataService";
+	WebData webData = null;
 
 	public JSONObject JSON = null;
 	public String username = "";
@@ -15,15 +15,20 @@ public abstract class Data {
 
 	public abstract void parseJSON();
 
-	public void getWebData() {
-		if (this.url != "") {
-			this.JSON = WebInterface.getJSON(this.url);
-			Log.d(TAG, "Data is: " + this.JSON);
-			this.parseJSON();
+	public void initializeData(Context mContext) {
+		webData = new WebData();
+		webData.initializeWebData(mContext);
+		JSON = webData.get(url);
+		if (JSON == null) {
+			JSON = webData.loadFromSDCard(app, key);
 		}
+		
+		parseJSON();
+		webData.saveToSDCard(app, key, JSON);
 	}
-	
-	public void registService(){
+
+
+	public void registService() {
 		DataService.datas.add(this);
 	}
 }

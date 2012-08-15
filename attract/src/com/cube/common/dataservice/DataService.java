@@ -37,7 +37,7 @@ public class DataService extends Service {
 	public void initializeServerData() {
 		for (int i = 0; i < datas.size(); i++) {
 			Data data = datas.get(i);
-			data.getWebData();
+			data.initializeData(DataService.this);
 		}
 	}
 }
