@@ -28,6 +28,8 @@ public class GlRenderer implements Renderer {
 	public GlRenderer(Context context) {
 		this.context = context;
 		this.mActivity = (Activity) context;
+		this.sceneState = SceneState.getInstance();
+		this.sceneState.render = this;
 	}
 
 	private final static float lightAmb[] = { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -38,29 +40,35 @@ public class GlRenderer implements Renderer {
 	private final static FloatBuffer lightDifBfr;
 	private final static FloatBuffer lightPosBfr;
 
-	// private static float[] quadVertexLogo = new float[] { -1.1f, 1f, 0,
-	// -1.1f,
-	// -1f, 0, 1.1f, 1f, 0, 1.1f, -1f, 0 };
+	private static float[] girlTotalTextureCoords = new float[] { 0, 1, 0, 0, 1, 1,
+			1, 0 };
+	
+	private static float[] girlIndexVertexCoords = new float[] { 0.6f, 0.23f, 0,
+		0.6f, 0.11f, 0, 0.72f, 0.23f, 0, 0.72f, 0.11f, 0 };
+	private static float[] girlTotalVertexCoords = new float[] { 0.72f, 0.23f, 0,
+			0.72f, 0.11f, 0, 0.9f, 0.23f, 0, 0.9f, 0.11f, 0 };
+	
+
 	final static float UNIT_SIZE = 0.35f;
-	static float[] quadVertexLogo = new float[] { 
-		0 * UNIT_SIZE, 1 * UNIT_SIZE, 0,
-		0.8f * UNIT_SIZE,0.5f * UNIT_SIZE, 0,
-		0.8f * UNIT_SIZE, -0.5f * UNIT_SIZE, 0,
-		0 * UNIT_SIZE, -1 * UNIT_SIZE, 0,
-		-0.8f * UNIT_SIZE,-0.5f * UNIT_SIZE, 0,
-		-0.8f * UNIT_SIZE, 0.5f * UNIT_SIZE, 0 };
+	static float[] quadVertexLogo = new float[] { 0 * UNIT_SIZE, 1 * UNIT_SIZE,
+			0, 0.8f * UNIT_SIZE, 0.5f * UNIT_SIZE, 0, 0.8f * UNIT_SIZE,
+			-0.5f * UNIT_SIZE, 0, 0 * UNIT_SIZE, -1 * UNIT_SIZE, 0,
+			-0.8f * UNIT_SIZE, -0.5f * UNIT_SIZE, 0, -0.8f * UNIT_SIZE,
+			0.5f * UNIT_SIZE, 0 };
 
 	private static ByteBuffer mIndexBuffer; // 顶点构建索引数据缓冲
 
-
-	
-	private static float[] quadTextureLogo = new float[] { 0.5f, 0,0, 0.25f , 0, 0.75f,0.5f, 1f, 1f, 0.75f,
-			1f, 0.25f
-			
-			};
+	private static float[] quadTextureLogo = new float[] { 0.5f, 0, 0, 0.25f,
+			0, 0.75f, 0.5f, 1f, 1f, 0.75f, 1f, 0.25f };
 
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
+	
+	private static FloatBuffer girlIndexVertexBuffer;
+	private static FloatBuffer girlTotalTextureBuffer;
+	
+	private static FloatBuffer girlTotalVertexBuffer;
+//	private static FloatBuffer girlTotalTextureBuffer1;
 
 	private static float[] quadVertexGirl = new float[] { -9.0f, 16.0f, 0,
 			-9.0f, -16.0f, 0, 9.0f, 16.0f, 0, 9.0f, -16.0f, 0 };
@@ -71,16 +79,10 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer quadVertexBufferGirl;
 	private static FloatBuffer quadTextureBufferGirl;
 
-	SceneState sceneState = SceneState.getInstance();
+	SceneState sceneState = null;
 
 	static {
-
-        byte indices[]=new byte[]{
-        		0,5,4,
-        		3,
-        		2,
-        		1
-            };
+		byte indices[] = new byte[] { 0, 5, 4, 3, 2, 1 };
 		// 创建三角形构造索引数据缓冲
 		mIndexBuffer = ByteBuffer.allocateDirect(indices.length);
 		mIndexBuffer.put(indices);// 向缓冲区中放入三角形构造索引数据
@@ -93,6 +95,12 @@ public class GlRenderer implements Renderer {
 		quadVertexBufferLogo = BufferUtil.floatToBuffer(quadVertexLogo);
 		quadTextureBufferLogo = BufferUtil.floatToBuffer(quadTextureLogo);
 
+		girlIndexVertexBuffer = BufferUtil.floatToBuffer(girlIndexVertexCoords);
+		girlTotalTextureBuffer = BufferUtil.floatToBuffer(girlTotalTextureCoords);
+		
+		girlTotalVertexBuffer = BufferUtil.floatToBuffer(girlTotalVertexCoords);
+//		girlTotalTextureBuffer1 = BufferUtil.floatToBuffer(girlTotalTextureCoords);
+		
 		quadVertexBufferGirl = BufferUtil.floatToBuffer(quadVertexGirl);
 		quadTextureBufferGirl = BufferUtil.floatToBuffer(quadTextureGirl);
 
@@ -139,6 +147,8 @@ public class GlRenderer implements Renderer {
 	GLAnimation girlGoFront = new GLAnimation();
 	GLAnimation girlRotateBack = new GLAnimation();
 	GLAnimation girlRotateFront = new GLAnimation();
+	GLAnimation ploygonColor = new GLAnimation();
+//	GLAnimation girlRotatetoPos = new GLAnimation();
 
 	public void initializeAnimations() {
 		girlGoBack.setTranslate(0, -11.5f, -5.5f, 200f);
@@ -149,6 +159,22 @@ public class GlRenderer implements Renderer {
 		girlRotateBack.start(false);
 		girlRotateFront.setRotate(-15, 1, 0, 0, 200f);
 		girlRotateFront.start(false);
+		ploygonColor.setColor(1f, 0.4f, 0.4f, 1f, 800f);
+		ploygonColor.start(false);
+
+//		girlRotatetoPos.setRotate(
+//				(float) (sceneState.pictureViewGallary.diff * 180 / PI), 0, 0,
+//				1, 1800f);
+//		girlRotatetoPos.setCallback(new GLAnimation.Callback() {
+//			
+//			@Override
+//			public void onEnd() {
+//				sceneState.pictureViewGallary.stop();
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+//		girlRotatetoPos.start(false);
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -178,30 +204,89 @@ public class GlRenderer implements Renderer {
 			gl.glDisable(GL10.GL_BLEND);
 			gl.glEnable(GL10.GL_CULL_FACE);
 		}
-		sceneState.isLocked[1]=true;
-		drawPolygon(gl,0,-0.316f,sceneState.isLocked[1]);//2
-		drawPolygon(gl,-1.6f*UNIT_SIZE,-0.31616f,sceneState.isLocked[0]);//1
-		drawPolygon(gl,1.6f*UNIT_SIZE,-0.31616f,sceneState.isLocked[2]);//3
-		drawPolygon(gl,-0.8f*UNIT_SIZE,-0.316f-1.5f*UNIT_SIZE,sceneState.isLocked[3]);//4
-		drawPolygon(gl,0.8f*UNIT_SIZE,-0.316f-1.5f*UNIT_SIZE,sceneState.isLocked[4]);//5
-		drawPolygon(gl,0,-0.316f-3*UNIT_SIZE,sceneState.isLocked[5]);//6
+		sceneState.isLocked[1] = true;
+		sceneState.isLocked[2] = true;
+		sceneState.isLocked[3] = true;
+		sceneState.isLocked[4] = true;
+		drawPolygon(gl, 0, -0.316f, sceneState.isLocked[1]);// 2
+		if(sceneState.isSelected[0]){
+			drawPolygon1(gl, -1.6f * UNIT_SIZE, -0.31616f);
+		}
+		else{
+		drawPolygon(gl, -1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[0]);// 1			
+		}
+
+		drawPolygon(gl, 1.6f * UNIT_SIZE, -0.31616f,sceneState.isLocked[2]);// 3
+		drawPolygon(gl, -0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE,
+				sceneState.isLocked[3]);// 4
+		drawPolygon(gl, 0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE,
+				sceneState.isLocked[4]);// 5
+		drawPolygon(gl, 0, -0.316f - 3 * UNIT_SIZE, sceneState.isLocked[5]);// 6
 		drawGirls(gl);
+		drawGirlNumber(gl);
 
 	}
 
-	public void drawPolygon(GL10 gl,float xaxis,float yaxis,boolean isLocked) {
+	public void drawGirlNumber(GL10 gl) {
 
-		if(isLocked){
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 0));
-		}
-		else{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 1));
-		}
-		
+		gl.glBindTexture(
+				GL10.GL_TEXTURE_2D,
+				texturesBuffer
+						.get(GIRLSINDEX
+								+ sceneState.pictureViewGallary.pictureView[sceneState.pictureViewGallary.frontViewIndex].girlNumber+1));
 		gl.glLoadIdentity();
+		gl.glTranslatef(-0.06f, 1.13f,-4f);
 
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, girlIndexVertexBuffer);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, girlTotalTextureBuffer);
+
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		
+		gl.glBindTexture(
+				GL10.GL_TEXTURE_2D,
+				texturesBuffer
+						.get(GIRLSINDEX_S
+								+ sceneState.pictureViewGallary.totalGirls));
+		gl.glLoadIdentity();
+		gl.glTranslatef(-0.06f, 1.13f, -4f);
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, girlTotalVertexBuffer);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, girlTotalTextureBuffer);
+
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+
+	}
+
+	public void drawPolygon(GL10 gl, float xaxis, float yaxis, boolean isLocked) {
+
+		if (isLocked) {
+			gl.glBindTexture(GL10.GL_TEXTURE_2D,
+					texturesBuffer.get(POLYGON + 0));
+		} else {
+			gl.glBindTexture(GL10.GL_TEXTURE_2D,
+					texturesBuffer.get(POLYGON + 1));
+		}
+
+
+		gl.glLoadIdentity();
+		
+		gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
+//		gl.glDisable(GL10.GL_BLEND);
 		gl.glEnable(GL10.GL_BLEND);
-
 		gl.glTranslatef(xaxis, yaxis, -4.5f);
 
 		// testAnimation.transformModel(gl);
@@ -212,8 +297,9 @@ public class GlRenderer implements Renderer {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBufferLogo);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, quadTextureBufferLogo);
 
-//		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
-		gl.glDrawElements(GL10.GL_TRIANGLE_FAN, 6, GL10.GL_UNSIGNED_BYTE, mIndexBuffer);
+		// gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+		gl.glDrawElements(GL10.GL_TRIANGLE_FAN, 6, GL10.GL_UNSIGNED_BYTE,
+				mIndexBuffer);
 
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -221,13 +307,46 @@ public class GlRenderer implements Renderer {
 
 	}
 
+	public void drawPolygon1(GL10 gl, float xaxis, float yaxis) {
+
+
+			gl.glBindTexture(GL10.GL_TEXTURE_2D,
+					texturesBuffer.get(POLYGON + 1));
+
+
+		gl.glLoadIdentity();
+		
+		gl.glColor4f(1f, 0.4f, 0.4f, 1f);
+//		gl.glDisable(GL10.GL_BLEND);
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glTranslatef(xaxis, yaxis, -4.5f);
+
+		// testAnimation.transformModel(gl);
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBufferLogo);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, quadTextureBufferLogo);
+
+		// gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+		gl.glDrawElements(GL10.GL_TRIANGLE_FAN, 6, GL10.GL_UNSIGNED_BYTE,
+				mIndexBuffer);
+
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		ploygonColor.transformModel(gl);
+	}
+	
 	public long lastMillis = 0;
 	double PI = Math.PI;
 
 	public void drawGirls(GL10 gl) {
 
 		sceneState.pictureViewGallary.movement();
-		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+	
 		for (int i = 0; i < sceneState.pictureViewGallary.viewsNum; i++) {
 			int index = 0;
 			index = (i) % sceneState.pictureViewGallary.viewsNum;
@@ -238,11 +357,13 @@ public class GlRenderer implements Renderer {
 
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(girlNumber));
 			gl.glLoadIdentity();
-
+//			girlRotatetoPos.transformModel(gl);	
 			girlGoBack.transformModel(gl);
 			girlGoFront.transformModel(gl);
 			girlRotateBack.transformModel(gl);
 			girlRotateFront.transformModel(gl);
+			
+
 			// gl.glEnable(GL10.GL_BLEND);
 			gl.glTranslatef(0, 0f, -63f);
 
@@ -297,8 +418,10 @@ public class GlRenderer implements Renderer {
 
 	public int POLYGON = 3;
 	public int BACKGROUND = 5;
+	public int GIRLSINDEX = 6;
+	public int GIRLSINDEX_S = 16;
 
-	public int textureNum = 6;
+	public int textureNum = 26;
 
 	private void loadTexture(GL10 gl) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -314,14 +437,55 @@ public class GlRenderer implements Renderer {
 				R.drawable.girl4_3);
 		// texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
 		// R.drawable.polygon);
-//		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
-//				R.drawable.six);
+		// texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
+		// R.drawable.six);
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.polygon_locked);
 		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.polygon_cupid);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.gameentry_background);
+		texture[GIRLSINDEX + 0] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_0);
+		texture[GIRLSINDEX + 1] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_1);
+		texture[GIRLSINDEX + 2] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_2);
+		texture[GIRLSINDEX + 3] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_3);
+		texture[GIRLSINDEX + 4] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_4);
+		texture[GIRLSINDEX + 5] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_5);
+		texture[GIRLSINDEX + 6] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_6);
+		texture[GIRLSINDEX + 7] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_7);
+		texture[GIRLSINDEX + 8] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_8);
+		texture[GIRLSINDEX + 9] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_9);
+		
+		texture[GIRLSINDEX_S + 0] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_0);		
+		texture[GIRLSINDEX_S + 1] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_1);	
+		texture[GIRLSINDEX_S + 2] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_2);	
+		texture[GIRLSINDEX_S + 3] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_3);	
+		texture[GIRLSINDEX_S + 4] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_4);	
+		texture[GIRLSINDEX_S + 5] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_5);	
+		texture[GIRLSINDEX_S + 6] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_6);	
+		texture[GIRLSINDEX_S + 7] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_7);	
+		texture[GIRLSINDEX_S + 8] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_8);	
+		texture[GIRLSINDEX_S + 9] = Utils.getTextureFromBitmapResource(context,
+				R.drawable.number_s_9);	
 
 		for (int i = 0; i < textureNum; i++) {
 

@@ -32,12 +32,21 @@ public class GLAnimation {
 		public float dt = 0;
 	}
 
+	public class Color {
+		public float red = 0;
+		public float green = 0;
+		public float blue = 0;
+		public float blend = 0;
+		public float dt = 0;
+	}
+
 	// data
-	public String[] types = { "Translate", "Rotate", "Scale" };
+	public String[] types = { "Translate", "Rotate", "Scale", "Color" };
 
 	public int TRANSLATE = 0;
 	public int ROTATE = 1;
 	public int SCALE = 2;
+	public int COLOR = 3;
 	public int type = TRANSLATE;
 
 	public Callback callback = null;
@@ -47,6 +56,7 @@ public class GLAnimation {
 	public Translate translate = new Translate();
 	public Rotate rotate = new Rotate();
 	public Scale scale = new Scale();
+	public Color color = new Color();
 
 	public GlMatrix transform = new GlMatrix();
 
@@ -55,6 +65,14 @@ public class GLAnimation {
 	// initialize method
 	public void addNextAnimation(GLAnimation animation) {
 		this.next.add(animation);
+	}
+
+	public void setColor(float r, float g, float b, float blend,float dt) {
+		this.color.red = r;
+		this.color.green = g;
+		this.color.blue = b;
+		this.color.blend = blend;
+		this.color.dt = dt;
 	}
 
 	public void setCallback(Callback callback) {
@@ -116,6 +134,8 @@ public class GLAnimation {
 				remainTime = (long) rotate.dt;
 			} else if (this.type == SCALE) {
 				remainTime = (long) scale.dt;
+			} else if (this.type == COLOR) {
+				remainTime = (long) color.dt;
 			}
 		}
 
@@ -126,16 +146,16 @@ public class GLAnimation {
 
 			for (int i = 0; i < this.next.size(); i++) {
 				GLAnimation nextAnimation = this.next.get(i);
-				nextRemainTime = nextRemainTime + nextAnimation.transformModel(gl);
+				nextRemainTime = nextRemainTime
+						+ nextAnimation.transformModel(gl);
 			}
 
 			if (nextRemainTime == 0) {
 				if (remainRepeatTimes > 1 || remainRepeatTimes < -9998) {
 					reset();
 					remainRepeatTimes--;
-				}
-				else{
-//					this.isStarted = false;
+				} else {
+					// this.isStarted = false;
 				}
 			}
 
@@ -153,11 +173,16 @@ public class GLAnimation {
 				}
 
 				if (this.type == TRANSLATE) {
-					transform.translate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta, translate.dz / translate.dt * delta);
+					transform.translate(translate.dx / translate.dt * delta,
+							translate.dy / translate.dt * delta, translate.dz
+									/ translate.dt * delta);
 				} else if (this.type == ROTATE) {
-					transform.rotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy, rotate.fz);
+					transform.rotate(rotate.dr / rotate.dt * delta, rotate.fx,
+							rotate.fy, rotate.fz);
 				} else if (this.type == SCALE) {
 
+				} else if (this.type == COLOR){
+					gl.glColor4f(color.red, color.green, color.blue, color.blend);
 				}
 			}
 
@@ -175,7 +200,7 @@ public class GLAnimation {
 	}
 
 	public void reset() {
-		lastMillis=0;
+		lastMillis = 0;
 		isReset = true;
 		for (int i = 0; i < this.next.size(); i++) {
 			GLAnimation nextAnimation = this.next.get(i);

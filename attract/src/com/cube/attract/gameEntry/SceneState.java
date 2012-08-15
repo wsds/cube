@@ -17,6 +17,7 @@ final class SceneState {
 		return instance;
 	}
 
+	public GlRenderer render = null;
 	boolean blending = false;
 
 	public boolean isClicked = false;
@@ -25,8 +26,7 @@ final class SceneState {
 	public int CUB = 1;
 	public int GIRL = 2;
 	boolean[] isLocked = new boolean[6];
-	
-
+	boolean[] isSelected = new boolean[6];
 
 	public int eventType = CUB;
 
@@ -40,13 +40,10 @@ final class SceneState {
 			initailizepictureView();
 		}
 
-
-
-
-		 float dySpeed;
+		float dySpeed;
 
 		float dx;
-		
+
 		public float stopFactor = 0.312f;
 		public int minNum = 0;
 		public double minX = 10000;
@@ -54,45 +51,25 @@ final class SceneState {
 		public float dxSpeed = 0;
 		public float dAngle = 0;
 		public float dy = 0;
-		
-		public double diff =0;
-		public int start = 0;
+
+		public int totalGirls = 3;
+		public double diff = 0;
+		public int frontViewIndex = 0;
+
 		public void stopmove() {
-
-
-			for (int i = 0; i < viewsNum; i++) {
-				int temp = (i + start)% viewsNum;
-				pictureView[temp].radian=2 * PI / viewsNum * i;
-				pictureView[temp].pAngle = pictureView[temp].radian;
-			}
+//			render.girlRotatetoPos.start(true);
 			dAngle = 0;
 			dxSpeed = 0.0f;
+			for (int i = 0; i < viewsNum; i++) {
+				int temp = (i + frontViewIndex) % viewsNum;
+				pictureView[temp].radian = 2 * PI / viewsNum * i;
+				pictureView[temp].pAngle = pictureView[temp].radian;
+			}
 		}
 
+		public void stop() {
 
-
-//		public boolean isStopmoving() {
-//			if (isStopping == false) {
-//				return false;
-//			}
-//			dAngle = (float) (dAngle + (minX) / (10 * moveFactor));
-//			// float minXabs = 10000;
-//			// for (int i = 0; i < viewsNum; i++) {
-//			// if (Math.abs(pictureView[i].x) < minXabs) {
-//			// minXabs = Math.abs(pictureView[i].x);
-//			// }
-//			// }
-//			// if (minXabs < 0.01) {
-//			// isStopping = false;
-//			// return true;
-//			// }
-//			stop--;
-//			if (stop < 1) {
-//				isStopping = false;
-//				return true;
-//			}
-//			return false;
-//		}
+		}
 
 		public PictureView[] pictureView;
 		public int viewsNum = 9;
@@ -106,8 +83,8 @@ final class SceneState {
 
 			for (int i = 0; i < viewsNum; i++) {
 				pictureView[i] = new PictureView();
-				pictureView[i].girlNumber = i % 3;
-				double radian =2 * PI / viewsNum * i;
+				pictureView[i].girlNumber = i % totalGirls;
+				double radian = 2 * PI / viewsNum * i;
 				pictureView[i].radian = radian;
 				pictureView[i].pAngle = radian;
 
@@ -123,23 +100,21 @@ final class SceneState {
 		public void movement() {
 			float moveAngle = (float) moveFactor * dAngle;
 
-			double halfRefRadian = PI/viewsNum;
+			double halfRefRadian = PI / viewsNum;
 
 			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].radian = pictureView[i].radian - Math.floor(pictureView[i].radian/(2*PI))*2*PI;
-				if (pictureView[i].radian > 2*PI - halfRefRadian){
-					start = i;
-					Log.i("i", String.valueOf(i));
-					diff = 2*PI - pictureView[i].radian; 
-				}
-				else if(pictureView[i].radian < halfRefRadian){
-					start = i;
-					Log.i("i", String.valueOf(i));
-					diff =-pictureView[i].radian;
+				pictureView[i].radian = pictureView[i].radian
+						- Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
+				if (pictureView[i].radian > 2 * PI - halfRefRadian) {
+					frontViewIndex = i;
+					diff = 2 * PI - pictureView[i].radian;
+				} else if (pictureView[i].radian < halfRefRadian) {
+					frontViewIndex = i;
+					diff = -pictureView[i].radian;
 				}
 			}
-//			pictureView[start].radian-2 * PI / viewsNum * start;
-			
+			// pictureView[start].radian-2 * PI / viewsNum * start;
+
 			for (int i = 0; i < viewsNum; i++) {
 				pictureView[i].radian = pictureView[i].pAngle + moveAngle;
 
@@ -149,12 +124,12 @@ final class SceneState {
 			}
 		}
 
-//		public void saveMovement() {
-//			for (int i = 0; i < viewsNum; i++) {
-//				pictureView[i].pAngle = pictureView[i].radian;
-//			}
-//			dAngle = 0.0f;
-//		}
+		// public void saveMovement() {
+		// for (int i = 0; i < viewsNum; i++) {
+		// pictureView[i].pAngle = pictureView[i].radian;
+		// }
+		// dAngle = 0.0f;
+		// }
 
 		public void dampenSpeed(long deltaMillis) {
 			if (dxSpeed != 0.0f) {

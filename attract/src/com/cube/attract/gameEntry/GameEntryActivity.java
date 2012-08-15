@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -28,7 +29,7 @@ public class GameEntryActivity extends Activity {
 
 		mContext = this;
 		mActivity = this;
-		
+
 		surface = new GLSurfaceView(this);
 		renderer = new GlRenderer(this);
 		surface.setRenderer(renderer);
@@ -50,6 +51,7 @@ public class GameEntryActivity extends Activity {
 
 	private float startX, startY;
 	float TOUCH_SCAL_FACTOR = 180f / 320;
+	private int GAMENUMBER = 7;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -59,54 +61,59 @@ public class GameEntryActivity extends Activity {
 
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-//			sceneState.pictureViewGallary.dxSpeed = 0.0f;
-//			sceneState.pictureViewGallary.dySpeed = 0.0f;
+			// sceneState.pictureViewGallary.dxSpeed = 0.0f;
+			// sceneState.pictureViewGallary.dySpeed = 0.0f;
 			startX = event.getX();
 			startY = event.getY();
 
 			float normalY = startY * 800 / sceneState.screenHeight;
 			float normalX = startX * 480 / sceneState.screenWidth;
+
 			if (normalY < 430) {
 				sceneState.eventType = sceneState.GIRL;
 
-//				sceneState.pictureViewGallary.dxSpeed = 0.0f;
-//				sceneState.pictureViewGallary.saveMovement();
+				// sceneState.pictureViewGallary.dxSpeed = 0.0f;
+				// sceneState.pictureViewGallary.saveMovement();
 				renderer.girlGoBack.start(true);
 				renderer.girlRotateBack.start(true);
-			}
-			else if(normalY<505){
-				if(normalX>181 && normalX<300&&!sceneState.isLocked[1]){
-					
-					//2
-					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
-					mContext.startActivity(about);
-					mActivity.finish();
-				}
-				else if(normalX>60&&!sceneState.isLocked[0])
-				{
-					//1
-				}
-				else if(normalX<420&&!sceneState.isLocked[2])
-				{
-					//3
-				}
-			}
-			else if(normalY<620 && normalY>545){
-				if(normalX>120 && normalX<239&&!sceneState.isLocked[3]){
-					//4
-				}
-				else if(normalX>239 && normalX<361&&!sceneState.isLocked[4]){
-					//5
-				}
-			}
-			else if(normalY>650 && normalX<737){
-				if(normalX>181 && normalX<300&&!sceneState.isLocked[5]){
-					//6
-				}
-			}
+			} else if (normalY < 505) {
+				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[1]) {
+					GAMENUMBER = 2;
+					Log.i("come in game", "2");
+					// 2
 
+				} else if (normalX > 60 && normalX < 181
+						&& !sceneState.isLocked[0]) {
+					GAMENUMBER = 1;
+					Log.i("come in game", "1");
+					// 1
+					sceneState.isSelected[0] = true;
+					renderer.ploygonColor.start(true);
+
+				} else if (normalX < 420 && normalX > 300
+						&& !sceneState.isLocked[2]) {
+					GAMENUMBER = 3;
+					Log.i("come in game", "3");
+					// 3
+				}
+			} else if (normalY < 620 && normalY > 545) {
+				if (normalX > 120 && normalX < 239 && !sceneState.isLocked[3]) {
+					GAMENUMBER = 4;
+					Log.i("come in game", "4");
+					// 4
+				} else if (normalX > 239 && normalX < 361
+						&& !sceneState.isLocked[4]) {
+					GAMENUMBER = 5;
+					Log.i("come in game", "5");
+					// 5
+				}
+			} else if (normalY > 650 && normalX < 737) {
+				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[5]) {
+					Log.i("come in game", "6");
+					GAMENUMBER = 6;
+					// 6
+				}
+			}
 
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -123,6 +130,25 @@ public class GameEntryActivity extends Activity {
 			if (sceneState.eventType == sceneState.GIRL) {
 				renderer.girlGoFront.start(true);
 				renderer.girlRotateFront.start(true);
+			} else {
+				switch (GAMENUMBER) {
+				case 1:
+					sceneState.isSelected[0] = false;
+					Intent about = new Intent(Intent.ACTION_MAIN);
+					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					about.setClassName("com.cube.attract",
+							"com.cube.attract.entry.EntryActivity");
+					mContext.startActivity(about);
+					mActivity.finish();
+					break;
+				case 2:
+
+					break;
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				}
 			}
 			sceneState.eventType = sceneState.NONE;
 			break;
