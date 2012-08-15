@@ -252,8 +252,9 @@ public class CanvasAnimation {
 						transformMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
 						traceMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
 					} else if (this.type == SCALE) {
-
-					}else if (this.type == ACCELERATE) {
+						transformMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt);
+						traceMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt);
+					} else if (this.type == ACCELERATE) {
 						float ds = (float) ((accelerate.v0 + 0.5*accelerate.a*delta)* delta);
 						transformMatrix.postTranslate(accelerate.dx * ds, accelerate.dy * ds);
 						traceMatrix.postTranslate(accelerate.dx * ds, accelerate.dy * ds);
