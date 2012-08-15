@@ -60,9 +60,16 @@ public class GameEntryActivity extends Activity {
 		}
 
 		switch (event.getAction()) {
+		case MotionEvent.ACTION_MOVE:
+			if (sceneState.eventType == sceneState.GIRL) {
+
+				sceneState.pictureViewGallary.dx = event.getX() - startX;
+				sceneState.pictureViewGallary.dy = event.getY() - startY;
+				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx
+						* TOUCH_SCAL_FACTOR;
+			}
+			break;
 		case MotionEvent.ACTION_DOWN:
-			// sceneState.pictureViewGallary.dxSpeed = 0.0f;
-			// sceneState.pictureViewGallary.dySpeed = 0.0f;
 			startX = event.getX();
 			startY = event.getY();
 
@@ -72,8 +79,8 @@ public class GameEntryActivity extends Activity {
 			if (normalY < 430) {
 				sceneState.eventType = sceneState.GIRL;
 
-				// sceneState.pictureViewGallary.dxSpeed = 0.0f;
-				// sceneState.pictureViewGallary.saveMovement();
+				sceneState.pictureViewGallary.dxSpeed = 0.0f;
+				sceneState.pictureViewGallary.saveMovement();
 				renderer.girlGoBack.start(true);
 				renderer.girlRotateBack.start(true);
 			} else if (normalY < 505) {
@@ -114,17 +121,8 @@ public class GameEntryActivity extends Activity {
 					// 6
 				}
 			}
-
 			break;
-		case MotionEvent.ACTION_MOVE:
 
-			if (sceneState.eventType == sceneState.GIRL) {
-				sceneState.pictureViewGallary.dx = event.getX() - startX;
-				sceneState.pictureViewGallary.dy = event.getY() - startY;
-				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx
-						* TOUCH_SCAL_FACTOR;
-			}
-			break;
 
 		case MotionEvent.ACTION_UP:
 			if (sceneState.eventType == sceneState.GIRL) {
@@ -153,6 +151,7 @@ public class GameEntryActivity extends Activity {
 			sceneState.eventType = sceneState.NONE;
 			break;
 		case MotionEvent.ACTION_CANCEL:
+			sceneState.eventType = sceneState.NONE;
 			break;
 		}
 
@@ -165,8 +164,11 @@ public class GameEntryActivity extends Activity {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
 
+			if (sceneState.eventType == sceneState.GIRL){
 			sceneState.pictureViewGallary.dxSpeed = velocityX / 1000;
-			sceneState.pictureViewGallary.dySpeed = velocityY / 1000;
+			sceneState.pictureViewGallary.dySpeed = velocityY / 1000;				
+			}
+
 
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}

@@ -25,6 +25,7 @@ final class SceneState {
 	public int NONE = 0;
 	public int CUB = 1;
 	public int GIRL = 2;
+	public int POLYGONBUTTON =3;
 	boolean[] isLocked = new boolean[6];
 	boolean[] isSelected = new boolean[6];
 
@@ -58,13 +59,13 @@ final class SceneState {
 
 		public void stopmove() {
 //			render.girlRotatetoPos.start(true);
-			dAngle = 0;
+
 			dxSpeed = 0.0f;
-			for (int i = 0; i < viewsNum; i++) {
-				int temp = (i + frontViewIndex) % viewsNum;
-				pictureView[temp].radian = 2 * PI / viewsNum * i;
-				pictureView[temp].pAngle = pictureView[temp].radian;
-			}
+//			for (int i = 0; i < viewsNum; i++) {
+//				int temp = (i + frontViewIndex) % viewsNum;
+//				pictureView[temp].radian = 2 * PI / viewsNum * i;
+//				pictureView[temp].pAngle = pictureView[temp].radian;
+//			}
 		}
 
 		public void stop() {
@@ -124,12 +125,12 @@ final class SceneState {
 			}
 		}
 
-		// public void saveMovement() {
-		// for (int i = 0; i < viewsNum; i++) {
-		// pictureView[i].pAngle = pictureView[i].radian;
-		// }
-		// dAngle = 0.0f;
-		// }
+		 public void saveMovement() {
+		 for (int i = 0; i < viewsNum; i++) {
+		 pictureView[i].pAngle = pictureView[i].radian;
+		 }
+		 dAngle = 0.0f;
+		 }
 
 		public void dampenSpeed(long deltaMillis) {
 			if (dxSpeed != 0.0f) {
