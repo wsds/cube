@@ -15,10 +15,4 @@ public class BitmapPool {
 			instance = new BitmapPool();
 		return instance;
 	}
-
-	BitmapPool() {
-		Bitmap bitmap = null;
-		map.put("1", bitmap);
-	}
-
 }
