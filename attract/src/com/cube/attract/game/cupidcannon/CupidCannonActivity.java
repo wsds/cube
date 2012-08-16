@@ -33,8 +33,6 @@ public class CupidCannonActivity extends Activity {
 
 		private int mWidth = 0;
 		private int mHeight = 0;
-		private int mBitmapWidth = 0;
-		private int mBitmapHeight = 0;
 		private SurfaceHolder mHolder = null;
 		private Thread mThread = null;
 		
@@ -66,6 +64,7 @@ public class CupidCannonActivity extends Activity {
 		public final int RADIUS = 80;
 		public float[] rotateCenter = {0.0f, 0.0f};
 		public float[] targetCenter = {0.0f, 0.0f};
+		public float[] boomCenter = {0.0f, 0.0f};
 		public Bitmap backgroundStage = null;
 		public Matrix testMatrix = new Matrix();
 		public float [] testMatrixArray; 
@@ -84,7 +83,7 @@ public class CupidCannonActivity extends Activity {
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
 			initBackgroundBm = BitmapFactory.decodeResource(getResources(),
-					R.drawable.entry_background);
+					R.drawable.welcome_background);
 			backgroundBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_3);
 			backgroundStage = BitmapFactory.decodeResource(getResources(),
@@ -99,8 +98,6 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.heart_3_s);
 			bulletBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.bullet);
-//			boomBm =  BitmapFactory.decodeResource(getResources(),
-//					R.drawable.cupid);
 			boomBm =  BitmapFactory.decodeResource(getResources(),
 					R.drawable.blast_f09);
 			
@@ -109,14 +106,6 @@ public class CupidCannonActivity extends Activity {
 		private void initAnimationInstance(){
 			
 			Matrix initMatrix = new Matrix();
-			
-//			boomAnim = new CanvasAnimation();
-//			boomAnim.setElements(boomBm, new Paint());
-//			boomAnim.setStartMatrix(initMatrix);
-//			
-//			boomAnim.setScale(0.5f, 0, 0, 3000);
-//			boomAnim.setRepeatTimes(3);
-//			boomAnim.start(true);
 			
 			artilleryAnimOdd = new CanvasAnimation();
 			artilleryAnimOdd.setCallback(new CanvasAnimation.Callback() {
@@ -227,7 +216,8 @@ public class CupidCannonActivity extends Activity {
 		
 		private void drawBackground() {
 			mCanvas.drawBitmap(initBackgroundBm, 0, 0, new Paint());
-			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
+			if (achievedCounter == -1)
+				mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
 			Matrix testMatrix = new Matrix();
 			testMatrix.setTranslate(-(480-mWidth)/2, mHeight-290);
 			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
@@ -251,46 +241,29 @@ public class CupidCannonActivity extends Activity {
 			int heartBmWidth = heartBm.getWidth();
 			int heartBmHeight = heartBm.getHeight();
 			mCanvas.drawBitmap(heartBm, targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2, new Paint());
-//			mCanvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
-//					R.drawable.artillery),(mWidth - artilleryAnimEven.mAnimBitmapWidth)/2,
-//					mHeight + 5 - artilleryAnimEven.mAnimBitmapHeight + 20, new Paint());
-//			mCanvas.drawBitmap(bulletBm, 207, 650, new Paint());
-//			
-//			//位置检测，矩阵运算测试
-//			Matrix matrix = new Matrix();
-//	    	float [] vector = {0.0f, 0.0f};
-//	    	float [] array1 = {	0.0f, 0.0f, 0.0f,
-//	    						0.0f, 0.0f, 0.0f,
-//	    						0.0f, 0.0f, 0.0f,
-//	    	};
-//	    	float [] array2 = {	1.0f, 0.0f, 100.0f,
-//								0.0f, 1.0f, 0.0f,
-//								0.0f, 0.0f, 1.0f
-//	    	};
-//	    	
-//	    	float [] array3 = {	1.0f, 0.0f, 100.0f,
-//								0.0f, 1.0f, 100.0f,
-//								0.0f, 0.0f, 1.0f
-//	    	};
-//	    	matrix.setValues(array3);
-//	    	mCanvas.drawBitmap(bulletBm, matrix, new Paint());
-//	    	matrix.postTranslate(100, 100);
-//	    	mCanvas.drawBitmap(bulletBm, matrix, new Paint());
-//	    	matrix.getValues(array1);
-//	    	for (int i=0; i<3; i++){
-//	    		for (int j=0; j<3; j++){
-//	    			array3[3*i + j] =0.0f;
-//	    			for (int k=0; k<3; k++){
-//	    				array3[3*i + j] += array2[3*i + k] * array1[3*k + j];
-//	    			}
-//	    		}
-//	    	}
-//	    	matrix.setValues(array3);
-//	    	mCanvas.drawBitmap(bulletBm, matrix, new Paint());
+		}
+		public int achievedCounter = -1;
+		private void reconfigureAnimationInstance() {
+			if (achieved == false)
+				return;
+			achievedCounter++;
+			int flag = achievedCounter%3;
+			switch(flag) {
+			case 0:
+				break;
+			case 1:
+				break;	
+			case 2:
+				break;
+			default :
+				break;
+			}
+			achieved = false;
 		}
 		private void drawAnimationInstance() {
 			
 			drawBackground();
+			reconfigureAnimationInstance();
 			if (bulletAnim != null)
 				bulletAnim.transformModel(mCanvas);
 
@@ -372,6 +345,7 @@ public class CupidCannonActivity extends Activity {
 		
 		public boolean powerTubeEnable = false;
 		public boolean bulletEnable = false;
+		public boolean achieved = false;
 		public float startX = 0;
 		public float startY = 0;
 		public double moveLength = 0;
@@ -451,9 +425,14 @@ public class CupidCannonActivity extends Activity {
 							@Override
 							public void onEnd() {
 								// TODO Auto-generated method stub
+								
+								if (Math.sqrt((boomCenter[0]-targetCenter[0])*(boomCenter[0]-targetCenter[0]) 
+										+ (boomCenter[1]-targetCenter[1])*(boomCenter[1]-targetCenter[1])) < RADIUS )
+									achieved = true;
 								Paint paint = new Paint();
 								paint.setAlpha(0x00);
 								boomAnim.setElements(boomBm, paint);
+								
 								
 							}
 						});
@@ -462,7 +441,9 @@ public class CupidCannonActivity extends Activity {
 						matrix.setValues(array);
 						boomAnim.setStartMatrix(matrix);
 						bulletAnim.traceMatrix.getValues(array);
-						boomAnim.setScale(2, array[2], array[5], 3000);
+						boomCenter[0] = array[2];
+						boomCenter[1] = array[5];
+						boomAnim.setScale(1.8f, boomCenter[0], boomCenter[1], 200);
 						//boomAnim.setScale(2, mWidth/2, mHeight/2, 3000);
 						boomAnim.setRepeatTimes(1);
 						boomAnim.start(true);

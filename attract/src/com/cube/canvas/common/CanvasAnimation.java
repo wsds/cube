@@ -275,7 +275,8 @@ public class CanvasAnimation {
 		}
 
 		public void start(boolean isStarted) {
-			reset();
+			if (isStarted == true)
+				reset();
 			this.isStarted = isStarted;
 		}
 
