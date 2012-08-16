@@ -25,7 +25,7 @@ final class SceneState {
 	public int NONE = 0;
 	public int CUB = 1;
 	public int GIRL = 2;
-	public int POLYGONBUTTON =3;
+	public int POLYGONBUTTON = 3;
 	boolean[] isLocked = new boolean[6];
 	boolean[] isSelected = new boolean[6];
 
@@ -56,21 +56,39 @@ final class SceneState {
 		public int totalGirls = 3;
 		public double diff = 0;
 		public int frontViewIndex = 0;
+		public boolean isStopping = false;
+		public boolean isPostive = true;
 
 		public void stopmove() {
-//			render.girlRotatetoPos.start(true);
 
-			dxSpeed = 0.0f;
-			dAngle = 0;
 			for (int i = 0; i < viewsNum; i++) {
 				int temp = (i + frontViewIndex) % viewsNum;
 				pictureView[temp].radian = 2 * PI / viewsNum * i;
 				pictureView[temp].pAngle = pictureView[temp].radian;
 			}
+					dxSpeed = 0;
+					dAngle = 0;			
 		}
 
-		public void stop() {
+		public boolean isPosCorrect() {
+			double halfRefRadian = PI / viewsNum;
 
+			for (int i = 0; i < viewsNum; i++) {
+//				double tempRadian = pictureView[i].radian
+//						- Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
+				if (pictureView[i].radian > 2 * PI - 0.005) {
+					Log.i("radian["+String.valueOf(i)+"] and postive", String.valueOf(pictureView[i].radian));
+					isStopping = false;
+					stopmove();
+					return true;
+				} else if (pictureView[i].radian < 0.005) {
+					Log.i("radian["+String.valueOf(i)+"] and negtive", String.valueOf(pictureView[i].radian));
+					isStopping = false;
+					stopmove();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public PictureView[] pictureView;
@@ -109,12 +127,16 @@ final class SceneState {
 						- Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
 				if (pictureView[i].radian > 2 * PI - halfRefRadian) {
 					frontViewIndex = i;
-					diff = 2 * PI - pictureView[i].radian;
+					isPostive = true;
+					// diff = 2 * PI - pictureView[i].radian;
 				} else if (pictureView[i].radian < halfRefRadian) {
 					frontViewIndex = i;
-					diff = -pictureView[i].radian;
+					isPostive = false;
+					// diff = -pictureView[i].radian;
 				}
+				
 			}
+
 			// pictureView[start].radian-2 * PI / viewsNum * start;
 
 			for (int i = 0; i < viewsNum; i++) {
@@ -126,19 +148,30 @@ final class SceneState {
 			}
 		}
 
-		 public void saveMovement() {
-		 for (int i = 0; i < viewsNum; i++) {
-		 pictureView[i].pAngle = pictureView[i].radian;
-		 }
-		 dAngle = 0.0f;
-		 }
+		public void saveMovement() {
+			for (int i = 0; i < viewsNum; i++) {
+				pictureView[i].pAngle = pictureView[i].radian;
+			}
+			dAngle = 0.0f;
+		}
 
 		public void dampenSpeed(long deltaMillis) {
 			if (dxSpeed != 0.0f) {
-				dxSpeed *= (1.0f - 0.001f * deltaMillis);
-
-				if (Math.abs(dxSpeed) < 0.361f) {
-					stopmove();
+				if (isStopping) {
+					if (isPostive) {
+							dxSpeed *= (1.0f - 0.0008f * deltaMillis);
+					} else {
+							dxSpeed *= (0.0008f * deltaMillis - 1.0f);	
+					}
+//					isPosCorrect();
+				} else {
+					dxSpeed *= (1.0f - 0.002f * deltaMillis);
+				}
+				if (Math.abs(dxSpeed) < 0.161f&&!isStopping) {
+					isStopping = true;
+					dxSpeed = Math.abs(dxSpeed);
+					Log.i("isStopping and dxSpeed", String.valueOf(isStopping)+"and"+String.valueOf(dxSpeed));
+					// stopmove();
 				}
 			}
 		}

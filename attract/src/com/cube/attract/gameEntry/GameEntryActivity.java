@@ -80,6 +80,7 @@ public class GameEntryActivity extends Activity {
 				sceneState.eventType = sceneState.GIRL;
 
 				sceneState.pictureViewGallary.dxSpeed = 0.0f;
+				sceneState.pictureViewGallary.isStopping = false;
 				sceneState.pictureViewGallary.saveMovement();
 				renderer.girlGoBack.start(true);
 				renderer.girlRotateBack.start(true);

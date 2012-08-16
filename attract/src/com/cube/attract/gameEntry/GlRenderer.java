@@ -408,7 +408,7 @@ public class GlRenderer implements Renderer {
 					* delta;
 			sceneState.pictureViewGallary.dy += sceneState.pictureViewGallary.dySpeed
 					* delta;
-			sceneState.pictureViewGallary.dampenSpeed(delta);
+//			sceneState.pictureViewGallary.dampenSpeed(delta);
 		}
 		// sceneState.pictureViewGallary.isStopmoving();
 
