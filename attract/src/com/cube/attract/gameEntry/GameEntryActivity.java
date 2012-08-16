@@ -79,6 +79,7 @@ public class GameEntryActivity extends Activity {
 			}
 			break;
 		case MotionEvent.ACTION_DOWN:
+			sceneState.isTouchUp = false;
 			startX = event.getX();
 			startY = event.getY();
 
@@ -133,6 +134,7 @@ public class GameEntryActivity extends Activity {
 			break;
 
 		case MotionEvent.ACTION_UP:
+			sceneState.isTouchUp = true;
 			if (sceneState.eventType == sceneState.GIRL) {
 //				renderer.girlGoFront.start(true);
 //				renderer.girlRotateFront.start(true);
@@ -173,8 +175,8 @@ public class GameEntryActivity extends Activity {
 				float velocityY) {
 
 			if (sceneState.eventType == sceneState.GIRL) {
-				sceneState.pictureViewGallary.dxSpeed = velocityX / 1000;
-				sceneState.pictureViewGallary.dySpeed = velocityY / 1000;
+				sceneState.pictureViewGallary.dxSpeed = velocityX / 800;
+				sceneState.pictureViewGallary.dySpeed = velocityY / 800;
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);
