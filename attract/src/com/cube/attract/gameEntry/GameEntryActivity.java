@@ -72,9 +72,9 @@ public class GameEntryActivity extends Activity {
 						+ sceneState.pictureViewGallary.dy
 						* sceneState.pictureViewGallary.dy;
 				if (path > 1600) {
-					renderer.girlGoBack.start(true);
-					renderer.girlRotateBack.start(true);
-					sceneState.pictureViewGallary.once = true;
+//					renderer.girlGoBack.start(true);
+//					renderer.girlRotateBack.start(true);
+//					sceneState.pictureViewGallary.once = true;
 				}
 			}
 			break;
