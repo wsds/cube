@@ -99,15 +99,9 @@ public class CupidCannonActivity extends Activity {
 			
 			boomAnim = new CanvasAnimation();
 			boomAnim.setElements(boomBm, new Paint());
-			//initMatrix.setTranslate(300, 400);
-			//initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			boomAnim.setStartMatrix(initMatrix);
-			//configure the artillery even trace matrix
-			/*initMatrix.setTranslate(207, 650);
-			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
-			artilleryAnimOdd.setTraceMatrix(initMatrix);*/
 			
-			boomAnim.setScale(0.5f, 3000);
+			boomAnim.setScale(0.5f, 0, 0, 3000);
 			boomAnim.setRepeatTimes(3);
 			boomAnim.start(true);
 			
@@ -336,10 +330,8 @@ public class CupidCannonActivity extends Activity {
 		public void run() {
 			while (isRunning) {
 				
-				//testDraw();
 
 				drawAnimationInstance();
-				
 	
 				try {
 					Thread.sleep(3);
@@ -443,7 +435,15 @@ public class CupidCannonActivity extends Activity {
 						bulletAnim.transformMatrix.getValues(array);
 						matrix.setValues(array);
 						boomAnim.setStartMatrix(matrix);
-						boomAnim.setScale(2, 3000);
+//						if (batteryAnimOdd.isStarted == true){
+//				    		batteryAnimOdd.traceMatrix.getValues(array);
+//				    	}
+//				    	else{
+//				    		batteryAnimEven.traceMatrix.getValues(array);	
+//				    	}
+						bulletAnim.traceMatrix.getValues(array);
+						boomAnim.setScale(2, array[2], array[5], 3000);
+						//boomAnim.setScale(2, mWidth/2, mHeight/2, 3000);
 						boomAnim.setRepeatTimes(1);
 						boomAnim.start(true);
 						bulletAnim.start(false);
@@ -451,6 +451,9 @@ public class CupidCannonActivity extends Activity {
 				});
 		    	bulletAnim.setElements(bulletBm, new Paint());
 		    	bulletAnim.setStartMatrix(matrix);
+		    	//trace the centre of the bullet
+		    	matrix.setValues(array2);
+		    	bulletAnim.setTraceMatrix(matrix);
 		    	float tubeLength = (float) moveLength/POWERSENSITY;
 				if (tubeLength > 32)
 					tubeLength = 32;
@@ -459,8 +462,6 @@ public class CupidCannonActivity extends Activity {
 				bulletAnim.setAccelerate(vector[0], vector[1], -0.0004f, 200*(float)Math.sqrt(tubeLength));
 				bulletAnim.setRepeatTimes(1);
 				bulletAnim.start(true);
-				
-
 				bulletEnable = false;		
 		    }
 		    // return super.onTouchEvent(event);
