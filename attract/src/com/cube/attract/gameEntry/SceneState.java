@@ -118,35 +118,40 @@ final class SceneState {
 
 		}
 
-		public float moveFactor = 0.0025f;
+		public float moveFactor = 0.002f;
 
 		public void movement() {
 			float moveAngle = (float) moveFactor * dAngle;
 
 			double halfRefRadian = PI / viewsNum;
 			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].radian = pictureView[i].pAngle + moveAngle;
-
-				pictureView[i].x = radius * Math.sin(pictureView[i].radian);
-				pictureView[i].y = 0;
-				pictureView[i].z = radius * Math.cos(pictureView[i].radian);
-			}
-			for (int i = 0; i < viewsNum; i++) {
+				pictureView[i].radian = pictureView[i].pAngle + moveAngle;				
 				pictureView[i].radian = pictureView[i].radian
 						- Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
-				if(dxSpeed ==0){
-					
-				}
+				pictureView[i].pAngle = pictureView[i].radian;
 				if (pictureView[i].radian > 2 * PI - halfRefRadian) {
 					frontViewIndex = i;
 					isPostive = true;
+//					if (dxSpeed == 0) {
+//						if (pictureView[i].radian != 0) {
+//							stopmove();
+//						}
+//					}
 					// diff = 2 * PI - pictureView[i].radian;
 				} else if (pictureView[i].radian < halfRefRadian) {
 					frontViewIndex = i;
 					isPostive = false;
+					if (dxSpeed == 0) {
+						if (pictureView[i].radian != 0) {
+
+						}
+					}
 					// diff = -pictureView[i].radian;
 				}
 
+				pictureView[i].x = radius * Math.sin(pictureView[i].radian);
+				pictureView[i].y = 0;
+				pictureView[i].z = radius * Math.cos(pictureView[i].radian);
 			}
 
 			// pictureView[start].radian-2 * PI / viewsNum * start;
@@ -182,11 +187,11 @@ final class SceneState {
 				}
 			} else {
 
-				if (once) {
-					render.girlGoFront.start(true);
-					render.girlRotateFront.start(true);
-					once = false;
-				}
+//				if (once) {
+//					render.girlGoFront.start(true);
+//					render.girlRotateFront.start(true);
+//					once = false;
+//				}
 
 			}
 		}

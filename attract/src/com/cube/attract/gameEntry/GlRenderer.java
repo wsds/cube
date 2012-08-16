@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 public class GlRenderer implements Renderer {
 
@@ -344,6 +345,7 @@ public class GlRenderer implements Renderer {
 
 	public void drawGirls(GL10 gl) {
 
+		Log.i("dAngle", String.valueOf(sceneState.pictureViewGallary.dAngle));
 		sceneState.pictureViewGallary.movement();
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 	
@@ -374,7 +376,6 @@ public class GlRenderer implements Renderer {
 			// }
 
 			gl.glRotatef(angle, 0, -1, 0);
-
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
