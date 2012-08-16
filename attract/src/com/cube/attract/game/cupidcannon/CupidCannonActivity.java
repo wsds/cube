@@ -37,10 +37,17 @@ public class CupidCannonActivity extends Activity {
 		private SurfaceHolder mHolder = null;
 		private Thread mThread = null;
 		private Bitmap mBitmap = null;
-		private Canvas mCanvas = null;
+		
 		private Paint mPaint = null;
 		private boolean isRunning = true;
 		private CanvasAnimation testAnim;
+		private CanvasAnimation cupidAnim;
+		
+		public Bitmap memBm = null;
+		private Canvas mCanvas = null;
+		public Bitmap backgroundBm = null;
+		public Matrix testMatrix = new Matrix();
+		public float [] testMatrixArray; 
 		
 		//puzzle. I have no idea about the definite meaning of the flags.
 		//I use it to create the second CanvasLayer.
@@ -55,50 +62,49 @@ public class CupidCannonActivity extends Activity {
 			// TODO Auto-generated constructor stub
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
-			mThread = new Thread(this);// 创建一个绘图线程
+			backgroundBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_2);
+			//mThread = new Thread(this);// 创建一个绘图线程
 
 		}
 
 		private void initDraw() {
-
+			
+			//testMatrix.getValues(testMatrixArray);
+			
 			//Draw elements on the first layer.
-			mCanvas = mHolder.lockCanvas();
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_2);
+			
 			mBitmapWidth = mBitmap.getWidth();
 			mBitmapHeight = mBitmap.getHeight();
-			
 			mCanvas.drawRect(0, 0, mBitmapWidth, mBitmapHeight, mPaint);
 			Matrix matrix = new Matrix();
 			matrix.setScale(0.67f, 0.67f);
 			matrix.postTranslate(0, -29);
 			mCanvas.drawBitmap(mBitmap, matrix, mPaint);
+			if (mBitmap != null)
+				mBitmap.recycle();
 			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_1);
-			
 			mCanvas.drawRect(50, 50, 200, 200, mPaint);
-
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
-			
-		/*	if (mBitmap != null)
-				mBitmap.recycle();*/
+			if (mBitmap != null)
+				mBitmap.recycle();
 			
 			
 			mBitmap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_1);
-			
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mPaint.setColor(Color.BLUE);
 			mCanvas.drawRect(50, 50, 200, 200, mPaint);
-
 			mCanvas.drawColor(Color.TRANSPARENT);
 			mPaint.setAlpha(0x40);
 			mCanvas.drawBitmap(mBitmap, 100, 100, mPaint);
-			
-		/*	if (mBitmap != null)
-				mBitmap.recycle();*/
+			if (mBitmap != null)
+				mBitmap.recycle();
 			
 		
 		//Draw elements on the second layer.	
@@ -109,30 +115,74 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.ic_launcher);
            mCanvas.drawBitmap(mBitmap, 300, 500, mPaint);
            mCanvas.restore();
-           mHolder.unlockCanvasAndPost(mCanvas);
 
+           //Double bitmap represent method to solve the screen twinkle frequently problem.
+           Canvas renderer = null;
+           renderer = mHolder.lockCanvas();
+           renderer.drawBitmap(memBm, 0, 0, null);
+           mHolder.unlockCanvasAndPost(renderer);
+          
 		}
 		
 		private void initAnimationInstance(){
 			testAnim = new CanvasAnimation();
-			testAnim.setElements(mBitmap, mPaint);
-			testAnim.setTranslate(300, 300, 3000);
-			testAnim.setCurrentPosition(0, 0, 0);
-			testAnim.setRepeatTimes(2);
-			testAnim.setTranslate(300, 300, 3);
+			/*mBitmap = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_1);*/
+			testAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.ic_launcher), new Paint());
+			testAnim.setCurrentPosition(300, 100, 60);
+			testAnim.setTranslate(0, 200, 10000);
+			//testAnim.setRotate(60, 0, 0, 10000);
+			testAnim.setRepeatTimes(3);
 			testAnim.start(true);
+			
+			cupidAnim = new CanvasAnimation();
+			cupidAnim.setElements(BitmapFactory.decodeResource(getResources(),
+					R.drawable.cupid), new Paint());
+			cupidAnim.setCurrentPosition(mWidth/2 - cupidAnim.mAnimBitmapWidth,
+					mHeight -cupidAnim.mAnimBitmapHeight/2, -90);
+			cupidAnim.setRotate(180, mWidth/2, mHeight, 10000);
+			cupidAnim.setRepeatTimes(3);
+			cupidAnim.start(true);
+			
 		}
 		private void drawAinmationInstance() {
+			//mCanvas.
+			drawBackground();
 			testAnim.transformModel(mCanvas);
+			cupidAnim.transformModel(mCanvas);
 		}
+		private void drawBackground() {
+			mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());	
+		}
+		
+		private void testDraw() {
+		mBitmap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.girl_4_2);
+		mBitmapWidth = mBitmap.getWidth();
+		mBitmapHeight = mBitmap.getHeight();
+		mCanvas.drawRect(0, 0, mBitmapWidth, mBitmapHeight, mPaint);
+		Matrix matrix = new Matrix();
+		matrix.setScale(0.67f, 0.67f);
+		matrix.postTranslate(0, -29);
+		mCanvas.drawBitmap(mBitmap, matrix, mPaint);
+		if (mBitmap != null)
+			mBitmap.recycle();
+		}
+		
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			mWidth = this.getWidth();
 			mHeight = this.getHeight();
 			mPaint=new Paint();
+			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
+			mCanvas = new Canvas(memBm);
 			initAnimationInstance();
-			initDraw();
+			//initDraw();
+			//Optimize mThread start
+			isRunning = true;
+			mThread = new Thread(this);// 创建一个绘图线程
 			mThread.start();
 
 		}
@@ -154,20 +204,43 @@ public class CupidCannonActivity extends Activity {
 		@Override
 		public void run() {
 			while (isRunning) {
-				//Add security lock
-				//synchronized (mHolder) {
-					//Get the canvas and lock it
-					mCanvas = mHolder.lockCanvas();
-					//drawAinmationInstance();
-					//Unlock the canvas and post it on the screen
-					mHolder.unlockCanvasAndPost(mCanvas);
-				//}
+				
+				//testDraw();
+				//Acquire start time.
+				long startTime = System.currentTimeMillis();
+				drawAinmationInstance();
+				
+			    //Acquire end time.  
+		/*	    long endTime = System.currentTimeMillis();  
+			      
+			    //Calculate the interval time  
+			    int diffTime  = (int)(endTime - startTime);  
+			      
+			    //Ensure every update interval is 20 millseconds.  
+			    while(diffTime <= 20) {  
+			        diffTime = (int)(System.currentTimeMillis() - startTime);  
+			        //Thread wait  
+			        Thread.yield();  
+			    }*/
 				try {
-					Thread.sleep(10);
+					Thread.sleep(3);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				Canvas renderer = null;
+				synchronized (mHolder) {
+				    try {  
+				      	renderer = mHolder.lockCanvas();  
+				        if (renderer != null) {  
+				        renderer.drawBitmap(memBm, 0, 0, null);  
+				        }  
+				    } finally {  
+				         if (renderer != null)  
+				         mHolder.unlockCanvasAndPost(renderer);  
+				    } 
+				}
+		    
 			}
 		}
 
