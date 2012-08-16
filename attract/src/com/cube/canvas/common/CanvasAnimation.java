@@ -35,6 +35,8 @@ public class CanvasAnimation {
 
 		public class Scale {
 			public float ds = 0;
+			public float fx = 0;
+			public float fy = 0;
 			public float dt = 0;
 		}
 		
@@ -159,10 +161,11 @@ public class CanvasAnimation {
 			this.type = ROTATE;
 		}
 
-		public void setScale(float ds, float dt) {
+		public void setScale(float ds, float fx, float fy, float dt) {
 			this.scale.ds = ds;
 			this.scale.dt = dt;
-
+			this.scale.fx = fx;
+			this.scale.fy = fy;
 			this.type = SCALE;
 		}
 		
@@ -252,8 +255,8 @@ public class CanvasAnimation {
 						transformMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
 						traceMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
 					} else if (this.type == SCALE) {
-						transformMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt);
-						traceMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt);
+						transformMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt, scale.fx, scale.fy);
+						traceMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt, scale.fx, scale.fy);
 					} else if (this.type == ACCELERATE) {
 						float ds = (float) ((accelerate.v0 + 0.5*accelerate.a*delta)* delta);
 						transformMatrix.postTranslate(accelerate.dx * ds, accelerate.dy * ds);
@@ -272,7 +275,8 @@ public class CanvasAnimation {
 		}
 
 		public void start(boolean isStarted) {
-			reset();
+			if (isStarted == true)
+				reset();
 			this.isStarted = isStarted;
 		}
 
