@@ -49,7 +49,9 @@ public class MainActivity extends Activity {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
-					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+//					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+					about.setClassName("com.cube.attract", "com.cube.common.test.TestApp");
+					
 					mContext.startActivity(about);
 					mActivity.finish();
 					

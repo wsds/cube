@@ -70,6 +70,20 @@
                 <action android:name="com.cube.attract.gameEntry.GameEntryActivity" />
             </intent-filter>
         </activity>
+        
+        
+        <activity
+            android:name="com.cube.common.test.TestApp"
+            android:exported="true"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="com.cube.common.test.TestApp" />
+            </intent-filter>
+        </activity>
+        
 
         <service
             android:name="com.cube.common.dataservice.DataService"
@@ -77,6 +91,14 @@
             android:exported="true" >
             <intent-filter>
                 <action android:name="com.cube.common.dataservice.DataService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.cube.common.imageservice.ImageService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.cube.common.imageservice.ImageService" />
             </intent-filter>
         </service>
     </application>

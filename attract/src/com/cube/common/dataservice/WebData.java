@@ -59,7 +59,7 @@ public class WebData {
 				String SDCardPath = Environment.getExternalStorageDirectory() + "/DataService/" + "/" + app + "/";
 				File saveFile = new File(SDCardPath, key + ".json");
 				if (!saveFile.exists() && mContext != null) {
-					InputStream fin = mContext.getResources().getAssets().open("ServerData.json");
+					InputStream fin = mContext.getResources().getAssets().open(key + ".json");
 					int length = fin.available();
 					byte[] buffer = new byte[length];
 					fin.read(buffer);

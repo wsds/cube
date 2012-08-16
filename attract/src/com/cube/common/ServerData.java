@@ -94,6 +94,7 @@ public class ServerData extends Data {
 				JSONArray picturesJSON = girlJSON.getJSONArray("pictures");
 				for (int j = 0; j < picturesJSON.length(); j++) {
 					JSONObject pictureJSON = (JSONObject) picturesJSON.get(j);
+					// Special syntax to resolve the Closure problem for JAVA inner class.
 					Girl.Picture picture = new Girl().new Picture();
 					girl.pictures.add(picture);
 					picture.id = pictureJSON.getLong("id");

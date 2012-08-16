@@ -1,0 +1,166 @@
+package com.cube.common.imageservice;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.Key;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.util.Log;
+
+public class WebImage {
+	private static final String TAG = "ImageService";
+
+	public Context mContext = null;
+	String app = "attract";
+
+	public Bitmap getBitmap(String url, String fileName) {
+		Bitmap bitmap = null;
+
+		try {
+			InputStream cipherBitmapStream = null;
+			InputStream bitmapStream = null;
+			cipherBitmapStream = loadStreamFromSDCard(fileName);
+			if (cipherBitmapStream != null) {
+				bitmapStream = DecryptInputStream(cipherBitmapStream);
+			}
+			if (bitmapStream == null) {
+				bitmapStream = getImageStream(url);
+				if (bitmapStream != null) {
+					Log.d(TAG, fileName + " is downloaded!");
+					cipherBitmapStream = EncryptInputStream(bitmapStream);
+					saveStreamToSDCard(cipherBitmapStream, fileName);
+					bitmapStream.close();
+					cipherBitmapStream.close();
+					cipherBitmapStream = loadStreamFromSDCard(fileName);
+					if (cipherBitmapStream != null) {
+						bitmapStream = DecryptInputStream(cipherBitmapStream);
+					}
+				} else {
+					Log.d(TAG, fileName + " cannot be  downloaded!");
+				}
+			}
+
+			if (bitmapStream != null) {
+				bitmap = BitmapFactory.decodeStream(bitmapStream);
+				Log.d(TAG, fileName + " is loaded!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (bitmap == null) {
+			Log.d(TAG, fileName + " cannot be loaded!");
+		}
+		return bitmap;
+	}
+
+	public InputStream getImageStream(String url) throws Exception {
+		URL mURL = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) mURL.openConnection();
+		conn.setConnectTimeout(5 * 1000);
+		conn.setRequestMethod("GET");
+		int result = conn.getResponseCode();
+		if (result == HttpURLConnection.HTTP_OK) {
+			return conn.getInputStream();
+		}
+		return null;
+	}
+
+	public InputStream loadStreamFromSDCard(String fileName) {
+		InputStream fin = null;
+		try {
+			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+
+				String SDCardPath = Environment.getExternalStorageDirectory() + "/DataService/" + "/" + app + "/image/";
+				File saveFile = new File(SDCardPath, fileName);
+				if (!saveFile.exists() && mContext != null) {
+					fin = mContext.getResources().getAssets().open(fileName);
+				} else {
+					fin = new FileInputStream(saveFile);
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return fin;
+	}
+
+	public void saveStreamToSDCard(InputStream inputStream, String fileName) throws IOException {
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			String SDCardPath = Environment.getExternalStorageDirectory() + "/DataService/" + "/" + app + "/image/";
+
+			File dirFile = new File(SDCardPath);
+			if (!dirFile.exists()) {
+				dirFile.mkdir();
+			}
+			File myCaptureFile = new File(SDCardPath + fileName);
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
+
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			while ((len = inputStream.read(buffer)) != -1) {
+				bos.write(buffer, 0, len);
+			}
+			bos.flush();
+			bos.close();
+		}
+	}
+
+	private String sKey = "abcdef123456";
+
+	public InputStream EncryptInputStream(InputStream inputStream) {
+
+		CipherInputStream cipherInputStream = null;
+		try {
+			int mode = Cipher.ENCRYPT_MODE;
+			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+			byte[] keyData = sKey.getBytes();
+			DESKeySpec keySpec = new DESKeySpec(keyData);
+			Key key = keyFactory.generateSecret(keySpec);
+			Cipher cipher = Cipher.getInstance("DES");
+			cipher.init(mode, key);
+			cipherInputStream = new CipherInputStream(inputStream, cipher);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cipherInputStream;
+	}
+
+	public InputStream DecryptInputStream(InputStream inputStream) {
+
+		CipherInputStream cipherInputStream = null;
+		try {
+			int mode = Cipher.DECRYPT_MODE;
+			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+			byte[] keyData = sKey.getBytes();
+			DESKeySpec keySpec = new DESKeySpec(keyData);
+			Key key = keyFactory.generateSecret(keySpec);
+			Cipher cipher = Cipher.getInstance("DES");
+			cipher.init(mode, key);
+			cipherInputStream = new CipherInputStream(inputStream, cipher);
+
+		} catch (Exception e) {
+		}
+		return cipherInputStream;
+	}
+
+	public void initializeWebData(Context mContext) {
+		// here,we get a reference to the instance of the activity or the service that the thread is hold by,
+		// for access the files stored in the <assets> folder of the application.
+		this.mContext = mContext;
+	}
+
+}
