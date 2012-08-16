@@ -18,12 +18,11 @@ public class CanvasAnimation {
 			public float CurrentX = 0;
 			public float CurrentY = 0;
 			public float CurrentAngle = 0;
-			public Matrix positionMatrix = null;
+			public Matrix positionMatrix = new Matrix();
 		}
 		public class Translate {
 			public float dx = 0;
 			public float dy = 0;
-			//public float dz = 0;
 			public float dt = 0;
 		}
 
@@ -31,21 +30,32 @@ public class CanvasAnimation {
 			public float dr = 0;
 			public float fx = 0;
 			public float fy = 0;
-			//public float fz = 0;
 			public float dt = 0;
 		}
 
 		public class Scale {
 			public float ds = 0;
+			public float fx = 0;
+			public float fy = 0;
 			public float dt = 0;
 		}
+		
+		public class Accelerate{
+			
+			public float dx = 0;
+			public float dy = 0;
+			public float a = 0;
+			public float dt = 0;
+			public float v0 = 0;
 
+		}
 		// data
-		public String[] types = { "Translate", "Rotate", "Scale" };
+		public String[] types = { "Translate", "Rotate", "Scale", "Accelerate" };
 
 		public int TRANSLATE = 0;
 		public int ROTATE = 1;
 		public int SCALE = 2;
+		public int ACCELERATE = 3;
 		public int type = TRANSLATE;
 
 		public Callback callback = null;
@@ -55,6 +65,7 @@ public class CanvasAnimation {
 		public Translate translate = new Translate();
 		public Rotate rotate = new Rotate();
 		public Scale scale = new Scale();
+		public Accelerate accelerate = new Accelerate();
 		public CurrentPosition currentPosition = new CurrentPosition();
 		
 		
@@ -63,8 +74,10 @@ public class CanvasAnimation {
 		public float mAnimBitmapWidth = 0.0f;
 		public float mAnimBitmapHeight = 0.0f;
 		public Matrix transformMatrix = new Matrix();
+		public Matrix traceMatrix = new Matrix();
+		public Matrix backupTraceMatrix = new Matrix();
 
-		boolean isStarted = true;
+		public boolean isStarted = true;
 
 		// initialize method
 		public void addNextAnimation(CanvasAnimation animation) {
@@ -86,13 +99,8 @@ public class CanvasAnimation {
 			currentPosition.CurrentX = currentX;
 			currentPosition.CurrentY = currentY;
 			currentPosition.CurrentAngle = currentAngle;
-			/*float [] array = { 1.0f, 0.0f, currentX,
-								0.0f, 1.0f, currentY,
-								0.0f, 0.0f, 1.0f};*/
-			currentPosition.positionMatrix = new Matrix();
-			//currentPosition.positionMatrix.setValues(array);
-			transformMatrix.postTranslate(currentX, currentY);
 			
+			transformMatrix.postTranslate(currentX, currentY);
 			transformMatrix.postRotate(currentAngle, 
 					currentX + mAnimBitmapWidth/2, currentY + mAnimBitmapHeight/2);
 			//Save the initial position. 
@@ -103,6 +111,35 @@ public class CanvasAnimation {
 			currentPosition.positionMatrix.setValues(array);
 		}
 		
+		public void setStartMatrix(Matrix matrix) {
+			float [] array = {	1.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 1.0f	};
+			
+			matrix.getValues(array);
+			transformMatrix.setValues(array);
+			currentPosition.positionMatrix.setValues(array);	
+			
+		}
+		public void setTraceMatrix(Matrix matrix) {
+			float [] array = {	1.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 1.0f	};
+			
+			matrix.getValues(array);
+			traceMatrix.setValues(array);
+			backupTraceMatrix.setValues(array);	
+			
+		}
+		
+		public Matrix getTransformMatrix(){
+			return transformMatrix;
+		}
+		
+		public Matrix getTraceMatrix(){
+			return traceMatrix;
+		}
+		
 		public void setRepeatTimes(long repeatTimes) {
 			this.repeatTimes = repeatTimes;
 		}
@@ -110,7 +147,6 @@ public class CanvasAnimation {
 		public void setTranslate(float dx, float dy, float dt) {
 			this.translate.dx = dx;
 			this.translate.dy = dy;
-			/*this.translate.dz = dz;*/
 			this.translate.dt = dt;
 
 			this.type = TRANSLATE;
@@ -120,17 +156,27 @@ public class CanvasAnimation {
 			this.rotate.dr = dr;
 			this.rotate.fx = fx;
 			this.rotate.fy = fy;
-			/*this.rotate.fz = fz;*/
 			this.rotate.dt = dt;
 
 			this.type = ROTATE;
 		}
 
-		public void setScale(float ds, float dt) {
+		public void setScale(float ds, float fx, float fy, float dt) {
 			this.scale.ds = ds;
 			this.scale.dt = dt;
-
+			this.scale.fx = fx;
+			this.scale.fy = fy;
 			this.type = SCALE;
+		}
+		
+		public void setAccelerate(float dx, float dy, float a, float dt){
+			this.accelerate.dx = (float) (dx/Math.sqrt(dx*dx + dy*dy));
+			this.accelerate.dy = (float) (dy/Math.sqrt(dx*dx + dy*dy));
+			this.accelerate.a = a;
+			this.accelerate.dt = dt;
+			this.accelerate.v0 = -a*dt;
+			
+			this.type = ACCELERATE;
 		}
 
 		// logic
@@ -158,12 +204,17 @@ public class CanvasAnimation {
 					remainTime = (long) rotate.dt;
 				} else if (this.type == SCALE) {
 					remainTime = (long) scale.dt;
+				} else if (this.type == ACCELERATE) {
+					remainTime = (long) accelerate.dt;
 				}
 			}
 
 			if (remainTime == 0) {
 				if (this.callback != null) {
 					this.callback.onEnd();
+					if (this.isStarted == false) {
+						return 0;
+					}
 				}
 
 				for (int i = 0; i < this.next.size(); i++) {
@@ -198,12 +249,19 @@ public class CanvasAnimation {
 
 					if (this.type == TRANSLATE) {
 						transformMatrix.postTranslate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta );
+						traceMatrix.postTranslate(translate.dx / translate.dt * delta, translate.dy / translate.dt * delta );
 						
 					} else if (this.type == ROTATE) {
 						transformMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
-						
+						traceMatrix.postRotate(rotate.dr / rotate.dt * delta, rotate.fx, rotate.fy);
 					} else if (this.type == SCALE) {
-
+						transformMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt, scale.fx, scale.fy);
+						traceMatrix.postScale(1 + delta*(scale.ds-1)/scale.dt, 1 + delta*(scale.ds-1)/scale.dt, scale.fx, scale.fy);
+					} else if (this.type == ACCELERATE) {
+						float ds = (float) ((accelerate.v0 + 0.5*accelerate.a*delta)* delta);
+						transformMatrix.postTranslate(accelerate.dx * ds, accelerate.dy * ds);
+						traceMatrix.postTranslate(accelerate.dx * ds, accelerate.dy * ds);
+						accelerate.v0 -= accelerate.a*delta;
 					}
 				}
 
@@ -217,7 +275,8 @@ public class CanvasAnimation {
 		}
 
 		public void start(boolean isStarted) {
-			reset();
+			if (isStarted == true)
+				reset();
 			this.isStarted = isStarted;
 		}
 
@@ -225,12 +284,17 @@ public class CanvasAnimation {
 			lastMillis=0;
 			isReset = true;
 			
-			//When this animation is reseted, the animation replay from it initial state.
+			//When this animation is reseted, the animation replay from its initial state.
 			float [] array = {	0.0f, 0.0f, 0.0f,
 					0.0f, 0.0f, 0.0f,
 					0.0f, 0.0f, 0.0f	};
+			//restore the start position to make the animation play from its initial state.
 			currentPosition.positionMatrix.getValues(array);
 			transformMatrix.setValues(array);
+			//restore the particular point's initial state .
+			backupTraceMatrix.getValues(array);
+			traceMatrix.setValues(array);
+			
 			
 			for (int i = 0; i < this.next.size(); i++) {
 				CanvasAnimation nextAnimation = this.next.get(i);
