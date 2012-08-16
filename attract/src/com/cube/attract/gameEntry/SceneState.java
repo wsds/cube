@@ -61,11 +61,12 @@ final class SceneState {
 //			render.girlRotatetoPos.start(true);
 
 			dxSpeed = 0.0f;
-//			for (int i = 0; i < viewsNum; i++) {
-//				int temp = (i + frontViewIndex) % viewsNum;
-//				pictureView[temp].radian = 2 * PI / viewsNum * i;
-//				pictureView[temp].pAngle = pictureView[temp].radian;
-//			}
+			dAngle = 0;
+			for (int i = 0; i < viewsNum; i++) {
+				int temp = (i + frontViewIndex) % viewsNum;
+				pictureView[temp].radian = 2 * PI / viewsNum * i;
+				pictureView[temp].pAngle = pictureView[temp].radian;
+			}
 		}
 
 		public void stop() {
