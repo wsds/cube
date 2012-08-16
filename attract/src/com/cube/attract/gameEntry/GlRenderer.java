@@ -365,7 +365,7 @@ public class GlRenderer implements Renderer {
 			
 
 			// gl.glEnable(GL10.GL_BLEND);
-			gl.glTranslatef(0, 0f, -63f);
+			gl.glTranslatef(0, 0f, -62f);
 
 			gl.glTranslatef((float) x, (float) y, (float) z);
 			float angle = (float) (-sceneState.pictureViewGallary.pictureView[i].radian * 180 / PI) % 360;

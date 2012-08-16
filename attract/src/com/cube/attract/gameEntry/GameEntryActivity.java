@@ -67,6 +67,15 @@ public class GameEntryActivity extends Activity {
 				sceneState.pictureViewGallary.dy = event.getY() - startY;
 				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx
 						* TOUCH_SCAL_FACTOR;
+				float path = sceneState.pictureViewGallary.dx
+						* sceneState.pictureViewGallary.dx
+						+ sceneState.pictureViewGallary.dy
+						* sceneState.pictureViewGallary.dy;
+				if (path > 1600) {
+					renderer.girlGoBack.start(true);
+					renderer.girlRotateBack.start(true);
+					sceneState.pictureViewGallary.once = true;
+				}
 			}
 			break;
 		case MotionEvent.ACTION_DOWN:
@@ -82,8 +91,7 @@ public class GameEntryActivity extends Activity {
 				sceneState.pictureViewGallary.dxSpeed = 0.0f;
 				sceneState.pictureViewGallary.isStopping = false;
 				sceneState.pictureViewGallary.saveMovement();
-				renderer.girlGoBack.start(true);
-				renderer.girlRotateBack.start(true);
+
 			} else if (normalY < 505) {
 				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[1]) {
 					GAMENUMBER = 2;
@@ -124,11 +132,10 @@ public class GameEntryActivity extends Activity {
 			}
 			break;
 
-
 		case MotionEvent.ACTION_UP:
 			if (sceneState.eventType == sceneState.GIRL) {
-				renderer.girlGoFront.start(true);
-				renderer.girlRotateFront.start(true);
+//				renderer.girlGoFront.start(true);
+//				renderer.girlRotateFront.start(true);
 			} else {
 				switch (GAMENUMBER) {
 				case 1:
@@ -165,11 +172,10 @@ public class GameEntryActivity extends Activity {
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
 
-			if (sceneState.eventType == sceneState.GIRL){
-			sceneState.pictureViewGallary.dxSpeed = velocityX / 1000;
-			sceneState.pictureViewGallary.dySpeed = velocityY / 1000;				
+			if (sceneState.eventType == sceneState.GIRL) {
+				sceneState.pictureViewGallary.dxSpeed = velocityX / 1000;
+				sceneState.pictureViewGallary.dySpeed = velocityY / 1000;
 			}
-
 
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
