@@ -4,5 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">魔方石的诱惑</string>
+    <string name="about_instuction_1">魔方石的诱惑，不只是神奇</string>
+    <string name="about_instuction_2">而且还神秘</string>
+    <string name="page_indicator">page_indicator</string>
 
 </resources>
