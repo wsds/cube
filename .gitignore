@@ -1,8 +1,5 @@
 *.class
-AndroidManifest.xml
-BuildConfig.java
-R.java
 jarlist.cache
-/attract/bin/attract.apk
-/attract/bin/classes.dex
-/attract/bin/resources.ap_
+/attract/bin/*
+/attract/bin/*/
+/attract/gen/*/
