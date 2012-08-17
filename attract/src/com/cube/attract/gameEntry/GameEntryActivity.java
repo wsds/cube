@@ -72,9 +72,13 @@ public class GameEntryActivity extends Activity {
 						+ sceneState.pictureViewGallary.dy
 						* sceneState.pictureViewGallary.dy;
 				if (path > 1600) {
-//					renderer.girlGoBack.start(true);
-//					renderer.girlRotateBack.start(true);
-//					sceneState.pictureViewGallary.once = true;
+					if (sceneState.backAnimaLock) {
+						renderer.girlGoBack.start(true);
+						renderer.girlRotateBack.start(true);
+						sceneState.backAnimaLock = false;
+					}
+
+					// sceneState.pictureViewGallary.once = true;
 				}
 			}
 			break;
@@ -136,8 +140,8 @@ public class GameEntryActivity extends Activity {
 		case MotionEvent.ACTION_UP:
 			sceneState.isTouchUp = true;
 			if (sceneState.eventType == sceneState.GIRL) {
-//				renderer.girlGoFront.start(true);
-//				renderer.girlRotateFront.start(true);
+				// renderer.girlGoFront.start(true);
+				// renderer.girlRotateFront.start(true);
 			} else {
 				switch (GAMENUMBER) {
 				case 1:
@@ -175,8 +179,8 @@ public class GameEntryActivity extends Activity {
 				float velocityY) {
 
 			if (sceneState.eventType == sceneState.GIRL) {
-				sceneState.pictureViewGallary.dxSpeed = velocityX / 800;
-				sceneState.pictureViewGallary.dySpeed = velocityY / 800;
+				sceneState.pictureViewGallary.dxSpeed = velocityX / 1100;
+				sceneState.pictureViewGallary.dySpeed = velocityY / 1100;
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);

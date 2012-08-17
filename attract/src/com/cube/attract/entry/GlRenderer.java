@@ -111,9 +111,9 @@ public class GlRenderer implements Renderer {
 	public static class BufferUtil {
 	    public static FloatBuffer mBuffer;
 	    public static FloatBuffer floatToBuffer(float[] a){
-	    //先初始化buffer，数组的长度*4，因为一个float占4个字节
+	    //鍏堝垵濮嬪寲buffer锛屾暟缁勭殑闀垮害*4锛屽洜涓轰竴涓猣loat鍗�涓瓧鑺�
 	       ByteBuffer mbb = ByteBuffer.allocateDirect(a.length*4);
-	    //数组排序用nativeOrder
+	    //鏁扮粍鎺掑簭鐢╪ativeOrder
 	       mbb.order(ByteOrder.nativeOrder());
 	       mBuffer = mbb.asFloatBuffer();
 	       mBuffer.put(a);

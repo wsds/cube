@@ -20,7 +20,7 @@ final class SceneState {
 	public GlRenderer render = null;
 	boolean blending = false;
 
-	public boolean isClicked = false;
+	public boolean backAnimaLock = true;
 	public boolean isTouchUp = false;
 	
 	public int NONE = 0;
@@ -70,7 +70,9 @@ final class SceneState {
 				pictureView[temp].radian = 2 * PI / viewsNum * i;
 				pictureView[temp].pAngle = pictureView[temp].radian;
 			}
-
+			 render.girlGoFront.start(true);
+			 render.girlRotateFront.start(true);
+			 backAnimaLock = true;
 		}
 
 		public boolean isPosCorrect(long delta) {
@@ -101,7 +103,7 @@ final class SceneState {
 			else{
 				diff+=dxSpeed*delta*moveFactor;
 			}
-			if(diff <=0){
+			if(diff <=0){//when the galley rotate to the correct postion or just beyond the correct postion
 				isStopping = false;
 				stopmove();
 			}
@@ -185,7 +187,7 @@ final class SceneState {
 					}
 					isPosCorrect(deltaMillis);
 				} else {
-					dxSpeed *= (1.0f - 0.0013f * deltaMillis);
+					dxSpeed *= (1.0f - 0.0009f * deltaMillis);
 				}
 				if (Math.abs(dxSpeed) < 0.261f && !isStopping) {
 					isStopping = true;
