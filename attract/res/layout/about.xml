@@ -60,7 +60,7 @@
 			android:background="@drawable/w06" /> <RelativeLayout
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:background="@drawable/w07" />
+			android:background="@drawable/w07" />
         -->
 
         <RelativeLayout
@@ -70,23 +70,21 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" 
-            android:background="@drawable/about_background">
+            android:layout_height="fill_parent"
+            android:background="@drawable/about_background" >
 
-            <Button
-                android:id="@+id/startBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="98dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                
-                android:text="开始探寻美色之旅"
-                android:textColor="@color/TextColor"
-                android:textSize="18sp" />
+            <FrameLayout
+                android:id="@+id/zipperlayout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <com.cjg.lalian.LalianView
+                    android:id="@+id/zipperview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
+            </FrameLayout>
         </RelativeLayout>
     </com.cube.attract.about.MyScrollLayout>
 
@@ -135,7 +133,7 @@
 			<ImageView android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical" android:clickable="true"
-			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
+			android:padding="5.0dip" android:src="@drawable/page_indicator_bg" />
         -->
 
         <ImageView
@@ -153,26 +151,6 @@
             android:clickable="true"
             android:padding="5.0dip"
             android:src="@drawable/page_indicator_bg" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/animLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@drawable/about_down"
-        android:visibility="gone" >
-
-        <LinearLayout
-            android:id="@+id/downLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
-
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="center"
-                android:src="@drawable/about_up" />
-        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
