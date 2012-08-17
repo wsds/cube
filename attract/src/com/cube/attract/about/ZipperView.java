@@ -190,7 +190,7 @@ public class ZipperView extends View
 		mBgMatrix.setScale(scalewidth, scaleheight);
 		Bitmap bmp = Bitmap.createBitmap(mDrawbleBg, 0, 0, bmwidth, bmheight, mBgMatrix, true);
 		backgroundByte = new int[mWidth * mHeight];
-		bmp.getPixels(newBackgroundByte, 0, mWidth, 0, 0, mWidth, mHeight);
+		bmp.getPixels(backgroundByte, 0, mWidth, 0, 0, mWidth, mHeight);
 	}
 
 	private void drawSlide(Canvas canvas)
