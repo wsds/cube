@@ -2,30 +2,24 @@ package com.cube.attract.about;
 
 import com.cube.attract.R;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.YuvImage;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class ZipperView extends View
-{
+public class ZipperView extends View {
 
-	private Bitmap mDrawbleBg;
-	private Bitmap mDrawbleZb;
+	private Bitmap mDrawbleBackground;
+	private Bitmap mDrawbleZipperBack;
 	private Bitmap mZipper;
 	private Bitmap mLeft;
 	private Bitmap mRight;
@@ -33,7 +27,6 @@ public class ZipperView extends View
 	private int mHeight;
 	public float movedY = 0;
 
-	private Path mPath;
 	private int[] backgroundByte;
 
 	private int[] zipperBackByte;
@@ -41,160 +34,115 @@ public class ZipperView extends View
 	private int[] newBackgroundByte;
 	Context context = null;
 
-	public ZipperView(Context context, AttributeSet attrs)
-	{
+	public ZipperView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
 		init();
 	}
 
-	private void init()
-	{
-		mDrawbleBg = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-		mDrawbleZb = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_back);
+	private void init() {
+		mDrawbleBackground = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+		mDrawbleZipperBack = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_back);
 		mZipper = BitmapFactory.decodeResource(getResources(), R.drawable.zipper);
 		mLeft = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_left);
 		mRight = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_right);
-		mPath = new Path();
-
 	}
 
 	@Override
-	protected void onLayout(boolean changed, int left, int top, int right,
-			int bottom)
-	{
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 		mWidth = getWidth();
 		mHeight = getHeight();
-		getBgByte();
-		getZbByte();
+
+		backgroundByte = getBitmapByte(mDrawbleBackground);
+		zipperBackByte = getBitmapByte(mDrawbleZipperBack);
+		newBackgroundByte = new int[zipperBackByte.length];
+
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas)
-	{
+	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		drawSlide(canvas);
-		drawzipper(canvas);
-		drawleft(canvas);
-		drawright(canvas);
+		drawZipper(canvas);
+		drawLeft(canvas);
+		drawRight(canvas);
 	}
 
-	private void drawleft(Canvas canvas)
-	{
+	private void drawLeft(Canvas canvas) {
 		Bitmap left = Bitmap.createScaledBitmap(mLeft, mWidth / 2, mHeight, false);
 		canvas.drawBitmap(left, 0, movedY - left.getHeight(), new Paint());
 	}
 
-	private void drawright(Canvas canvas)
-	{
+	private void drawRight(Canvas canvas) {
 		Bitmap right = Bitmap.createScaledBitmap(mRight, mWidth / 2, mHeight, false);
 		canvas.drawBitmap(right, right.getWidth(), movedY - right.getHeight(), new Paint());
 	}
 
-	private float startX, startY;
+	// private float startX, startY;
+	private float startY;
 	Boolean istartingActivityBoolean = false;
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
-	{
+	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
-			case MotionEvent.ACTION_MOVE:
-				Log.d("ZipperView", "ACTION_MOVE");
-				float dx = event.getX() - startX;
-				float dy = event.getY() - startY;
-				movedY = dy;
+		case MotionEvent.ACTION_MOVE:
+			Log.d("ZipperView", "ACTION_MOVE");
+			// float dx = event.getX() - startX;
+			float dy = event.getY() - startY;
+			movedY = dy;
 
-				if (movedY > 600) {
-					if (istartingActivityBoolean == false) {
-						istartingActivityBoolean = true;
-						Intent about = new Intent(Intent.ACTION_MAIN);
-						about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						about.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
-						context.startActivity(about);
-						((Activity) context).finish();
-					}
+			if (movedY > 600) {
+				if (istartingActivityBoolean == false) {
+					istartingActivityBoolean = true;
+					Intent about = new Intent(Intent.ACTION_MAIN);
+					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					about.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+					context.startActivity(about);
+					((Activity) context).finish();
 				}
-				else {
-					istartingActivityBoolean = false;
-					postInvalidate();
+			} else {
+				istartingActivityBoolean = false;
+				postInvalidate();
 
-				}
-				break;
-			case MotionEvent.ACTION_DOWN:
-				Log.d("ZipperView", "ACTION_DOWN");
-				startX = event.getX();
-				startY = event.getY();
-				break;
-			default:
-				break;
+			}
+			break;
+		case MotionEvent.ACTION_DOWN:
+			Log.d("ZipperView", "ACTION_DOWN");
+			// startX = event.getX();
+			startY = event.getY();
+			break;
+		default:
+			break;
 		}
 
-//		return super.onTouchEvent(event);
+		// return super.onTouchEvent(event);
 		return true;
 	}
 
-	private void drawzipper(Canvas canvas)
-	{
+	private void drawZipper(Canvas canvas) {
 		Bitmap zipperbitmap = Bitmap.createScaledBitmap(mZipper, 50, 100, false);
 		canvas.drawBitmap(zipperbitmap, (mWidth - 50) / 2, movedY, new Paint());
 	}
 
-	private void drawZb(Canvas canvas)
-	{
-		int bmwidth = mDrawbleZb.getWidth();
-		int bmheight = mDrawbleZb.getHeight();
-		float scalewidth = Float.intBitsToFloat(mWidth) / Float.intBitsToFloat(bmwidth);
-		float scaleheight = Float.intBitsToFloat(mHeight) / Float.intBitsToFloat(bmheight);
-		Matrix mBgMatrix;
-		mBgMatrix = new Matrix();
-		mBgMatrix.postScale(scalewidth, scaleheight);
-		canvas.drawBitmap(mDrawbleZb, mBgMatrix, new Paint());
+	private int[] getBitmapByte(Bitmap bitmap) {
+		int[] bytes;
+		
+		int bitmapWidth = bitmap.getWidth();
+		int bitmapHeight = bitmap.getHeight();
+		float scaleWidth = Float.intBitsToFloat(mWidth) / Float.intBitsToFloat(bitmapWidth);
+		float scaleHeight = Float.intBitsToFloat(mHeight) / Float.intBitsToFloat(bitmapHeight);
+		Matrix mBackgroundMatrix;
+		mBackgroundMatrix = new Matrix();
+		mBackgroundMatrix.setScale(scaleWidth, scaleHeight);
+		Bitmap bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, mBackgroundMatrix, true);
+		bytes = new int[mWidth * mHeight];
+		bmp.getPixels(bytes, 0, mWidth, 0, 0, mWidth, mHeight);
+		return bytes;
 	}
 
-	private void drawbg(Canvas canvas)
-	{
-		int bmwidth = mDrawbleBg.getWidth();
-		int bmheight = mDrawbleBg.getHeight();
-		float scalewidth = Float.intBitsToFloat(mWidth) / Float.intBitsToFloat(bmwidth);
-		float scaleheight = Float.intBitsToFloat(mHeight) / Float.intBitsToFloat(bmheight);
-		Matrix mBgMatrix;
-		mBgMatrix = new Matrix();
-		mBgMatrix.postScale(scalewidth, scaleheight);
-		canvas.drawBitmap(mDrawbleBg, mBgMatrix, new Paint());
-	}
 
-	private void getZbByte()
-	{
-		int bmwidth = mDrawbleZb.getWidth();
-		int bmheight = mDrawbleZb.getHeight();
-		float scalewidth = Float.intBitsToFloat(mWidth) / Float.intBitsToFloat(bmwidth);
-		float scaleheight = Float.intBitsToFloat(mHeight) / Float.intBitsToFloat(bmheight);
-		Matrix mBgMatrix;
-		mBgMatrix = new Matrix();
-		mBgMatrix.setScale(scalewidth, scaleheight);
-		Bitmap bmp = Bitmap.createBitmap(mDrawbleZb, 0, 0, bmwidth, bmheight, mBgMatrix, true);
-		zipperBackByte = new int[mWidth * mHeight];
-		bmp.getPixels(zipperBackByte, 0, mWidth, 0, 0, mWidth, mHeight);
-		newBackgroundByte = new int[mWidth * mHeight];
-	}
-
-	private void getBgByte()
-	{
-		int bmwidth = mDrawbleBg.getWidth();
-		int bmheight = mDrawbleBg.getHeight();
-		float scalewidth = Float.intBitsToFloat(mWidth) / Float.intBitsToFloat(bmwidth);
-		float scaleheight = Float.intBitsToFloat(mHeight) / Float.intBitsToFloat(bmheight);
-		Matrix mBgMatrix;
-		mBgMatrix = new Matrix();
-		mBgMatrix.setScale(scalewidth, scaleheight);
-		Bitmap bmp = Bitmap.createBitmap(mDrawbleBg, 0, 0, bmwidth, bmheight, mBgMatrix, true);
-		backgroundByte = new int[mWidth * mHeight];
-		bmp.getPixels(backgroundByte, 0, mWidth, 0, 0, mWidth, mHeight);
-	}
-
-	private void drawSlide(Canvas canvas)
-	{
+	private void drawSlide(Canvas canvas) {
 		int centerX = mWidth / 2;
 
 		newBackgroundByte = zipperBackByte.clone();
@@ -215,8 +163,7 @@ public class ZipperView extends View
 				int exchangeByteIndex = y * mWidth + x;
 				try {
 					newBackgroundByte[exchangeByteIndex] = backgroundByte[exchangeByteIndex];
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

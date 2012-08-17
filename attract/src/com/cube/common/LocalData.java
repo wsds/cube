@@ -24,6 +24,8 @@ public class LocalData extends Data {
 	public String username = "null";
 
 	public String weibo = "null";
+	
+	public String isFisrtRun = "true";
 
 	public String isLogin = "false";
 
