@@ -214,22 +214,21 @@ public class GlRenderer implements Renderer {
 
 		logoUp.setCallback(new GLAnimation.Callback() {
 			public void onEnd() {
-				// Intent about = new Intent(Intent.ACTION_MAIN);
-				// about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				// about.setClassName("com.cube.attract",
-				// "com.cube.attract.gameEntry.GameEntryActivity");
-				// context.startActivity(about);
+				Intent about = new Intent(Intent.ACTION_MAIN);
+				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+				context.startActivity(about);
 
-				Intent service = new Intent(Intent.ACTION_MAIN);
-				service.setClassName("com.cube.attract", "com.cube.common.dataservice.DataService");
-
-				if (isServeceStarted == false) {
-					context.startService(service);
-					isServeceStarted = true;
-				} else {
-					context.stopService(service);
-					isServeceStarted = false;
-				}
+				// Intent service = new Intent(Intent.ACTION_MAIN);
+				// service.setClassName("com.cube.attract", "com.cube.common.dataservice.DataService");
+				//
+				// if (isServeceStarted == false) {
+				// context.startService(service);
+				// isServeceStarted = true;
+				// } else {
+				// context.stopService(service);
+				// isServeceStarted = false;
+				// }
 
 			}
 		});
