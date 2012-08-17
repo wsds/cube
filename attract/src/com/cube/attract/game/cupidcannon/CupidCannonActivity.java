@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,6 +20,7 @@ import com.cube.canvas.common.CanvasAnimation;
 
 public class CupidCannonActivity extends Activity {
 
+	//Context 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +39,8 @@ public class CupidCannonActivity extends Activity {
 		private Thread mThread = null;
 		
 		private boolean isRunning = true;
+		private CanvasAnimation girlAnim = null;
+		private CanvasAnimation heartAnim = null;
 		private CanvasAnimation bulletAnim = null;
 		private CanvasAnimation boomAnim = null;
 		private CanvasAnimation artilleryAnimOdd = null;
@@ -52,6 +56,9 @@ public class CupidCannonActivity extends Activity {
 		private Canvas mCanvas = null;
 		public Bitmap initBackgroundBm = null;
 		public Bitmap backgroundBm = null;
+		public Bitmap girl_4_0Bm = null;
+		public Bitmap girl_4_1Bm = null;
+		public Bitmap girl_4_2Bm = null;
 		public Bitmap powerTube1 = null;
 		public Bitmap powerTube2 = null;
 		public Bitmap powerTube3 = null;
@@ -64,6 +71,7 @@ public class CupidCannonActivity extends Activity {
 		public final int RADIUS = 80;
 		public float[] rotateCenter = {0.0f, 0.0f};
 		public float[] targetCenter = {0.0f, 0.0f};
+		public float[] lastTargetCenter = {0.0f, 0.0f};
 		public float[] boomCenter = {0.0f, 0.0f};
 		public Bitmap backgroundStage = null;
 		public Matrix testMatrix = new Matrix();
@@ -86,6 +94,12 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.welcome_background);
 			backgroundBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_3);
+			girl_4_0Bm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_3);
+			girl_4_1Bm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_2);
+			girl_4_2Bm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.girl_4_1);
 			backgroundStage = BitmapFactory.decodeResource(getResources(),
 					R.drawable.button_bar);
 			powerTube1 = BitmapFactory.decodeResource(getResources(),
@@ -106,6 +120,29 @@ public class CupidCannonActivity extends Activity {
 		private void initAnimationInstance(){
 			
 			Matrix initMatrix = new Matrix();
+			
+			girlAnim = new CanvasAnimation();
+			girlAnim.setElements(girl_4_0Bm, new Paint());
+			initMatrix.setTranslate(0, 0);
+			girlAnim.setStartMatrix(initMatrix);
+			girlAnim.setTranslate(0, 0, 0);
+			girlAnim.setRepeatTimes(1);
+			girlAnim.start(true);
+			
+			heartAnim = new CanvasAnimation();
+			heartAnim.setElements(heartBm, new Paint());
+			targetCenter[0] = 280;
+			targetCenter[1] = 180;	
+			int heartBmWidth = heartBm.getWidth();
+			int heartBmHeight = heartBm.getHeight();
+//			mCanvas.drawBitmap(heartBm, targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2, new Paint());
+			initMatrix.setTranslate(targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2);
+			lastTargetCenter[0] = targetCenter[0];
+			lastTargetCenter[1] = targetCenter[1];
+			heartAnim.setStartMatrix(initMatrix);
+			heartAnim.setTranslate(0, 0, 0);
+			heartAnim.setRepeatTimes(1);
+			heartAnim.start(true);
 			
 			artilleryAnimOdd = new CanvasAnimation();
 			artilleryAnimOdd.setCallback(new CanvasAnimation.Callback() {
@@ -215,9 +252,6 @@ public class CupidCannonActivity extends Activity {
 		}
 		
 		private void drawBackground() {
-			mCanvas.drawBitmap(initBackgroundBm, 0, 0, new Paint());
-			if (achievedCounter == -1)
-				mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
 			Matrix testMatrix = new Matrix();
 			testMatrix.setTranslate(-(480-mWidth)/2, mHeight-290);
 			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
@@ -236,34 +270,265 @@ public class CupidCannonActivity extends Activity {
 			}
 			
 			//
-			targetCenter[0] = 280;
-			targetCenter[1] = 180;	
-			int heartBmWidth = heartBm.getWidth();
-			int heartBmHeight = heartBm.getHeight();
-			mCanvas.drawBitmap(heartBm, targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2, new Paint());
+//			targetCenter[0] = 280;
+//			targetCenter[1] = 180;	
+//			int heartBmWidth = heartBm.getWidth();
+//			int heartBmHeight = heartBm.getHeight();
+//			mCanvas.drawBitmap(heartBm, targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2, new Paint());
 		}
-		public int achievedCounter = -1;
-		private void reconfigureAnimationInstance() {
+		public int achievedCounter = 0;
+		public Matrix reconfigureMatrix = new Matrix();
+		private int reconfigureAnimationInstance() {
 			if (achieved == false)
-				return;
+				return 0;
 			achievedCounter++;
 			int flag = achievedCounter%3;
 			switch(flag) {
 			case 0:
+				
 				break;
 			case 1:
+				girlAnim.setElements(girl_4_1Bm, new Paint());
+				reconfigureMatrix.setTranslate(0, 0);
+				girlAnim.setStartMatrix(reconfigureMatrix);
+				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setRepeatTimes(1);
+				girlAnim.start(true);
+				girlAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						// TODO Auto-generated method stub
+						girlAnim.setElements(girl_4_1Bm, new Paint());
+						float [] array = {
+											0.0f, 0.0f, 0.0f,
+											0.0f, 0.0f, 0.0f,
+											0.0f, 0.0f, 0.0f
+						};
+						girlAnim.traceMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						girlAnim.setStartMatrix(reconfigureMatrix);
+						girlAnim.setTranslate(-200, -400, 2000);
+						girlAnim.setRepeatTimes(1);
+						girlAnim.start(true);
+						girlAnim.setCallback(new CanvasAnimation.Callback() {
+							
+							@Override
+							public void onEnd() {
+								// TODO Auto-generated method stub
+								lastTargetCenter[0] = targetCenter[0];
+								lastTargetCenter[1] = targetCenter[1];
+								targetCenter[1] = 300;
+								targetCenter[0] = 200;
+								targetCenter[1] = 300;
+								girlAnim.setCallback(null);
+							}
+						});
+					}
+				});
+				Paint paint = new Paint();
+				paint.setAlpha(0x00);
+				heartAnim.setElements(heartBm, paint);
+				float [] array1 = {
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f
+				};
+				heartAnim.transformMatrix.getValues(array1);
+				reconfigureMatrix.setValues(array1);
+				heartAnim.setStartMatrix(reconfigureMatrix);
+				heartAnim.setTranslate(0, 0, 5500);
+				heartAnim.setRepeatTimes(1);
+				heartAnim.start(true);
+				heartAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						// TODO Auto-generated method stub
+						float [] array = {
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f
+						};
+						heartAnim.transformMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						heartAnim.setStartMatrix(reconfigureMatrix);
+						heartAnim.setElements(heartBm, new Paint());
+						heartAnim.setTranslate(targetCenter[0]-lastTargetCenter[0], 
+								targetCenter[1]-lastTargetCenter[1], 2000);
+						heartAnim.setRepeatTimes(1);
+						heartAnim.start(true);
+						heartAnim.setCallback(null);
+					}
+				});
 				break;	
 			case 2:
+				girlAnim.setElements(girl_4_2Bm, new Paint());
+				float [] array = {
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f
+				};
+				girlAnim.transformMatrix.getValues(array);
+				reconfigureMatrix.setValues(array);
+				girlAnim.setStartMatrix(reconfigureMatrix);
+				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setRepeatTimes(1);
+				girlAnim.start(true);
+				girlAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						// TODO Auto-generated method stub
+						float [] array = {
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f
+						};
+						girlAnim.transformMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						girlAnim.setStartMatrix(reconfigureMatrix);
+						girlAnim.setTranslate(-100, 100, 1500);
+						girlAnim.setRepeatTimes(1);
+						girlAnim.start(true);
+						girlAnim.setCallback(new CanvasAnimation.Callback() {
+							
+							@Override
+							public void onEnd() {
+								// TODO Auto-generated method stub
+								float [] array = {
+										0.0f, 0.0f, 0.0f,
+										0.0f, 0.0f, 0.0f,
+										0.0f, 0.0f, 0.0f
+								};
+								girlAnim.transformMatrix.getValues(array);
+								reconfigureMatrix.setValues(array);
+								girlAnim.setStartMatrix(reconfigureMatrix);
+								girlAnim.setTranslate(240, 240, 3500);
+								girlAnim.setRepeatTimes(1);
+								girlAnim.start(true);
+								girlAnim.setCallback(new CanvasAnimation.Callback() {
+									
+									@Override
+									public void onEnd() {
+										// TODO Auto-generated method stub
+										float [] array = {
+												0.0f, 0.0f, 0.0f,
+												0.0f, 0.0f, 0.0f,
+												0.0f, 0.0f, 0.0f
+										};
+										girlAnim.transformMatrix.getValues(array);
+										reconfigureMatrix.setValues(array);
+										girlAnim.setStartMatrix(reconfigureMatrix);
+										girlAnim.setTranslate(100, -100, 1500);
+										girlAnim.setRepeatTimes(1);
+										girlAnim.start(true);
+										girlAnim.setCallback(new CanvasAnimation.Callback() {
+											
+											@Override
+											public void onEnd() {
+												// TODO Auto-generated method stub
+												float [] array = {
+														0.0f, 0.0f, 0.0f,
+														0.0f, 0.0f, 0.0f,
+														0.0f, 0.0f, 0.0f
+												};
+												girlAnim.transformMatrix.getValues(array);
+												reconfigureMatrix.setValues(array);
+												girlAnim.setStartMatrix(reconfigureMatrix);
+												girlAnim.setTranslate(-240, -240, 3500);
+												girlAnim.setRepeatTimes(1);
+												girlAnim.start(true);
+												girlAnim.setCallback(new CanvasAnimation.Callback() {
+													
+													@Override
+													public void onEnd() {
+														// TODO Auto-generated method stub
+														float [] array = {
+																0.0f, 0.0f, 0.0f,
+																0.0f, 0.0f, 0.0f,
+																0.0f, 0.0f, 0.0f
+														};
+														girlAnim.transformMatrix.getValues(array);
+														reconfigureMatrix.setValues(array);
+														girlAnim.setStartMatrix(reconfigureMatrix);
+														girlAnim.setTranslate(200, 400, 3000);
+														girlAnim.setRepeatTimes(1);
+														girlAnim.start(true);
+														girlAnim.setCallback(null);
+//														lastTargetCenter[0] = targetCenter[0];
+//														lastTargetCenter[1] = targetCenter[1];
+//	
+//														targetCenter[0] = 280;
+//														targetCenter[1] = 180;
+													}
+												});
+	
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+				Paint paint1 = new Paint();
+				paint1.setAlpha(0x00);
+				heartAnim.setElements(heartBm, paint1);
+				float [] array2 = {
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f
+				};
+				heartAnim.transformMatrix.getValues(array2);
+				reconfigureMatrix.setValues(array2);
+				heartAnim.setStartMatrix(reconfigureMatrix);
+				heartAnim.setTranslate(0, 0, 16500);
+				heartAnim.setRepeatTimes(1);
+				heartAnim.start(true);
+				heartAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						// TODO Auto-generated method stub
+						heartAnim.setElements(heartBm, new Paint());
+						float [] array = {
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f
+						};
+						heartAnim.transformMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						heartAnim.setStartMatrix(reconfigureMatrix);
+						lastTargetCenter[0] = targetCenter[0];
+						lastTargetCenter[1] = targetCenter[1];
+						targetCenter[0] = 280;
+						targetCenter[1] = 180;
+						heartAnim.setTranslate(targetCenter[0]-lastTargetCenter[0], 
+								targetCenter[1]-lastTargetCenter[1], 2000);
+						heartAnim.setRepeatTimes(1);
+						heartAnim.start(true);
+						heartAnim.setCallback(null);
+						girlAnim.setElements(girl_4_0Bm, new Paint());
+						achievedCounter++;
+					}
+				});
 				break;
 			default :
 				break;
 			}
 			achieved = false;
+			return 0;
 		}
 		private void drawAnimationInstance() {
-			
+			mCanvas.drawBitmap(initBackgroundBm, 0, 0, new Paint());
+			girlAnim.transformModel(mCanvas);
+			heartAnim.transformModel(mCanvas);
 			drawBackground();
-			reconfigureAnimationInstance();
+			//if (achieved) {
+				reconfigureAnimationInstance();
+				//achieved = false;
+			//}
 			if (bulletAnim != null)
 				bulletAnim.transformModel(mCanvas);
 
@@ -343,6 +608,13 @@ public class CupidCannonActivity extends Activity {
 			}
 		}
 		
+
+//			MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.bomb);
+//			mediaPlayer.stop();
+//			mediaPlayer.prepare();
+//			mediaPlayer.start();
+
+
 		public boolean powerTubeEnable = false;
 		public boolean bulletEnable = false;
 		public boolean achieved = false;
@@ -431,7 +703,9 @@ public class CupidCannonActivity extends Activity {
 									achieved = true;
 								Paint paint = new Paint();
 								paint.setAlpha(0x00);
+								bulletAnim.setElements(bulletBm, paint);
 								boomAnim.setElements(boomBm, paint);
+								boomAnim.start(false);
 								
 								
 							}
@@ -448,6 +722,7 @@ public class CupidCannonActivity extends Activity {
 						boomAnim.setRepeatTimes(1);
 						boomAnim.start(true);
 						bulletAnim.start(false);
+						
 					}
 				});
 		    	bulletAnim.setElements(bulletBm, new Paint());

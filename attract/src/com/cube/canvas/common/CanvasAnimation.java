@@ -78,6 +78,7 @@ public class CanvasAnimation {
 		public Matrix backupTraceMatrix = new Matrix();
 
 		public boolean isStarted = true;
+		public boolean isPaused = false;
 
 		// initialize method
 		public void addNextAnimation(CanvasAnimation animation) {
@@ -182,6 +183,8 @@ public class CanvasAnimation {
 		// logic
 
 		long lastMillis = 0;
+		long delta = 0;
+		boolean alreadyPaused = false;
 		long remainTime = 0;
 		long remainRepeatTimes = -9999;
 		public long transformCount = 0;
@@ -234,12 +237,14 @@ public class CanvasAnimation {
 					}
 				}
 
-			} else {
+			} else if (!isPaused){			//if the Animation is paused, the Animation stay at its last state.
 
 				long currentMillis = System.currentTimeMillis();
 
 				if (lastMillis != 0 && remainTime > 0) {
-					long delta = currentMillis - lastMillis;
+					if (!alreadyPaused)		//if last state is paused, we use last delta time.
+						delta = currentMillis - lastMillis;
+					
 					if (remainTime > delta) {
 						remainTime = remainTime - delta;
 					} else {
@@ -268,6 +273,7 @@ public class CanvasAnimation {
 				lastMillis = currentMillis;
 				transformCount++;
 			}
+			alreadyPaused = isPaused;
 			canvas.drawBitmap(mAnimBitmap, transformMatrix, mAnimPaint);
 			//gl.glMultMatrixf(transform.data);
 
@@ -279,7 +285,10 @@ public class CanvasAnimation {
 				reset();
 			this.isStarted = isStarted;
 		}
-
+		
+		public void pause(boolean isPaused){
+			this.isPaused = isPaused;
+		}
 		public void reset() {
 			lastMillis=0;
 			isReset = true;
