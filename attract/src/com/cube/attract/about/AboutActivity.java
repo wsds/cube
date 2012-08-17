@@ -4,13 +4,15 @@ import com.cube.attract.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class AboutActivity extends Activity implements OnViewChangeListener
-{
+
+
+public class AboutActivity extends Activity implements OnViewChangeListener {
 
 	private MyScrollLayout mScrollLayout;
 	private ImageView[] imgs;
@@ -22,18 +24,25 @@ public class AboutActivity extends Activity implements OnViewChangeListener
 	private LinearLayout pointLLayout;
 	final Context mContext = this;
 	final Activity mActivity = this;
-
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
 		initView();
+//		intent();
 	}
 
-
-	private void initView()
-	{
+//	private void intent(){
+//		if(zipperView.mYp == -780){
+//			Intent about = new Intent(Intent.ACTION_MAIN);
+//			about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			about.setClassName("com.cube.attract.about.About", "com.cube.attract.entry.EntryActivity");
+//			mContext.startActivity(about);
+//			mActivity.finish();
+//		}
+//	}
+	
+	private void initView() {
 		mScrollLayout = (MyScrollLayout) findViewById(R.id.ScrollLayout);
 		pointLLayout = (LinearLayout) findViewById(R.id.llayout);
 		mainRLayout = (RelativeLayout) findViewById(R.id.mainRLayout);
@@ -50,13 +59,11 @@ public class AboutActivity extends Activity implements OnViewChangeListener
 	}
 
 	@Override
-	public void OnViewChange(int position)
-	{
+	public void OnViewChange(int position) {
 		setcurrentPoint(position);
 	}
 
-	private void setcurrentPoint(int position)
-	{
+	private void setcurrentPoint(int position) {
 		if (position < 0 || position > count - 1 || currentItem == position) {
 			return;
 		}
