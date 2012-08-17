@@ -345,7 +345,7 @@ public class GlRenderer implements Renderer {
 
 	public void drawGirls(GL10 gl) {
 
-		Log.i("dAngle", String.valueOf(sceneState.pictureViewGallary.dAngle));
+
 		sceneState.pictureViewGallary.movement();
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 	

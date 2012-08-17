@@ -9,7 +9,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.cube.attract.R;
-import com.cube.common.dataservice.DataService;
 import com.cube.opengl.common.GLAnimation;
 import com.cube.opengl.common.Utils;
 
@@ -106,20 +105,21 @@ public class GlRenderer implements Renderer {
 		quadTextureBufferBackground = BufferUtil.floatToBuffer(quadTextureBackground);
 
 	}
-
+	
+	 
+	 
 	public static class BufferUtil {
-		public static FloatBuffer mBuffer;
-
-		public static FloatBuffer floatToBuffer(float[] a) {
-			// 先初始化buffer，数组的长度*4，因为一个float占4个字节
-			ByteBuffer mbb = ByteBuffer.allocateDirect(a.length * 4);
-			// 数组排序用nativeOrder
-			mbb.order(ByteOrder.nativeOrder());
-			mBuffer = mbb.asFloatBuffer();
-			mBuffer.put(a);
-			mBuffer.position(0);
-			return mBuffer;
-		}
+	    public static FloatBuffer mBuffer;
+	    public static FloatBuffer floatToBuffer(float[] a){
+	    //鍏堝垵濮嬪寲buffer锛屾暟缁勭殑闀垮害*4锛屽洜涓轰竴涓猣loat鍗�涓瓧鑺�
+	       ByteBuffer mbb = ByteBuffer.allocateDirect(a.length*4);
+	    //鏁扮粍鎺掑簭鐢╪ativeOrder
+	       mbb.order(ByteOrder.nativeOrder());
+	       mBuffer = mbb.asFloatBuffer();
+	       mBuffer.put(a);
+	       mBuffer.position(0);
+	       return mBuffer;
+	    }
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -157,17 +157,16 @@ public class GlRenderer implements Renderer {
 	public GLAnimation rotate2Animation = new GLAnimation();
 	public GLAnimation cube1Animation = new GLAnimation();
 	public GLAnimation cube2Animation = new GLAnimation();
-
+	
 	public GLAnimation logoDown = new GLAnimation();
 	public GLAnimation logoUp = new GLAnimation();
-
-	boolean isServeceStarted = false;
+	
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
-		sceneState.screenHeight = height;
-		sceneState.screenWidth = width;
-		Log.e("screen", "sceneState.screenHeight=" + height);
-		Log.e("screen", "sceneState.screenWidth=" + width);
+		sceneState.screenHeight=height;
+		sceneState.screenWidth=width;
+		Log.e("screen", "sceneState.screenHeight="+height);
+		Log.e("screen", "sceneState.screenWidth="+width);
 
 		// reload textures
 		loadTexture(gl);
@@ -189,7 +188,7 @@ public class GlRenderer implements Renderer {
 
 		testAnimation.addNextAnimation(test1Animation);
 		test1Animation.setRepeatTimes(5);
-
+		
 		test1Animation.setTranslate(-1f, -1f, -0f, 1000.0f);
 		test1Animation.addNextAnimation(test2Animation);
 		test2Animation.setTranslate(1f, 1f, -0f, 1000.0f);
@@ -202,34 +201,23 @@ public class GlRenderer implements Renderer {
 
 		rotate1Animation.setRotate(360f, 0, 0f, -1f, 30000f);
 		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
-
+		
 		testAnimation.addNextAnimation(rotate2Animation);
 
 		rotate2Animation.setRotate(1440f, 0, 1f, 0f, 5000f);
-
+		
 		logoDown.setTranslate(0f, 0.1f, -0.5f, 100.0f);
 		logoDown.start(false);
 		logoUp.setTranslate(0f, -0.1f, 0.5f, 100.0f);
 		logoUp.start(false);
-
+		
+		
 		logoUp.setCallback(new GLAnimation.Callback() {
 			public void onEnd() {
 				Intent about = new Intent(Intent.ACTION_MAIN);
 				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 				context.startActivity(about);
-
-				// Intent service = new Intent(Intent.ACTION_MAIN);
-				// service.setClassName("com.cube.attract", "com.cube.common.dataservice.DataService");
-				//
-				// if (isServeceStarted == false) {
-				// context.startService(service);
-				// isServeceStarted = true;
-				// } else {
-				// context.stopService(service);
-				// isServeceStarted = false;
-				// }
-
 			}
 		});
 
@@ -308,7 +296,7 @@ public class GlRenderer implements Renderer {
 
 		gl.glTranslatef(0, 1.2f, -3.8f);
 
-		// testAnimation.transformModel(gl);
+//		testAnimation.transformModel(gl);
 		logoDown.transformModel(gl);
 		logoUp.transformModel(gl);
 
