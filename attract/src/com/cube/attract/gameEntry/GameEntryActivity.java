@@ -45,6 +45,7 @@ public class GameEntryActivity extends Activity {
 
 	@Override
 	protected void onResume() {
+		sceneState.notJustComeIn=false;
 		super.onResume();
 		surface.onResume();
 	}
@@ -76,9 +77,10 @@ public class GameEntryActivity extends Activity {
 						renderer.girlGoBack.start(true);
 						renderer.girlRotateBack.start(true);
 						sceneState.backAnimaLock = false;
+						sceneState.goFrontPermit = true;
+						sceneState.notJustComeIn = true;
 					}
 
-					// sceneState.pictureViewGallary.once = true;
 				}
 			}
 			break;
@@ -101,6 +103,8 @@ public class GameEntryActivity extends Activity {
 				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[1]) {
 					GAMENUMBER = 2;
 					Log.i("come in game", "2");
+					sceneState.isSelected[1] = true;
+
 					// 2
 
 				} else if (normalX > 60 && normalX < 181
@@ -109,29 +113,36 @@ public class GameEntryActivity extends Activity {
 					Log.i("come in game", "1");
 					// 1
 					sceneState.isSelected[0] = true;
-					renderer.ploygonColor.start(true);
+
 
 				} else if (normalX < 420 && normalX > 300
 						&& !sceneState.isLocked[2]) {
 					GAMENUMBER = 3;
 					Log.i("come in game", "3");
+					sceneState.isSelected[2] = true;
+
 					// 3
 				}
 			} else if (normalY < 620 && normalY > 545) {
 				if (normalX > 120 && normalX < 239 && !sceneState.isLocked[3]) {
 					GAMENUMBER = 4;
 					Log.i("come in game", "4");
+					sceneState.isSelected[3] = true;
+
 					// 4
 				} else if (normalX > 239 && normalX < 361
 						&& !sceneState.isLocked[4]) {
 					GAMENUMBER = 5;
 					Log.i("come in game", "5");
+					sceneState.isSelected[4] = true;
+
 					// 5
 				}
 			} else if (normalY > 650 && normalX < 737) {
 				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[5]) {
 					Log.i("come in game", "6");
 					GAMENUMBER = 6;
+					sceneState.isSelected[5] = true;
 					// 6
 				}
 			}
@@ -140,8 +151,6 @@ public class GameEntryActivity extends Activity {
 		case MotionEvent.ACTION_UP:
 			sceneState.isTouchUp = true;
 			if (sceneState.eventType == sceneState.GIRL) {
-				// renderer.girlGoFront.start(true);
-				// renderer.girlRotateFront.start(true);
 			} else {
 				switch (GAMENUMBER) {
 				case 1:
@@ -149,17 +158,30 @@ public class GameEntryActivity extends Activity {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					about.setClassName("com.cube.attract",
-							"com.cube.attract.entry.EntryActivity");
+							"com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 					break;
 				case 2:
+					sceneState.isSelected[1] = false;
 
 					break;
 				case 3:
+					sceneState.isSelected[2] = false;
+
+					break;
 				case 4:
+					sceneState.isSelected[3] = false;
+
+					break;
 				case 5:
+					sceneState.isSelected[4] = false;
+
+					break;
 				case 6:
+					sceneState.isSelected[5] = false;
+
+					break;
 				}
 			}
 			sceneState.eventType = sceneState.NONE;
