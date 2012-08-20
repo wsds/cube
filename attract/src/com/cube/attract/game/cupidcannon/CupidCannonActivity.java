@@ -20,7 +20,7 @@ import com.cube.canvas.common.CanvasAnimation;
 
 public class CupidCannonActivity extends Activity {
 
-	//Context 
+	Context mContext = null;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,6 +28,7 @@ public class CupidCannonActivity extends Activity {
 		// 强制为竖屏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(new AnimView(this));
+		mContext = this;
 	}
 
 	public class AnimView extends SurfaceView implements
@@ -47,6 +48,7 @@ public class CupidCannonActivity extends Activity {
 		private CanvasAnimation artilleryAnimEven = null;
 		private CanvasAnimation batteryAnimOdd = null;
 		private CanvasAnimation batteryAnimEven = null;
+	
 //		public class BulletBoom {
 //			public CanvasAnimation bulletAnimElement = null;
 //			public CanvasAnimation boomAnim = null;
@@ -79,11 +81,11 @@ public class CupidCannonActivity extends Activity {
 		
 		//puzzle. I have no idea about the definite meaning of the flags.
 		//I use it to create the second CanvasLayer.
-		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
-                Canvas.CLIP_SAVE_FLAG |  
-                Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |  
-                Canvas.FULL_COLOR_LAYER_SAVE_FLAG |  
-                Canvas.CLIP_TO_LAYER_SAVE_FLAG; 
+//		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
+//                Canvas.CLIP_SAVE_FLAG |  
+//                Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |  
+//                Canvas.FULL_COLOR_LAYER_SAVE_FLAG |  
+//                Canvas.CLIP_TO_LAYER_SAVE_FLAG; 
 		
 		public AnimView(Context context) {
 			super(context);
@@ -525,10 +527,7 @@ public class CupidCannonActivity extends Activity {
 			girlAnim.transformModel(mCanvas);
 			heartAnim.transformModel(mCanvas);
 			drawBackground();
-			//if (achieved) {
-				reconfigureAnimationInstance();
-				//achieved = false;
-			//}
+			reconfigureAnimationInstance();
 			if (bulletAnim != null)
 				bulletAnim.transformModel(mCanvas);
 
@@ -609,7 +608,7 @@ public class CupidCannonActivity extends Activity {
 		}
 		
 
-//			MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.bomb);
+//			MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bomb);
 //			mediaPlayer.stop();
 //			mediaPlayer.prepare();
 //			mediaPlayer.start();
@@ -723,6 +722,16 @@ public class CupidCannonActivity extends Activity {
 						boomAnim.start(true);
 						bulletAnim.start(false);
 						
+						try
+						{
+							MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bomb);
+							mediaPlayer.stop();
+							mediaPlayer.prepare();
+							mediaPlayer.start();
+						}
+						catch (Exception e)
+						{		
+						}
 					}
 				});
 		    	bulletAnim.setElements(bulletBm, new Paint());
