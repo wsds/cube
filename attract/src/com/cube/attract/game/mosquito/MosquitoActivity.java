@@ -15,13 +15,20 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.cube.attract.R;
-import com.cube.canvas.common.CanvasAnimation;
+import com.cube.canvas.common.AnimationManager;
+import com.cube.canvas.common.AnimationManager.AnimationBitmap;
 
 public class MosquitoActivity extends Activity {
+
+	private static final String TAG = "MosquitoActivity";
+
+	Context context;
+	public Bitmap memBitmap;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		context = this;
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(new AnimView(this));
 	}
@@ -32,76 +39,48 @@ public class MosquitoActivity extends Activity {
 		private int mHeight = 0;
 		private SurfaceHolder mHolder = null;
 		private Thread mThread = null;
-
-		private boolean isRunning = true;
-		private CanvasAnimation bulletAnim = null;
-		private CanvasAnimation boomAnim = null;
-		private CanvasAnimation artilleryAnimOdd = null;
-		private CanvasAnimation artilleryAnimEven = null;
-		private CanvasAnimation batteryAnimOdd = null;
-		private CanvasAnimation batteryAnimEven = null;
-
-		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
-		public Bitmap initBackgroundBm = null;
-		public Bitmap backgroundBm = null;
-		public Bitmap powerTube1 = null;
-		public Bitmap powerTube2 = null;
-		public Bitmap powerTube3 = null;
-		public Bitmap heartBm = null;
-		public Bitmap bulletBm = null;
-		public Bitmap boomBm = null;
 
-		public float[] powerTubeBaseAdress = { 0.0f, 0.0f };
-		public final int POWERSENSITY = 15;
-		public final int RADIUS = 80;
-		public float[] rotateCenter = { 0.0f, 0.0f };
-		public float[] targetCenter = { 0.0f, 0.0f };
-		public float[] boomCenter = { 0.0f, 0.0f };
-		public Bitmap backgroundStage = null;
-		public Matrix testMatrix = new Matrix();
-		public float[] testMatrixArray;
+		public AnimationBitmap background = null;
+		public AnimationBitmap cannon_based = null;
+		public AnimationBitmap cannon = null;
+		public AnimationBitmap mosquito1 = null;
+		public AnimationBitmap mosquito2 = null;
+		public AnimationBitmap shell = null;
+
+		public AnimationManager animationManager = null;
+
+		DrawThread drawThread = null;
 
 		public AnimView(Context context) {
 			super(context);
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
-			initBackgroundBm = BitmapFactory.decodeResource(getResources(), R.drawable.welcome_background);
-			backgroundBm = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_3);
+			animationManager = new AnimationManager(context);
+
 		}
 
 		private void initAnimationInstance() {
+			background = animationManager.addAnimationBitmap(R.drawable.game2_background);
+			background.matrix.setTranslate(-(480 - mWidth) / 2, mHeight - 290);
+			cannon_based = animationManager.addAnimationBitmap(R.drawable.game2_cannon_based);
+			cannon_based.matrix.setTranslate((mWidth - 271) / 2, mHeight - 122);
+			cannon = animationManager.addAnimationBitmap(R.drawable.game2_cannon2);
+			cannon.matrix.setTranslate((mWidth - 149) / 2, mHeight - 142);
+			mosquito1 = animationManager.addAnimationBitmap(R.drawable.game2_mosquito1);
+			mosquito1.matrix.setTranslate((mWidth - 36) / 2, 360);
+			mosquito2 = animationManager.addAnimationBitmap(R.drawable.game2_mosquito2);
+			mosquito2.matrix.setTranslate((mWidth - 500) / 2, 250);
 
+			shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
+			shell.matrix.setTranslate(260, 650);
 		}
 
-		private void drawBackground() {
-			Paint paint= new Paint();
-			mCanvas.drawBitmap(initBackgroundBm, 0, 0, new Paint());
-			if (achievedCounter == -1)
-				mCanvas.drawBitmap(backgroundBm, 0, 0, new Paint());
-			Matrix testMatrix = new Matrix();
-			testMatrix.setTranslate(-(480 - mWidth) / 2, mHeight - 290);
-			
-			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
-		}
 
-		public int achievedCounter = -1;
 
 		private void drawAnimationInstance() {
+			animationManager.draw();
 
-			drawBackground();
-//			if (bulletAnim != null)
-//				bulletAnim.transformModel(mCanvas);
-//
-//			batteryAnimOdd.transformModel(mCanvas);
-//			batteryAnimEven.transformModel(mCanvas);
-//			batteryAnimOdd.transformModel(mCanvas);
-//
-//			artilleryAnimOdd.transformModel(mCanvas);
-//			artilleryAnimEven.transformModel(mCanvas);
-//			artilleryAnimOdd.transformModel(mCanvas);
-//			if (boomAnim != null)
-//				boomAnim.transformModel(mCanvas);
 
 		}
 
@@ -109,26 +88,25 @@ public class MosquitoActivity extends Activity {
 		public void surfaceCreated(SurfaceHolder holder) {
 			mWidth = this.getWidth();
 			mHeight = this.getHeight();
-			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
-			mCanvas = new Canvas(memBm);
+
+			memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
+			mCanvas = new Canvas(memBitmap);
+			animationManager.mCanvas = mCanvas;
 			initAnimationInstance();
 
-			isRunning = true;
-			DrawThread drawThread = new DrawThread();
+			drawThread = new DrawThread();
 			mThread = new Thread(drawThread);
-			mThread.start();
 
 		}
 
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+			mThread.start();
 		}
 
 		@Override
 		public void surfaceDestroyed(SurfaceHolder holder) {
-			isRunning = false;
-
+			drawThread.isRunning = false;
 		}
 
 		public float startX = 0;
@@ -164,8 +142,11 @@ public class MosquitoActivity extends Activity {
 		}
 
 		class DrawThread implements Runnable {
+			public Boolean isRunning = true;
+
 			@Override
 			public void run() {
+
 				while (isRunning) {
 
 					drawAnimationInstance();
@@ -180,7 +161,7 @@ public class MosquitoActivity extends Activity {
 						try {
 							renderer = mHolder.lockCanvas();
 							if (renderer != null) {
-								renderer.drawBitmap(memBm, 0, 0, null);
+								renderer.drawBitmap(memBitmap, 0, 0, null);
 							}
 						} finally {
 							if (renderer != null)
