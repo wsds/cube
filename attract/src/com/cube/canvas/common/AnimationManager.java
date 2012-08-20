@@ -28,15 +28,43 @@ public class AnimationManager {
 		return animationBitmap;
 	}
 
+	public void removeAnimationBitmap(AnimationBitmap animationBitmap) {
+		animationBitmaps.remove(animationBitmap);
+	}
+
 	public void draw() {
-		for(AnimationBitmap animationBitmap : animationBitmaps){
+		for (AnimationBitmap animationBitmap : animationBitmaps) {
 			mCanvas.drawBitmap(animationBitmap.bitmap, animationBitmap.matrix, paint);
+			@SuppressWarnings("unchecked")
+			ArrayList<CanvasAnimation2> animationPool = (ArrayList<CanvasAnimation2>) animationBitmap.animationPool.clone();
+			// Double-buffering here to resolve the ConcurrentModificationException, which to caused by multiple thread accessing.
+			for (CanvasAnimation2 animation : animationPool) {
+				boolean isFinished = animation.transformModel(animationBitmap.matrix);
+				if (isFinished == true) {
+					animationBitmap.removeAnimation(animation);
+					if (animation.children != null) {
+						for (CanvasAnimation2 child : animation.children) {
+							animationBitmap.addAnimation(child);
+						}
+					}
+				}
+			}
+			animationPool.clear();
 		}
 	}
 
 	public class AnimationBitmap {
 		public Bitmap bitmap = null;
 		public Matrix matrix = null;
+		ArrayList<CanvasAnimation2> animationPool = new ArrayList<CanvasAnimation2>();
+		
+		public void addAnimation(CanvasAnimation2 animation) {
+				animationPool.add(animation);
+		}
+
+		public void removeAnimation(CanvasAnimation2 animation) {
+			animationPool.remove(animation);
+		}
 	}
 
 }

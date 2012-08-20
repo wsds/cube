@@ -1,13 +1,15 @@
 package com.cube.attract.game.mosquito;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,6 +19,7 @@ import android.view.SurfaceView;
 import com.cube.attract.R;
 import com.cube.canvas.common.AnimationManager;
 import com.cube.canvas.common.AnimationManager.AnimationBitmap;
+import com.cube.canvas.common.CanvasAnimation2;
 
 public class MosquitoActivity extends Activity {
 
@@ -41,6 +44,46 @@ public class MosquitoActivity extends Activity {
 		private Thread mThread = null;
 		private Canvas mCanvas = null;
 
+		DrawThread drawThread = null;
+
+		public AnimView(Context context) {
+			super(context);
+			mHolder = this.getHolder();
+			mHolder.addCallback(this);
+
+		}
+
+		class MosquitosPool {
+			public class Mosquito {
+				public int blood = 2;
+				public AnimationBitmap animationBitmap = null;
+				int x;
+				int y;
+			}
+
+			public int count = 5;
+			public int type = 2;
+			public ArrayList<Mosquito> mosquitos = new ArrayList<Mosquito>();
+
+			public void initaize() {
+				Random random = new Random(System.currentTimeMillis());
+				for (int i = 0; i < count; i++) {
+					Mosquito mosquito = new Mosquito();
+					int randomType = random.nextInt(1000) % type;
+					if (randomType == 0) {
+						mosquito.animationBitmap = animationManager.addAnimationBitmap(R.drawable.game2_mosquito1);
+					} else if (randomType >= 1) {
+						mosquito.animationBitmap = animationManager.addAnimationBitmap(R.drawable.game2_mosquito2);
+					}
+					Log.v(TAG, "randomType is " + randomType);
+					mosquito.x = random.nextInt(mWidth * 10) % mWidth;
+					mosquito.y = random.nextInt(600 * 10) % 600;
+					mosquito.animationBitmap.matrix.setTranslate(mosquito.x, mosquito.y);
+					mosquitos.add(mosquito);
+				}
+			}
+		}
+
 		public AnimationBitmap background = null;
 		public AnimationBitmap cannon_based = null;
 		public AnimationBitmap cannon = null;
@@ -49,38 +92,48 @@ public class MosquitoActivity extends Activity {
 		public AnimationBitmap shell = null;
 
 		public AnimationManager animationManager = null;
-
-		DrawThread drawThread = null;
-
-		public AnimView(Context context) {
-			super(context);
-			mHolder = this.getHolder();
-			mHolder.addCallback(this);
-			animationManager = new AnimationManager(context);
-
-		}
+		public MosquitosPool mosquitosPool = null;
 
 		private void initAnimationInstance() {
+			animationManager = new AnimationManager(context);
+			animationManager.mCanvas = mCanvas;
+			mosquitosPool = new MosquitosPool();
+
 			background = animationManager.addAnimationBitmap(R.drawable.game2_background);
 			background.matrix.setTranslate(-(480 - mWidth) / 2, mHeight - 290);
 			cannon_based = animationManager.addAnimationBitmap(R.drawable.game2_cannon_based);
 			cannon_based.matrix.setTranslate((mWidth - 271) / 2, mHeight - 122);
 			cannon = animationManager.addAnimationBitmap(R.drawable.game2_cannon2);
 			cannon.matrix.setTranslate((mWidth - 149) / 2, mHeight - 142);
-			mosquito1 = animationManager.addAnimationBitmap(R.drawable.game2_mosquito1);
-			mosquito1.matrix.setTranslate((mWidth - 36) / 2, 360);
-			mosquito2 = animationManager.addAnimationBitmap(R.drawable.game2_mosquito2);
-			mosquito2.matrix.setTranslate((mWidth - 500) / 2, 250);
 
+			mosquitosPool.initaize();
 			shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
-			shell.matrix.setTranslate(260, 650);
+			shell.matrix.setTranslate(260, 550);
+
+			CanvasAnimation2 up = new CanvasAnimation2();
+			up.setTranslate(-100, -200,500);
+			// up.setRepeatSelfTimes(5);
+			up.setRepeatTimes(CanvasAnimation2.INFINITE);
+			
+
+			CanvasAnimation2 down = new CanvasAnimation2();
+			down.setTranslate(100, 200, 500);
+			down.setRepeatTimes(CanvasAnimation2.INFINITE);
+			up.addNextAnimation(down);
+			down.addNextAnimation(up);
+			
+			shell.addAnimation(up);
+
+			// CanvasAnimation2 turn = new CanvasAnimation2();
+			// turn.setRotate(360, 23, 66, 1000);
+			// turn.setRepeatSelfTimes(5);
+			// // turn.setRepeatTimes(5);
+			// up.addNextAnimation(turn);
 		}
 
-
-
 		private void drawAnimationInstance() {
+			mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 			animationManager.draw();
-
 
 		}
 
@@ -91,7 +144,7 @@ public class MosquitoActivity extends Activity {
 
 			memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 			mCanvas = new Canvas(memBitmap);
-			animationManager.mCanvas = mCanvas;
+
 			initAnimationInstance();
 
 			drawThread = new DrawThread();
@@ -134,6 +187,10 @@ public class MosquitoActivity extends Activity {
 				Log.v("test", "ACTION_UP");
 				currentX = event.getX();
 				currentY = event.getY();
+				CanvasAnimation2 turn = new CanvasAnimation2();
+				turn.setRotate(1440, 23, 66, 1000);
+				turn.setRepeatSelfTimes(5);
+				shell.addAnimation(turn);
 				// moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
 				break;
 			}
