@@ -135,6 +135,10 @@ public class GameEntryActivity extends Activity {
 					sceneState.isSelected[0] = false;
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					about.putExtra("picture1" ,"girl_4_1.jpg");
+					about.putExtra("picture2" ,"girl_4_2.jpg");
+					about.putExtra("picture3" ,"girl_4_3.jpg");
+					about.putExtra("weibo" ,"@小悦悦");
 					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
