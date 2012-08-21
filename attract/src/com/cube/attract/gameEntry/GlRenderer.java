@@ -250,9 +250,9 @@ public class GlRenderer implements Renderer {
 		gl.glGenTextures(textureNum, texturesBuffer);
 
 		Bitmap[] texture = new Bitmap[textureNum];
-		texture[0] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_1);
-		texture[1] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_2);
-		texture[2] = Utils.getTextureFromBitmapResource(context, R.drawable.girl4_3);
+		texture[0] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_4_1);
+		texture[1] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_4_2);
+		texture[2] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_4_3);
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.gameentry_background);
 

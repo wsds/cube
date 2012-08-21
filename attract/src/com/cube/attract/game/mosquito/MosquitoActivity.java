@@ -73,25 +73,36 @@ public class MosquitoActivity extends Activity {
 					double dy = mHeight - 40 - currentY;
 
 					CanvasAnimation2 flyAwayAnimation = new CanvasAnimation2();
-					flyAwayAnimation.setTranslate((float) dx, (float) dy, 500);
+					flyAwayAnimation.setTranslate(-(float) dx / 5, -(float) dy / 5, 100);
 					animationBitmap.addAnimation(flyAwayAnimation);
+
+					CanvasAnimation2 flyAwayAnimation1 = new CanvasAnimation2();
+					flyAwayAnimation1.setTranslate((float) dx, (float) dy, 500);
+					flyAwayAnimation.addNextAnimation(flyAwayAnimation1);
+
 					CanvasAnimation2 flyAwayAnimation2 = new CanvasAnimation2();
-					flyAwayAnimation2.setRotate(1440, 256, 256, 500);
+					flyAwayAnimation2.setRotate(1440, 256, 256, 600);
 					animationBitmap.addAnimation(flyAwayAnimation2);
 
-					final Mosquito mosquito=this;
+					final Mosquito mosquito = this;
 					flyAwayAnimation2.setCallback(new Callback() {
 						@Override
 						public void onEnd() {
 							Log.v(TAG, "mosquito is dead!");
-							animationManager.removeAnimationBitmap(animationBitmap);
+							animationDynamicManager.removeAnimationBitmap(animationBitmap);
 							mosquitos.remove(mosquito);
-							int remainMosquitos=mosquitos.size();
+
+							int remainMosquitos = mosquitos.size();
+							if (remainMosquitos < 5) {
+								AnimationBitmap cover = covers.get(random.nextInt(covers.size()));
+								animationManager.removeAnimationBitmap(cover);
+								covers.remove(cover);
+							}
 							if (remainMosquitos == 0) {
 								winGame();
-							}
-							else{
-								Log.v(TAG, "There are "+remainMosquitos+" mosquitos remained.");
+							} else {
+
+								Log.v(TAG, "There are " + remainMosquitos + " mosquitos remained.");
 							}
 						}
 					});
@@ -99,9 +110,10 @@ public class MosquitoActivity extends Activity {
 				}
 			}
 
-			public int count = 5;
+			public int count = 15;
 			public int type = 2;
 			public ArrayList<Mosquito> mosquitos = new ArrayList<Mosquito>();
+			ArrayList<AnimationBitmap> covers = new ArrayList<AnimationBitmap>();
 			Random random = null;
 
 			public void initaize() {
@@ -111,9 +123,9 @@ public class MosquitoActivity extends Activity {
 					int randomType = random.nextInt(1000) % type;
 					mosquito.type = randomType;
 					if (randomType == 0) {
-						mosquito.animationBitmap = animationManager.addAnimationBitmap(R.drawable.game2_mosquito1);
+						mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito1);
 					} else if (randomType >= 1) {
-						mosquito.animationBitmap = animationManager.addAnimationBitmap(R.drawable.game2_mosquito2);
+						mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito2);
 					}
 					Log.v(TAG, "randomType is " + randomType);
 					mosquito.x = random.nextInt(mWidth * 10) % mWidth;
@@ -177,48 +189,75 @@ public class MosquitoActivity extends Activity {
 		// public AnimationBitmap shell = null;
 
 		public AnimationManager animationManager = null;
+		// for dynamic element
+		public AnimationManager animationDynamicManager = null;
+		public AnimationManager animationDynamicManager1 = null;
+
 		public MosquitosPool mosquitosPool = null;
 
 		private void initAnimationInstance() {
-			animationManager = new AnimationManager(context);
+			animationManager = new AnimationManager(context, mHeight, mWidth);
+
 			animationManager.mCanvas = mCanvas;
+			animationDynamicManager = new AnimationManager(context, mHeight, mWidth);
+			animationDynamicManager.mCanvas = mCanvas;
+			animationDynamicManager1 = new AnimationManager(context, mHeight, mWidth);
+			animationDynamicManager1.mCanvas = mCanvas;
 			mosquitosPool = new MosquitosPool();
 
-			background = animationManager.addAnimationBitmap(R.drawable.game2_background);
-			background.matrix.setTranslate(-(480 - mWidth) / 2, mHeight - 290);
+			background = animationManager.addAnimationBitmap(R.drawable.girl_4_1);
+			float sx = ((float) mWidth / 720f);
+			Log.v(TAG, "sx is " + sx);
+			background.matrix.setScale(sx, sx);
+
+			AnimationBitmap cover1 = animationManager.addAnimationBitmap(R.drawable.game2_cover1);
+			mosquitosPool.covers.add(cover1);
+			AnimationBitmap cover2 = animationManager.addAnimationBitmap(R.drawable.game2_cover2);
+			mosquitosPool.covers.add(cover2);
+			AnimationBitmap cover3 = animationManager.addAnimationBitmap(R.drawable.game2_cover3);
+			mosquitosPool.covers.add(cover3);
+			AnimationBitmap cover4 = animationManager.addAnimationBitmap(R.drawable.game2_cover4);
+			mosquitosPool.covers.add(cover4);
+			AnimationBitmap cover5 = animationManager.addAnimationBitmap(R.drawable.game2_cover5);
+			mosquitosPool.covers.add(cover5);
+
 			cannon_based = animationManager.addAnimationBitmap(R.drawable.game2_cannon_based);
 			cannon_based.matrix.setTranslate((mWidth - 271) / 2, mHeight - 122);
-			cannon = animationManager.addAnimationBitmap(R.drawable.game2_cannon2);
+
+			cannon = animationDynamicManager1.addAnimationBitmap(R.drawable.game2_cannon2);
 			cannon.matrix.setTranslate((mWidth - 149) / 2, mHeight - 142);
 
 			mosquitosPool.initaize();
-			// shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
-			// shell.matrix.setTranslate(260, 550);
-
-			CanvasAnimation2 up = new CanvasAnimation2();
-			up.setTranslate(-100, -200, 500);
-			// up.setRepeatSelfTimes(5);
-			up.setRepeatTimes(CanvasAnimation2.INFINITE);
-
-			CanvasAnimation2 down = new CanvasAnimation2();
-			down.setTranslate(100, 200, 500);
-			down.setRepeatTimes(CanvasAnimation2.INFINITE);
-			up.addNextAnimation(down);
-			down.addNextAnimation(up);
-
-			// shell.addAnimation(up);
-
-			// CanvasAnimation2 turn = new CanvasAnimation2();
-			// turn.setRotate(360, 23, 66, 1000);
-			// turn.setRepeatSelfTimes(5);
-			// // turn.setRepeatTimes(5);
-			// up.addNextAnimation(turn);
 		}
 
-		private void drawAnimationInstance() {
-			mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
-			animationManager.draw();
+		long drawCount = 0;
+		long lastMillis = 0;
 
+		private void drawAnimationInstance() {
+
+			mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
+			animationManager.drawStatic();
+			animationDynamicManager.draw();
+			animationDynamicManager1.draw();
+
+			drawCount++;
+			if (drawCount > 50) {
+				long currentMillis = System.currentTimeMillis();
+
+				if (lastMillis != 0) {
+					long delta = currentMillis - lastMillis;
+					float fps = (float) drawCount / ((float) delta / 1000f);
+					Log.v(TAG, "fps is " + fps);
+					drawCount = 0;
+				}
+				lastMillis = currentMillis;
+			}
+		}
+
+		@Override
+		protected void onDraw(Canvas canvas) {
+			super.onDraw(canvas);
+			Log.v(TAG, "ondraw");
 		}
 
 		@Override
@@ -304,7 +343,7 @@ public class MosquitoActivity extends Activity {
 			double theta = Math.atan2(dx, dy);
 			final double angle = theta / Math.PI * 180;
 			double speed = (dx * dx + dy * dy) / (mWidth * mWidth + mHeight * mHeight) * 500;
-			final AnimationBitmap shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
+			final AnimationBitmap shell = animationDynamicManager.addAnimationBitmap(R.drawable.game2_shell);
 
 			shell.matrix.setRotate((float) angle, 23, 66);
 			shell.matrix.postTranslate((mWidth - 46) / 2, mHeight - 142);
@@ -316,8 +355,8 @@ public class MosquitoActivity extends Activity {
 			fireAnimation.setCallback(new Callback() {
 				@Override
 				public void onEnd() {
-					animationManager.removeAnimationBitmap(shell);
-					final AnimationBitmap cloud = animationManager.addAnimationBitmap(R.drawable.game2_cloud);
+					animationDynamicManager.removeAnimationBitmap(shell);
+					final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(R.drawable.game2_cloud);
 
 					cloud.matrix.setRotate((float) angle, 23, 66);
 					cloud.matrix.postTranslate(currentX, currentY);
@@ -336,7 +375,7 @@ public class MosquitoActivity extends Activity {
 			explodeAnimation.setCallback(new Callback() {
 				@Override
 				public void onEnd() {
-					animationManager.removeAnimationBitmap(cloud);
+					animationDynamicManager.removeAnimationBitmap(cloud);
 				}
 			});
 			// CanvasAnimation2 explodeAnimation2 = new CanvasAnimation2();
@@ -359,11 +398,11 @@ public class MosquitoActivity extends Activity {
 
 					drawAnimationInstance();
 
-					try {
-						Thread.sleep(3);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					// try {
+					// Thread.sleep(10);
+					// } catch (InterruptedException e) {
+					// e.printStackTrace();
+					// }
 					Canvas renderer = null;
 					synchronized (mHolder) {
 						try {
