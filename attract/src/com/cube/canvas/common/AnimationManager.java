@@ -33,6 +33,8 @@ public class AnimationManager {
 	}
 
 	public void draw() {
+		@SuppressWarnings("unchecked")
+		ArrayList<AnimationBitmap> animationBitmaps = (ArrayList<AnimationBitmap>) this.animationBitmaps.clone();
 		for (AnimationBitmap animationBitmap : animationBitmaps) {
 			mCanvas.drawBitmap(animationBitmap.bitmap, animationBitmap.matrix, paint);
 			@SuppressWarnings("unchecked")

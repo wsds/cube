@@ -164,7 +164,7 @@ public class CanvasAnimation2 {
 				} else if (this.type == ROTATE) {
 					matrix.preRotate(rotate.dr / dt * delta, rotate.fx, rotate.fy);
 				} else if (this.type == SCALE) {
-					// traceMatrix.postScale(1 + delta * (scale.ds - 1) / scale.dt, 1 + delta * (scale.ds - 1) / scale.dt, scale.fx, scale.fy);
+					matrix.preScale(1 + delta * (scale.ds - 1) /  dt, 1 + delta * (scale.ds - 1) / dt, scale.fx, scale.fy);
 				} else if (this.type == ACCELERATE) {
 					// float ds = (float) ((accelerate.v0 + 0.5 * accelerate.a * delta) * delta);
 					// traceMatrix.postTranslate(accelerate.dx * ds, accelerate.dy * ds);

@@ -86,11 +86,14 @@ public class MosquitoActivity extends Activity {
 					}
 					Log.v(TAG, "randomType is " + randomType);
 					mosquito.x = random.nextInt(mWidth * 10) % mWidth;
-					mosquito.y = random.nextInt(600 * 10) % 600;
+					mosquito.y = (int) (random.nextInt(600 * 10) % (mHeight * 0.8 - 150));
 					mosquito.direction = random.nextInt(1000) % 180;
 					// mosquito.direction = 45;
 					mosquito.animationBitmap.matrix.setTranslate(mosquito.x, mosquito.y);
 					mosquito.animationBitmap.matrix.preScale(0.25f, 0.25f);
+					if (Math.cos(mosquito.direction * Math.PI / 180) < 0) {
+						mosquito.animationBitmap.matrix.preScale(-1, 1);
+					}
 					mosquitos.add(mosquito);
 					fly(mosquito);
 
@@ -98,11 +101,8 @@ public class MosquitoActivity extends Activity {
 			}
 
 			void fly(final Mosquito mosquito) {
-				// double factor = (random.nextInt(200) - 200) / 100;
-				// factor = 1;
 				mosquito.directionX = (int) (50 * Math.cos(mosquito.direction * Math.PI / 180));
 				mosquito.directionY = (int) (50 * Math.sin(mosquito.direction * Math.PI / 180));
-				Log.v(TAG, "direction is " + mosquito.direction + " and directionX is " + mosquito.directionX + " and directionY is " + mosquito.directionY);
 				CanvasAnimation2 flyAnimation = new CanvasAnimation2();
 				flyAnimation.setTranslate(mosquito.directionX, mosquito.directionY, 90);
 				flyAnimation.setCallback(new Callback() {
@@ -111,13 +111,11 @@ public class MosquitoActivity extends Activity {
 						mosquito.x = mosquito.x + mosquito.directionX;
 						mosquito.y = mosquito.y + mosquito.directionY;
 						if (mosquito.x < -50 || mosquito.x > mWidth + 50) {
-							mosquito.direction = (180 - mosquito.direction) % 360 + (random.nextInt(20) - 10);
-							// if ((0 < mosquito.direction && mosquito.direction < 90) || (0 >= mosquito.direction && mosquito.direction > -90)) {
+							mosquito.direction = (180 - mosquito.direction) % 360 + (random.nextInt(10) - 5);
 							mosquito.animationBitmap.matrix.preScale(-1, 1);
-							// }
 						}
-						if (mosquito.y < -50 || mosquito.y > mHeight * 0.8 - 150) {
-							mosquito.direction = -mosquito.direction + (random.nextInt(20) - 10);
+						if (mosquito.y < -150 || mosquito.y > mHeight * 0.8 - 150) {
+							mosquito.direction = -mosquito.direction + (random.nextInt(10) - 5);
 						}
 						fly(mosquito);
 					}
@@ -131,7 +129,7 @@ public class MosquitoActivity extends Activity {
 		public AnimationBitmap cannon = null;
 		public AnimationBitmap mosquito1 = null;
 		public AnimationBitmap mosquito2 = null;
-		public AnimationBitmap shell = null;
+		// public AnimationBitmap shell = null;
 
 		public AnimationManager animationManager = null;
 		public MosquitosPool mosquitosPool = null;
@@ -149,8 +147,8 @@ public class MosquitoActivity extends Activity {
 			cannon.matrix.setTranslate((mWidth - 149) / 2, mHeight - 142);
 
 			mosquitosPool.initaize();
-			shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
-			shell.matrix.setTranslate(260, 550);
+			// shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
+			// shell.matrix.setTranslate(260, 550);
 
 			CanvasAnimation2 up = new CanvasAnimation2();
 			up.setTranslate(-100, -200, 500);
@@ -163,7 +161,7 @@ public class MosquitoActivity extends Activity {
 			up.addNextAnimation(down);
 			down.addNextAnimation(up);
 
-			shell.addAnimation(up);
+			// shell.addAnimation(up);
 
 			// CanvasAnimation2 turn = new CanvasAnimation2();
 			// turn.setRotate(360, 23, 66, 1000);
@@ -212,6 +210,8 @@ public class MosquitoActivity extends Activity {
 			int action = event.getAction();
 			float currentX = 0;
 			float currentY = 0;
+			float angle = 0;
+			boolean isfire = false;
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
 				startX = event.getX();
@@ -228,24 +228,75 @@ public class MosquitoActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				currentX = event.getX();
 				currentY = event.getY();
+				isfire = true;
 				CanvasAnimation2 turn1 = new CanvasAnimation2();
 				turn1.setRotate(1440, 23, 66, 1000);
 				turn1.setRepeatSelfTimes(5);
-				shell.addAnimation(turn1);
+				// shell.addAnimation(turn1);
 				// moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
 				break;
 			}
-			turnCannon(currentX, currentY);
+			angle = turnCannon(currentX, currentY);
+			if (isfire == true) {
+				fire(currentX, currentY, angle);
+			}
 			return true;
 		}
 
-		void turnCannon(float currentX, float currentY) {
+		float turnCannon(float currentX, float currentY) {
 			double x = currentX - mWidth / 2;
 			double y = mHeight - 40 - currentY;
 			double theta = Math.atan2(x, y);
 			double angle = theta / Math.PI * 180;
 			cannon.matrix.setRotate((float) angle, 75, 106);
 			cannon.matrix.postTranslate((mWidth - 149) / 2, mHeight - 142);
+			return (float) angle;
+		}
+
+		void fire(final float currentX, final float currentY, float angle1) {
+			double dx = currentX - mWidth / 2;
+			double dy = mHeight - 40 - currentY;
+			double theta = Math.atan2(dx, dy);
+			final double angle = theta / Math.PI * 180;
+			double speed = (dx * dx + dy * dy) / (mWidth * mWidth + mHeight * mHeight) * 500;
+			final AnimationBitmap shell = animationManager.addAnimationBitmap(R.drawable.game2_shell);
+
+			shell.matrix.setRotate((float) angle, 23, 66);
+			shell.matrix.postTranslate((mWidth - 46) / 2, mHeight - 142);
+			shell.matrix.preScale(0.5f, 0.8f);
+
+			CanvasAnimation2 fireAnimation = new CanvasAnimation2();
+			fireAnimation.setTranslate((float) dx, -(float) dy, (float) speed);
+			shell.addAnimation(fireAnimation);
+			fireAnimation.setCallback(new Callback() {
+				@Override
+				public void onEnd() {
+					animationManager.removeAnimationBitmap(shell);
+					final AnimationBitmap cloud = animationManager.addAnimationBitmap(R.drawable.game2_cloud);
+
+					cloud.matrix.setRotate((float) angle, 23, 66);
+					cloud.matrix.postTranslate(currentX, currentY);
+					cloud.matrix.preScale(0.5f, 0.5f);
+					explode(cloud);
+				}
+			});
+
+		}
+
+		void explode(final AnimationBitmap cloud) {
+			CanvasAnimation2 explodeAnimation = new CanvasAnimation2();
+			explodeAnimation.setScale(3f, 82, 96, 200);
+			cloud.addAnimation(explodeAnimation);
+			explodeAnimation.setCallback(new Callback() {
+				@Override
+				public void onEnd() {
+					animationManager.removeAnimationBitmap(cloud);
+				}
+			});
+//			CanvasAnimation2 explodeAnimation2 = new CanvasAnimation2();
+//			explodeAnimation2.setRotate(1440, 82, 96, 200);
+//			cloud.addAnimation(explodeAnimation2);
+
 		}
 
 		class DrawThread implements Runnable {
