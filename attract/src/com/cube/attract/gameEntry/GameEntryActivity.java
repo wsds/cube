@@ -45,6 +45,7 @@ public class GameEntryActivity extends Activity {
 
 	@Override
 	protected void onResume() {
+		sceneState.notJustComeIn=false;
 		super.onResume();
 		surface.onResume();
 	}
@@ -65,16 +66,26 @@ public class GameEntryActivity extends Activity {
 
 				sceneState.pictureViewGallary.dx = event.getX() - startX;
 				sceneState.pictureViewGallary.dy = event.getY() - startY;
-				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx * TOUCH_SCAL_FACTOR;
-				float path = sceneState.pictureViewGallary.dx * sceneState.pictureViewGallary.dx + sceneState.pictureViewGallary.dy * sceneState.pictureViewGallary.dy;
+				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx
+						* TOUCH_SCAL_FACTOR;
+				float path = sceneState.pictureViewGallary.dx
+						* sceneState.pictureViewGallary.dx
+						+ sceneState.pictureViewGallary.dy
+						* sceneState.pictureViewGallary.dy;
 				if (path > 1600) {
-					// renderer.girlGoBack.start(true);
-					// renderer.girlRotateBack.start(true);
-					// sceneState.pictureViewGallary.once = true;
+					if (sceneState.backAnimaLock) {
+						renderer.girlGoBack.start(true);
+						renderer.girlRotateBack.start(true);
+						sceneState.backAnimaLock = false;
+						sceneState.goFrontPermit = true;
+						sceneState.notJustComeIn = true;
+					}
+
 				}
 			}
 			break;
 		case MotionEvent.ACTION_DOWN:
+			sceneState.isTouchUp = false;
 			startX = event.getX();
 			startY = event.getY();
 
@@ -92,43 +103,54 @@ public class GameEntryActivity extends Activity {
 				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[1]) {
 					GAMENUMBER = 2;
 					Log.i("come in game", "2");
+					sceneState.isSelected[1] = true;
+
 					// 2
 
-				} else if (normalX > 60 && normalX < 181 && !sceneState.isLocked[0]) {
+				} else if (normalX > 60 && normalX < 181
+						&& !sceneState.isLocked[0]) {
 					GAMENUMBER = 1;
 					Log.i("come in game", "1");
 					// 1
 					sceneState.isSelected[0] = true;
-					renderer.ploygonColor.start(true);
 
-				} else if (normalX < 420 && normalX > 300 && !sceneState.isLocked[2]) {
+
+				} else if (normalX < 420 && normalX > 300
+						&& !sceneState.isLocked[2]) {
 					GAMENUMBER = 3;
 					Log.i("come in game", "3");
+					sceneState.isSelected[2] = true;
+
 					// 3
 				}
 			} else if (normalY < 620 && normalY > 545) {
 				if (normalX > 120 && normalX < 239 && !sceneState.isLocked[3]) {
 					GAMENUMBER = 4;
 					Log.i("come in game", "4");
+					sceneState.isSelected[3] = true;
+
 					// 4
-				} else if (normalX > 239 && normalX < 361 && !sceneState.isLocked[4]) {
+				} else if (normalX > 239 && normalX < 361
+						&& !sceneState.isLocked[4]) {
 					GAMENUMBER = 5;
 					Log.i("come in game", "5");
+					sceneState.isSelected[4] = true;
+
 					// 5
 				}
 			} else if (normalY > 650 && normalX < 737) {
 				if (normalX > 181 && normalX < 300 && !sceneState.isLocked[5]) {
 					Log.i("come in game", "6");
 					GAMENUMBER = 6;
+					sceneState.isSelected[5] = true;
 					// 6
 				}
 			}
 			break;
 
 		case MotionEvent.ACTION_UP:
+			sceneState.isTouchUp = true;
 			if (sceneState.eventType == sceneState.GIRL) {
-				// renderer.girlGoFront.start(true);
-				// renderer.girlRotateFront.start(true);
 			} else {
 				switch (GAMENUMBER) {
 				case 1:
@@ -144,12 +166,25 @@ public class GameEntryActivity extends Activity {
 					mActivity.finish();
 					break;
 				case 2:
+					sceneState.isSelected[1] = false;
 
 					break;
 				case 3:
+					sceneState.isSelected[2] = false;
+
+					break;
 				case 4:
+					sceneState.isSelected[3] = false;
+
+					break;
 				case 5:
+					sceneState.isSelected[4] = false;
+
+					break;
 				case 6:
+					sceneState.isSelected[5] = false;
+
+					break;
 				}
 			}
 			sceneState.eventType = sceneState.NONE;
@@ -162,13 +197,15 @@ public class GameEntryActivity extends Activity {
 		return super.onTouchEvent(event);
 	}
 
-	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
+	private class GlAppGestureListener extends
+			GestureDetector.SimpleOnGestureListener {
 		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
 
 			if (sceneState.eventType == sceneState.GIRL) {
-				sceneState.pictureViewGallary.dxSpeed = velocityX / 1000;
-				sceneState.pictureViewGallary.dySpeed = velocityY / 1000;
+				sceneState.pictureViewGallary.dxSpeed = velocityX / 1100;
+				sceneState.pictureViewGallary.dySpeed = velocityY / 1100;
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);

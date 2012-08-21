@@ -1,11 +1,8 @@
 package com.cube.attract.gameEntry;
 
-import javax.microedition.khronos.opengles.GL10;
 
 import android.util.Log;
 
-import com.cube.common.Settings;
-import com.cube.opengl.common.GlMatrix;
 
 final class SceneState {
 
@@ -20,7 +17,10 @@ final class SceneState {
 	public GlRenderer render = null;
 	boolean blending = false;
 
-	public boolean isClicked = false;
+	public boolean backAnimaLock = true;
+	public boolean goFrontPermit = false;
+	public boolean isTouchUp = false;
+	public boolean notJustComeIn = false;
 
 	public int NONE = 0;
 	public int CUB = 1;
@@ -68,28 +68,47 @@ final class SceneState {
 				pictureView[temp].radian = 2 * PI / viewsNum * i;
 				pictureView[temp].pAngle = pictureView[temp].radian;
 			}
+			if (goFrontPermit) {
+				if(notJustComeIn){//刚进入该activity,并且没有onTouchMove事件时，不执行以下代码
+					render.girlGoFront.start(true);
+					render.girlRotateFront.start(true);
+				}
+				notJustComeIn = true;
+				backAnimaLock = true;
+				goFrontPermit = false;
+			}
 
 		}
 
-		public boolean isPosCorrect() {
-			double halfRefRadian = PI / viewsNum;
-
-			for (int i = 0; i < viewsNum; i++) {
-				// double tempRadian = pictureView[i].radian
-				// - Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
-				if (pictureView[i].radian > 2 * PI - 0.005) {
-					Log.i("radian[" + String.valueOf(i) + "] and postive",
-							String.valueOf(pictureView[i].radian));
-					isStopping = false;
-					stopmove();
-					return true;
-				} else if (pictureView[i].radian < 0.005) {
-					Log.i("radian[" + String.valueOf(i) + "] and negtive",
-							String.valueOf(pictureView[i].radian));
-					isStopping = false;
-					stopmove();
-					return true;
-				}
+		public boolean isPosCorrect(long delta) {
+			// for (int i = 0; i < viewsNum; i++) {
+			// // double tempRadian = pictureView[i].radian
+			// // - Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
+			// if (pictureView[i].radian > 2 * PI - 0.005) {
+			// Log.i("radian[" + String.valueOf(i) + "] and postive",
+			// String.valueOf(pictureView[i].radian));
+			// isStopping = false;
+			// stopmove();
+			// return true;
+			// } else if (pictureView[i].radian < 0.005) {
+			// Log.i("radian[" + String.valueOf(i) + "] and negtive",
+			// String.valueOf(pictureView[i].radian));
+			// isStopping = false;
+			// stopmove();
+			// return true;
+			// }
+			// } this is other way to achieve the same function as below
+			Log.i("diff and isPostive and dxSpeed", String.valueOf(diff)
+					+ String.valueOf(isPostive) + String.valueOf(dxSpeed));
+			if (isPostive) {
+				diff -= dxSpeed * delta * moveFactor;
+			} else {
+				diff += dxSpeed * delta * moveFactor;
+			}
+			if (diff <= 0) {// when the galley rotate to the correct postion or
+							// just beyond the correct postion
+				isStopping = false;
+				stopmove();
 			}
 			return false;
 		}
@@ -125,37 +144,30 @@ final class SceneState {
 
 			double halfRefRadian = PI / viewsNum;
 			for (int i = 0; i < viewsNum; i++) {
-				pictureView[i].radian = pictureView[i].pAngle + moveAngle;				
+				pictureView[i].radian = pictureView[i].pAngle + moveAngle;
 				pictureView[i].radian = pictureView[i].radian
 						- Math.floor(pictureView[i].radian / (2 * PI)) * 2 * PI;
-				pictureView[i].pAngle = pictureView[i].radian;
+				// pictureView[i].pAngle = pictureView[i].radian;
 				if (pictureView[i].radian > 2 * PI - halfRefRadian) {
 					frontViewIndex = i;
 					isPostive = true;
-//					if (dxSpeed == 0) {
-//						if (pictureView[i].radian != 0) {
-//							stopmove();
-//						}
-//					}
-					// diff = 2 * PI - pictureView[i].radian;
+
+					diff = 2 * PI - pictureView[i].radian;
 				} else if (pictureView[i].radian < halfRefRadian) {
 					frontViewIndex = i;
 					isPostive = false;
-					if (dxSpeed == 0) {
-						if (pictureView[i].radian != 0) {
-
-						}
-					}
-					// diff = -pictureView[i].radian;
+					diff = pictureView[i].radian;
 				}
-
+				if (dxSpeed == 0 && isTouchUp) {
+					if (pictureView[frontViewIndex].radian != 0) {
+						stopmove();
+						isTouchUp = false;
+					}
+				}
 				pictureView[i].x = radius * Math.sin(pictureView[i].radian);
 				pictureView[i].y = 0;
 				pictureView[i].z = radius * Math.cos(pictureView[i].radian);
 			}
-
-			// pictureView[start].radian-2 * PI / viewsNum * start;
-
 		}
 
 		public void saveMovement() {
@@ -170,29 +182,20 @@ final class SceneState {
 				if (isStopping) {
 					dxSpeed = Math.abs(dxSpeed);
 					if (isPostive) {
-						dxSpeed *= (1.0f + 0.002f * deltaMillis);
+						dxSpeed *= (1.0f + 0.006f * deltaMillis);
 					} else {
-						dxSpeed *= (-0.002f * deltaMillis - 1.0f);
+						dxSpeed *= (-0.006f * deltaMillis - 1.0f);
 					}
-					isPosCorrect();
+					isPosCorrect(deltaMillis);
 				} else {
-					dxSpeed *= (1.0f - 0.002f * deltaMillis);
+					dxSpeed *= (1.0f - 0.0009f * deltaMillis);
 				}
-				if (Math.abs(dxSpeed) < 0.161f && !isStopping) {
+				if (Math.abs(dxSpeed) < 0.261f && !isStopping) {
 					isStopping = true;
 
 					Log.i("isStopping and dxSpeed", String.valueOf(isStopping)
 							+ "and" + String.valueOf(dxSpeed));
-					// stopmove();
 				}
-			} else {
-
-//				if (once) {
-//					render.girlGoFront.start(true);
-//					render.girlRotateFront.start(true);
-//					once = false;
-//				}
-
 			}
 		}
 
