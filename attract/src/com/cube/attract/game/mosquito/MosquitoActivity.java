@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -68,6 +70,7 @@ public class MosquitoActivity extends Activity {
 				int mHeight = 0;
 
 				public void die(final float currentX, final float currentY, float angle1) {
+					soundPool.play(flyawaySound, 0.2f, 0.2f, 1, 0, 1f);
 					Log.v(TAG, "mosquito is dieing!");
 					double dx = currentX - mWidth / 2;
 					double dy = mHeight - 40 - currentY;
@@ -110,7 +113,7 @@ public class MosquitoActivity extends Activity {
 				}
 			}
 
-			public int count = 15;
+			public int count = 5;
 			public int type = 2;
 			public ArrayList<Mosquito> mosquitos = new ArrayList<Mosquito>();
 			ArrayList<AnimationBitmap> covers = new ArrayList<AnimationBitmap>();
@@ -195,7 +198,15 @@ public class MosquitoActivity extends Activity {
 
 		public MosquitosPool mosquitosPool = null;
 
+		final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		final int fireSound = soundPool.load(context, R.raw.fire, 1);
+		final int explodeSound = soundPool.load(context, R.raw.explode, 1);
+		final int passSound = soundPool.load(context, R.raw.pass, 1);
+		final int startSound = soundPool.load(context, R.raw.start, 1);
+		final int flyawaySound = soundPool.load(context, R.raw.flyaway, 1);
+		
 		private void initAnimationInstance() {
+			
 			animationManager = new AnimationManager(context, mHeight, mWidth);
 
 			animationManager.mCanvas = mCanvas;
@@ -228,6 +239,7 @@ public class MosquitoActivity extends Activity {
 			cannon.matrix.setTranslate((mWidth - 149) / 2, mHeight - 142);
 
 			mosquitosPool.initaize();
+			soundPool.play(startSound, 0.2f, 0.2f, 1, 0, 1f);
 		}
 
 		long drawCount = 0;
@@ -366,6 +378,8 @@ public class MosquitoActivity extends Activity {
 				}
 			});
 
+			soundPool.play(fireSound, 0.2f, 0.2f, 1, 0, 1f);
+
 		}
 
 		void explode(final AnimationBitmap cloud) {
@@ -378,14 +392,25 @@ public class MosquitoActivity extends Activity {
 					animationDynamicManager.removeAnimationBitmap(cloud);
 				}
 			});
-			// CanvasAnimation2 explodeAnimation2 = new CanvasAnimation2();
-			// explodeAnimation2.setRotate(1440, 82, 96, 200);
-			// cloud.addAnimation(explodeAnimation2);
-
+			soundPool.play(explodeSound, 0.2f, 0.2f, 1, 0, 1f);
 		}
 
 		void winGame() {
 			Log.v(TAG, "game is win!");
+			soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
+			final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
+
+			win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
+			win.matrix.preScale(0.5f, 0.5f, 189, 166);
+
+			CanvasAnimation2 enlarge = new CanvasAnimation2();
+			enlarge.setScale(2f, 189, 166, 200);
+			win.addAnimation(enlarge);
+
+			CanvasAnimation2 shrink = new CanvasAnimation2();
+			shrink.setScale(0.8f, 189, 166, 200);
+			enlarge.addNextAnimation(shrink);
+
 		}
 
 		class DrawThread implements Runnable {
