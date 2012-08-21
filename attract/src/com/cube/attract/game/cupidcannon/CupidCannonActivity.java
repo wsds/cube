@@ -48,7 +48,7 @@ public class CupidCannonActivity extends Activity {
 		private CanvasAnimation artilleryAnimEven = null;
 		private CanvasAnimation batteryAnimOdd = null;
 		private CanvasAnimation batteryAnimEven = null;
-	
+
 //		public class BulletBoom {
 //			public CanvasAnimation bulletAnimElement = null;
 //			public CanvasAnimation boomAnim = null;
