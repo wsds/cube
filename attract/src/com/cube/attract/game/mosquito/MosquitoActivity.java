@@ -66,6 +66,37 @@ public class MosquitoActivity extends Activity {
 				int direction;
 				int mWidth = 0;
 				int mHeight = 0;
+
+				public void die(final float currentX, final float currentY, float angle1) {
+					Log.v(TAG, "mosquito is dieing!");
+					double dx = currentX - mWidth / 2;
+					double dy = mHeight - 40 - currentY;
+
+					CanvasAnimation2 flyAwayAnimation = new CanvasAnimation2();
+					flyAwayAnimation.setTranslate((float) dx, (float) dy, 500);
+					animationBitmap.addAnimation(flyAwayAnimation);
+					CanvasAnimation2 flyAwayAnimation2 = new CanvasAnimation2();
+					flyAwayAnimation2.setRotate(1440, 256, 256, 500);
+					animationBitmap.addAnimation(flyAwayAnimation2);
+
+					final Mosquito mosquito=this;
+					flyAwayAnimation2.setCallback(new Callback() {
+						@Override
+						public void onEnd() {
+							Log.v(TAG, "mosquito is dead!");
+							animationManager.removeAnimationBitmap(animationBitmap);
+							mosquitos.remove(mosquito);
+							int remainMosquitos=mosquitos.size();
+							if (remainMosquitos == 0) {
+								winGame();
+							}
+							else{
+								Log.v(TAG, "There are "+remainMosquitos+" mosquitos remained.");
+							}
+						}
+					});
+
+				}
 			}
 
 			public int count = 5;
@@ -121,6 +152,20 @@ public class MosquitoActivity extends Activity {
 					}
 				});
 				mosquito.animationBitmap.addAnimation(flyAnimation);
+			}
+
+			void hit(final float currentX, final float currentY, float angle1) {
+				@SuppressWarnings("unchecked")
+				ArrayList<Mosquito> mosquitos = (ArrayList<Mosquito>) this.mosquitos.clone();
+				for (Mosquito mosquito : mosquitos) {
+					float distance = (mosquito.x - currentX) * (mosquito.x - currentX) + (mosquito.y - currentY) * (mosquito.y - currentY);
+					if (distance < 10000) {
+						mosquito.blood--;
+						if (mosquito.blood == 0) {
+							mosquito.die(currentX, currentY, angle1);
+						}
+					}
+				}
 			}
 		}
 
@@ -278,6 +323,7 @@ public class MosquitoActivity extends Activity {
 					cloud.matrix.postTranslate(currentX, currentY);
 					cloud.matrix.preScale(0.5f, 0.5f);
 					explode(cloud);
+					mosquitosPool.hit(currentX, currentY, (float) angle);
 				}
 			});
 
@@ -293,10 +339,14 @@ public class MosquitoActivity extends Activity {
 					animationManager.removeAnimationBitmap(cloud);
 				}
 			});
-//			CanvasAnimation2 explodeAnimation2 = new CanvasAnimation2();
-//			explodeAnimation2.setRotate(1440, 82, 96, 200);
-//			cloud.addAnimation(explodeAnimation2);
+			// CanvasAnimation2 explodeAnimation2 = new CanvasAnimation2();
+			// explodeAnimation2.setRotate(1440, 82, 96, 200);
+			// cloud.addAnimation(explodeAnimation2);
 
+		}
+
+		void winGame() {
+			Log.v(TAG, "game is win!");
 		}
 
 		class DrawThread implements Runnable {
