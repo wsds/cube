@@ -8,21 +8,24 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.cube.attract.R;
-import com.cube.opengl.common.GLAnimation;
-import com.cube.opengl.common.Utils;
-
-
 import android.content.Context;
-
 import android.graphics.Bitmap;
+import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
-import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
+
+import com.cube.attract.R;
+import com.cube.common.imageservice.BitmapPool;
+import com.cube.opengl.common.GLAnimation;
+import com.cube.opengl.common.Utils;
 public class GlRenderer implements Renderer {
 
 	private Context context;
-
+	public int POLYGON=9;
+	public int BACKGROUND = POLYGON+2;
+	public int GIRLSINDEX = BACKGROUND+1;
+	public int GIRLSINDEX_S = GIRLSINDEX+10;
 
 	public GlRenderer(Context context) {
 		this.context = context;
@@ -376,25 +379,33 @@ public class GlRenderer implements Renderer {
 
 	private IntBuffer texturesBuffer;
 
-	public int POLYGON = 3;
-	public int BACKGROUND = 5;
-	public int GIRLSINDEX = 6;
-	public int GIRLSINDEX_S = 16;
 
-	public int textureNum = 26;
+	public int textureNum = GIRLSINDEX_S+10;
+	private BitmapPool bitmapPool;
 
 	private void loadTexture(GL10 gl) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		texturesBuffer = IntBuffer.allocate(textureNum);
 		gl.glGenTextures(textureNum, texturesBuffer);
 
-		Bitmap[] texture = new Bitmap[textureNum];
-		texture[0] = Utils.getTextureFromBitmapResource(context,
-				R.drawable.girl4_1);
-		texture[1] = Utils.getTextureFromBitmapResource(context,
-				R.drawable.girl4_2);
-		texture[2] = Utils.getTextureFromBitmapResource(context,
-				R.drawable.girl4_3);
+		bitmapPool = BitmapPool.getInstance();
+		
+		Bitmap[] texture = new Bitmap[textureNum];		
+		int girls=0;
+		for (String filename : bitmapPool.map.keySet()) {
+			Log.i("GlRender girls", filename);
+
+			texture[girls] = bitmapPool.map.get(filename);
+			if(girls>=POLYGON){
+				break;
+			}
+			girls++;
+		}
+		while(girls!=9){
+			texture[girls]=texture[girls-1];
+			girls++;
+			Log.i("GlRenderer girls", String.valueOf(girls));
+		}
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context,
 				R.drawable.polygon_locked);
 		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context,

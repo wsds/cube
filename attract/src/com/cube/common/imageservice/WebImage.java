@@ -6,14 +6,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.Key;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -68,15 +73,12 @@ public class WebImage {
 	}
 
 	public InputStream getImageStream(String url) throws Exception {
-		URL mURL = new URL(url);
-		HttpURLConnection conn = (HttpURLConnection) mURL.openConnection();
-		conn.setConnectTimeout(5 * 1000);
-		conn.setRequestMethod("GET");
-		int result = conn.getResponseCode();
-		if (result == HttpURLConnection.HTTP_OK) {
-			return conn.getInputStream();
-		}
-		return null;
+		HttpGet conn = new HttpGet(url);
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpResponse response = (HttpResponse) httpclient.execute(conn);
+		HttpEntity entity = response.getEntity();
+		BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(entity);
+		return bufferedHttpEntity.getContent();
 	}
 
 	public InputStream loadStreamFromSDCard(String fileName) {
