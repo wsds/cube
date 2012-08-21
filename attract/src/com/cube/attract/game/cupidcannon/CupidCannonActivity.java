@@ -2,6 +2,7 @@ package com.cube.attract.game.cupidcannon;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import android.view.SurfaceView;
 
 import com.cube.attract.R;
 import com.cube.canvas.common.CanvasAnimation;
+import com.cube.common.imageservice.BitmapPool;
 
 public class CupidCannonActivity extends Activity {
 
@@ -48,7 +50,13 @@ public class CupidCannonActivity extends Activity {
 		private CanvasAnimation artilleryAnimEven = null;
 		private CanvasAnimation batteryAnimOdd = null;
 		private CanvasAnimation batteryAnimEven = null;
-
+		private BitmapPool bitmapPool = BitmapPool.getInstance();
+		private Intent intent = getIntent();
+		private String picture1 = intent.getStringExtra("picture1");
+		private String picture2 = intent.getStringExtra("picture2");
+		private String picture3 = intent.getStringExtra("picture3");
+		private String weibo = intent.getStringExtra("weibo");
+		
 //		public class BulletBoom {
 //			public CanvasAnimation bulletAnimElement = null;
 //			public CanvasAnimation boomAnim = null;
@@ -67,6 +75,7 @@ public class CupidCannonActivity extends Activity {
 		public Bitmap heartBm = null;
 		public Bitmap bulletBm = null;
 		public Bitmap boomBm = null;
+		public Bitmap testBm = null;
 
 		public float[] powerTubeBaseAdress = {0.0f, 0.0f};
 		public final int POWERSENSITY = 15;
@@ -116,6 +125,14 @@ public class CupidCannonActivity extends Activity {
 					R.drawable.bullet);
 			boomBm =  BitmapFactory.decodeResource(getResources(),
 					R.drawable.blast_f09);
+			for(String filename : bitmapPool.map.keySet()){
+			testBm = bitmapPool.map.get(filename);				
+				if(testBm != null)
+					break;
+			}
+			if(testBm !=null)
+			Log.i("testBm", "ssssssssssssssssssssssssssss:");
+
 			
 		}
 		
@@ -271,12 +288,6 @@ public class CupidCannonActivity extends Activity {
 				mCanvas.drawBitmap(powerTube3, testMatrix, new Paint());
 			}
 			
-			//
-//			targetCenter[0] = 280;
-//			targetCenter[1] = 180;	
-//			int heartBmWidth = heartBm.getWidth();
-//			int heartBmHeight = heartBm.getHeight();
-//			mCanvas.drawBitmap(heartBm, targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2, new Paint());
 		}
 		public int achievedCounter = 0;
 		public Matrix reconfigureMatrix = new Matrix();
@@ -541,7 +552,9 @@ public class CupidCannonActivity extends Activity {
 			artilleryAnimOdd.transformModel(mCanvas);
 			if (boomAnim != null)
 				boomAnim.transformModel(mCanvas);
-			
+			if (testBm != null)
+				mCanvas.drawBitmap(testBm, 100, 100, new Paint());
+			//Log.d("picture1", picture1);
 		}
 		
 		
