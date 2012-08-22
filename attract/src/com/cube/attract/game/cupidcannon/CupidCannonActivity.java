@@ -10,7 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,8 +30,8 @@ public class CupidCannonActivity extends Activity {
 
 		// 强制为竖屏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		setContentView(new AnimView(this));
 		mContext = this;
+		setContentView(new AnimView(this));
 	}
 
 	public class AnimView extends SurfaceView implements
@@ -58,13 +57,7 @@ public class CupidCannonActivity extends Activity {
 		private String picture2 = intent.getStringExtra("picture2");
 		private String picture3 = intent.getStringExtra("picture3");
 		private String weibo = intent.getStringExtra("weibo");
-//		private SoundPool soundPool;
-//		private int bombSound;
-		
-//		public class BulletBoom {
-//			public CanvasAnimation bulletAnimElement = null;
-//			public CanvasAnimation boomAnim = null;
-//		}
+
 		
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
@@ -97,22 +90,15 @@ public class CupidCannonActivity extends Activity {
 		public Matrix testMatrix = new Matrix();
 		public float [] testMatrixArray; 
 		
-		//puzzle. I have no idea about the definite meaning of the flags.
-		//I use it to create the second CanvasLayer.
-//		private static final int LAYERS_FLAGS=Canvas.MATRIX_SAVE_FLAG|  
-//                Canvas.CLIP_SAVE_FLAG |  
-//                Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |  
-//                Canvas.FULL_COLOR_LAYER_SAVE_FLAG |  
-//                Canvas.CLIP_TO_LAYER_SAVE_FLAG; 
+		
+		final SoundPool soundPool= new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		final int bombSound= soundPool.load(mContext, R.raw.bomb, 1);
 		
 		public AnimView(Context context) {
 			super(context);
-			// TODO Auto-generated constructor stub
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
 			
-//			soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
-//			bombSound = soundPool.load(mContext, R.raw.bomb, 1);
 			
 			initBackgroundBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.welcome_background);
@@ -182,7 +168,6 @@ public class CupidCannonActivity extends Activity {
 			targetCenter[1] = 180;	
 			int heartBmWidth = heartBm.getWidth();
 			int heartBmHeight = heartBm.getHeight();
-//			mCanvas.drawBitmap(heartBm, targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2, new Paint());
 			initMatrix.setTranslate(targetCenter[0] - heartBmWidth/2, targetCenter[1] - heartBmHeight/2);
 			lastTargetCenter[0] = targetCenter[0];
 			lastTargetCenter[1] = targetCenter[1];
@@ -196,7 +181,6 @@ public class CupidCannonActivity extends Activity {
 				
 				@Override
 				public void onEnd() {
-					// TODO Auto-generated method stub
 					
 					artilleryAnimEven.start(true);
 					artilleryAnimOdd.start(false);
@@ -225,7 +209,6 @@ public class CupidCannonActivity extends Activity {
 				
 				@Override
 				public void onEnd() {
-					// TODO Auto-generated method stub
 					
 					artilleryAnimOdd.start(true);
 					artilleryAnimEven.start(false);
@@ -251,7 +234,6 @@ public class CupidCannonActivity extends Activity {
 				
 				@Override
 				public void onEnd() {
-					// TODO Auto-generated method stub
 					
 					batteryAnimEven.start(true);
 					batteryAnimOdd.start(false);
@@ -277,7 +259,6 @@ public class CupidCannonActivity extends Activity {
 				
 				@Override
 				public void onEnd() {
-					// TODO Auto-generated method stub
 					
 					batteryAnimOdd.start(true);
 					batteryAnimEven.start(false);
@@ -336,7 +317,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						girlAnim.setElements(girl_4_1Bm, new Paint());
 						float [] array = {
 											0.0f, 0.0f, 0.0f,
@@ -353,7 +333,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								lastTargetCenter[0] = targetCenter[0];
 								lastTargetCenter[1] = targetCenter[1];
 								targetCenter[0] = 200;
@@ -381,7 +360,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -416,7 +394,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -432,7 +409,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								float [] array = {
 										0.0f, 0.0f, 0.0f,
 										0.0f, 0.0f, 0.0f,
@@ -448,7 +424,6 @@ public class CupidCannonActivity extends Activity {
 									
 									@Override
 									public void onEnd() {
-										// TODO Auto-generated method stub
 										float [] array = {
 												0.0f, 0.0f, 0.0f,
 												0.0f, 0.0f, 0.0f,
@@ -464,7 +439,6 @@ public class CupidCannonActivity extends Activity {
 											
 											@Override
 											public void onEnd() {
-												// TODO Auto-generated method stub
 												float [] array = {
 														0.0f, 0.0f, 0.0f,
 														0.0f, 0.0f, 0.0f,
@@ -480,18 +454,6 @@ public class CupidCannonActivity extends Activity {
 													
 													@Override
 													public void onEnd() {
-														// TODO Auto-generated method stub
-//														float [] array = {
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f
-//														};
-//														girlAnim.transformMatrix.getValues(array);
-//														reconfigureMatrix.setValues(array);
-//														girlAnim.setStartMatrix(reconfigureMatrix);
-//														girlAnim.setTranslate(200, 400, 3000);
-//														girlAnim.setRepeatTimes(1);
-//														girlAnim.start(true);
 														girlAnim.setElements(girlsBm[0], new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
@@ -528,7 +490,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						heartAnim.setElements(heartBm, new Paint());
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
@@ -547,7 +508,6 @@ public class CupidCannonActivity extends Activity {
 						heartAnim.setRepeatTimes(1);
 						heartAnim.start(true);
 						heartAnim.setCallback(null);
-//						girlAnim.setElements(girl_4_0Bm, new Paint());
 					}
 				});
 				break;
@@ -562,7 +522,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						girlAnim.setElements(girlsBm[1], new Paint());
 						float [] array = {
 											0.0f, 0.0f, 0.0f,
@@ -579,7 +538,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								lastTargetCenter[0] = targetCenter[0];
 								lastTargetCenter[1] = targetCenter[1];
 								targetCenter[0] = 260 + 0;
@@ -607,7 +565,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -642,7 +599,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -658,7 +614,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								float [] array = {
 										0.0f, 0.0f, 0.0f,
 										0.0f, 0.0f, 0.0f,
@@ -674,7 +629,6 @@ public class CupidCannonActivity extends Activity {
 									
 									@Override
 									public void onEnd() {
-										// TODO Auto-generated method stub
 										float [] array = {
 												0.0f, 0.0f, 0.0f,
 												0.0f, 0.0f, 0.0f,
@@ -690,7 +644,6 @@ public class CupidCannonActivity extends Activity {
 											
 											@Override
 											public void onEnd() {
-												// TODO Auto-generated method stub
 												float [] array = {
 														0.0f, 0.0f, 0.0f,
 														0.0f, 0.0f, 0.0f,
@@ -706,18 +659,6 @@ public class CupidCannonActivity extends Activity {
 													
 													@Override
 													public void onEnd() {
-														// TODO Auto-generated method stub
-//														float [] array = {
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f
-//														};
-//														girlAnim.transformMatrix.getValues(array);
-//														reconfigureMatrix.setValues(array);
-//														girlAnim.setStartMatrix(reconfigureMatrix);
-//														girlAnim.setTranslate(200, 400, 3000);
-//														girlAnim.setRepeatTimes(1);
-//														girlAnim.start(true);
 														girlAnim.setElements(girlsBm[3], new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
@@ -754,7 +695,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						heartAnim.setElements(heartBm, new Paint());
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
@@ -773,7 +713,6 @@ public class CupidCannonActivity extends Activity {
 						heartAnim.setRepeatTimes(1);
 						heartAnim.start(true);
 						heartAnim.setCallback(null);
-//						girlAnim.setElements(girl_4_0Bm, new Paint());
 					}
 				});
 				break;
@@ -788,7 +727,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						girlAnim.setElements(girlsBm[4], new Paint());
 						float [] array = {
 											0.0f, 0.0f, 0.0f,
@@ -805,7 +743,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								lastTargetCenter[0] = targetCenter[0];
 								lastTargetCenter[1] = targetCenter[1];
 								targetCenter[0] = 250 - 50;
@@ -833,7 +770,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -868,7 +804,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -884,7 +819,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								float [] array = {
 										0.0f, 0.0f, 0.0f,
 										0.0f, 0.0f, 0.0f,
@@ -916,7 +850,6 @@ public class CupidCannonActivity extends Activity {
 											
 											@Override
 											public void onEnd() {
-												// TODO Auto-generated method stub
 												float [] array = {
 														0.0f, 0.0f, 0.0f,
 														0.0f, 0.0f, 0.0f,
@@ -932,18 +865,6 @@ public class CupidCannonActivity extends Activity {
 													
 													@Override
 													public void onEnd() {
-														// TODO Auto-generated method stub
-//														float [] array = {
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f
-//														};
-//														girlAnim.transformMatrix.getValues(array);
-//														reconfigureMatrix.setValues(array);
-//														girlAnim.setStartMatrix(reconfigureMatrix);
-//														girlAnim.setTranslate(200, 400, 3000);
-//														girlAnim.setRepeatTimes(1);
-//														girlAnim.start(true);
 														girlAnim.setElements(girlsBm[6], new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
@@ -980,7 +901,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						heartAnim.setElements(heartBm, new Paint());
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
@@ -999,7 +919,6 @@ public class CupidCannonActivity extends Activity {
 						heartAnim.setRepeatTimes(1);
 						heartAnim.start(true);
 						heartAnim.setCallback(null);
-//						girlAnim.setElements(girl_4_0Bm, new Paint());
 					}
 				});
 				break;
@@ -1014,7 +933,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						girlAnim.setElements(girlsBm[7], new Paint());
 						float [] array = {
 											0.0f, 0.0f, 0.0f,
@@ -1031,7 +949,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								lastTargetCenter[0] = targetCenter[0];
 								lastTargetCenter[1] = targetCenter[1];
 								targetCenter[0] = 320 - 20;
@@ -1059,7 +976,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -1094,7 +1010,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						float [] array = {
 								0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f,
@@ -1110,7 +1025,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								float [] array = {
 										0.0f, 0.0f, 0.0f,
 										0.0f, 0.0f, 0.0f,
@@ -1126,7 +1040,6 @@ public class CupidCannonActivity extends Activity {
 									
 									@Override
 									public void onEnd() {
-										// TODO Auto-generated method stub
 										float [] array = {
 												0.0f, 0.0f, 0.0f,
 												0.0f, 0.0f, 0.0f,
@@ -1142,7 +1055,6 @@ public class CupidCannonActivity extends Activity {
 											
 											@Override
 											public void onEnd() {
-												// TODO Auto-generated method stub
 												float [] array = {
 														0.0f, 0.0f, 0.0f,
 														0.0f, 0.0f, 0.0f,
@@ -1158,18 +1070,6 @@ public class CupidCannonActivity extends Activity {
 													
 													@Override
 													public void onEnd() {
-														// TODO Auto-generated method stub
-//														float [] array = {
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f,
-//																0.0f, 0.0f, 0.0f
-//														};
-//														girlAnim.transformMatrix.getValues(array);
-//														reconfigureMatrix.setValues(array);
-//														girlAnim.setStartMatrix(reconfigureMatrix);
-//														girlAnim.setTranslate(200, 400, 3000);
-//														girlAnim.setRepeatTimes(1);
-//														girlAnim.start(true);
 														girlAnim.setElements(girl_4_0Bm, new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
@@ -1219,7 +1119,6 @@ public class CupidCannonActivity extends Activity {
 						lastTargetCenter[1] = targetCenter[1];
 						targetCenter[0] = 280;
 						targetCenter[1] = 180;
-//						reconfigureMatrix.setTranslate(targetCenter[0]-heartBm.getWidth()/2, 80-heartBm.getHeight()/2);
 						reconfigureMatrix.setTranslate(targetCenter[0]-heartBm.getWidth()/2, targetCenter[1]-heartBm.getHeight()/2);
 						heartAnim.setStartMatrix(reconfigureMatrix);
 						heartAnim.setTranslate(0, 0, 20);
@@ -1255,9 +1154,6 @@ public class CupidCannonActivity extends Activity {
 			artilleryAnimOdd.transformModel(mCanvas);
 			if (boomAnim != null)
 				boomAnim.transformModel(mCanvas);
-//			if (testBm != null)
-//				mCanvas.drawBitmap(testBm, 100, 100, new Paint());
-			//Log.d("picture1", picture1);
 		}
 		
 		
@@ -1283,13 +1179,11 @@ public class CupidCannonActivity extends Activity {
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width,
 				int height) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void surfaceDestroyed(SurfaceHolder holder) {
-			// TODO Auto-generated method stub
 			isRunning = false;
 
 		}
@@ -1300,11 +1194,10 @@ public class CupidCannonActivity extends Activity {
 				
 
 				drawAnimationInstance();
-	
+
 				try {
 					Thread.sleep(3);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				Canvas renderer = null;
@@ -1324,10 +1217,6 @@ public class CupidCannonActivity extends Activity {
 		}
 		
 
-//			MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bomb);
-//			mediaPlayer.stop();
-//			mediaPlayer.prepare();
-//			mediaPlayer.start();
 
 		public boolean gameEnded = false;
 		public boolean powerTubeEnable = false;
@@ -1401,7 +1290,6 @@ public class CupidCannonActivity extends Activity {
 					
 					@Override
 					public void onEnd() {
-						// TODO Auto-generated method stub
 						Matrix matrix = new Matrix();
 						float [] array = {	1.0f, 0.0f, 0.0f,
 	    									0.0f, 1.0f, 0.0f,
@@ -1412,7 +1300,6 @@ public class CupidCannonActivity extends Activity {
 							
 							@Override
 							public void onEnd() {
-								// TODO Auto-generated method stub
 								
 								if (Math.sqrt((boomCenter[0]-targetCenter[0])*(boomCenter[0]-targetCenter[0]) 
 										+ (boomCenter[1]-targetCenter[1])*(boomCenter[1]-targetCenter[1])) < RADIUS )
@@ -1437,19 +1324,10 @@ public class CupidCannonActivity extends Activity {
 						//boomAnim.setScale(2, mWidth/2, mHeight/2, 3000);
 						boomAnim.setRepeatTimes(1);
 						boomAnim.start(true);
+						soundPool.play(bombSound, 1.0f, 1.0f, 1, 0, 1f);
 						bulletAnim.start(false);
 						
-//						soundPool.play(bombSound, 0.2f, 0.2f, 1, 0, 1f);
-//						try
-//						{
-//							MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bomb);
-//							mediaPlayer.stop();
-//							mediaPlayer.prepare();
-//							mediaPlayer.start();
-//						}
-//						catch (Exception e)
-//						{		
-//						}
+						
 					}
 				});
 		    	bulletAnim.setElements(bulletBm, new Paint());
