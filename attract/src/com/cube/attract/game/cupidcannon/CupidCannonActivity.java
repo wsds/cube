@@ -1349,6 +1349,38 @@ public class CupidCannonActivity extends Activity {
 		    return true;
 		}
 
+		//test game end. Dialog will show on the screen.
+//	    public void CreatDialog(int id) {
+//	    	AlertDialog.Builder builder = new AlertDialog.Builder(MainDialog.this);	
+//
+//	    	    builder.setIcon(R.drawable.icon);
+//	                builder.setTitle("投票");
+//	                builder.setMessage("您认为什么样的内容能吸引您？");
+//	                builder.setPositiveButton("有趣味的", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                        showDialog("你选择了有趣味的");
+//	                    }
+//	                });
+//	                builder.setNeutralButton("有思想的", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                        showDialog("你选择了有思想的");                    
+//	                    }
+//	                });
+//	                builder.setNegativeButton("主题强的", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                        showDialog("你选择了主题强的");  
+//	                    }
+//	                });
+//	    	
+//	        }
+//
+//	        
+//	        private void showDialog(String str) {
+//	    	 new AlertDialog.Builder(mContext.this)
+//	             .setMessage(str)
+//	             .show();
+//	        }
+
 	}
 
 }
