@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
@@ -18,7 +19,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.cube.attract.R;
+import com.cube.attract.game2.R;
 import com.cube.canvas.common.AnimationManager;
 import com.cube.canvas.common.AnimationManager.AnimationBitmap;
 import com.cube.canvas.common.CanvasAnimation2;
@@ -113,7 +114,7 @@ public class MosquitoActivity extends Activity {
 				}
 			}
 
-			public int count = 5;
+			public int count = 15;
 			public int type = 2;
 			public ArrayList<Mosquito> mosquitos = new ArrayList<Mosquito>();
 			ArrayList<AnimationBitmap> covers = new ArrayList<AnimationBitmap>();
@@ -204,9 +205,21 @@ public class MosquitoActivity extends Activity {
 		final int passSound = soundPool.load(context, R.raw.pass, 1);
 		final int startSound = soundPool.load(context, R.raw.start, 1);
 		final int flyawaySound = soundPool.load(context, R.raw.flyaway, 1);
-		
+
+		ArrayList<Bitmap> girls = new ArrayList<Bitmap>();
+		int id = 0;
+
+		void initGirls() {
+			girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_1_1));
+			girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_2_1));
+			girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_3_1));
+			girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_4_1));
+			girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_5_1));
+			girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_6_1));
+		}
+
 		private void initAnimationInstance() {
-			
+
 			animationManager = new AnimationManager(context, mHeight, mWidth);
 
 			animationManager.mCanvas = mCanvas;
@@ -216,7 +229,8 @@ public class MosquitoActivity extends Activity {
 			animationDynamicManager1.mCanvas = mCanvas;
 			mosquitosPool = new MosquitosPool();
 
-			background = animationManager.addAnimationBitmap(R.drawable.girl_4_1);
+			background = animationManager.addAnimationBitmap(girls.get(id));
+			id = (id + 1) % 6;
 			float sx = ((float) mWidth / 720f);
 			Log.v(TAG, "sx is " + sx);
 			background.matrix.setScale(sx, sx);
@@ -279,7 +293,7 @@ public class MosquitoActivity extends Activity {
 
 			memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 			mCanvas = new Canvas(memBitmap);
-
+			initGirls();
 			initAnimationInstance();
 
 			drawThread = new DrawThread();
@@ -328,8 +342,6 @@ public class MosquitoActivity extends Activity {
 				CanvasAnimation2 turn1 = new CanvasAnimation2();
 				turn1.setRotate(1440, 23, 66, 1000);
 				turn1.setRepeatSelfTimes(5);
-				// shell.addAnimation(turn1);
-				// moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
 				break;
 			}
 			angle = turnCannon(currentX, currentY);
@@ -411,6 +423,26 @@ public class MosquitoActivity extends Activity {
 			shrink.setScale(0.8f, 189, 166, 200);
 			enlarge.addNextAnimation(shrink);
 
+			
+			CanvasAnimation2 up = new CanvasAnimation2();
+			up.setTranslate(100, -250, 2500);
+			shrink.addNextAnimation(up);
+			
+			CanvasAnimation2 shrink1 = new CanvasAnimation2();
+			shrink1.setScale(0.1f, 189, 166, 1500);
+			shrink.addNextAnimation(shrink1);
+
+			up.setCallback(new Callback() {
+				@Override
+				public void onEnd() {
+					next();
+				}
+			});
+
+		}
+
+		void next() {
+			initAnimationInstance();
 		}
 
 		class DrawThread implements Runnable {
@@ -422,12 +454,6 @@ public class MosquitoActivity extends Activity {
 				while (isRunning) {
 
 					drawAnimationInstance();
-
-					// try {
-					// Thread.sleep(10);
-					// } catch (InterruptedException e) {
-					// e.printStackTrace();
-					// }
 					Canvas renderer = null;
 					synchronized (mHolder) {
 						try {

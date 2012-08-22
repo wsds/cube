@@ -5,18 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 
-import com.cube.attract.about.MyScrollLayout;
-import com.cube.common.Settings;
+import com.cube.attract.game2.R;
 
 public class MainActivity extends Activity {
-
-	Settings settings = Settings.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,18 +41,12 @@ public class MainActivity extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				if (settings.isLogoin == "false") {
-					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					// about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+				Intent about = new Intent(Intent.ACTION_MAIN);
+				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-					about.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
-					mContext.startActivity(about);
-					mActivity.finish();
-
-				} else if (settings.isLogoin == "") {
-
-				}
+				about.setClassName("com.cube.attract.game2", "com.cube.attract.game.mosquito.MosquitoActivity");
+				mContext.startActivity(about);
+				mActivity.finish();
 
 			}
 		});
