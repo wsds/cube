@@ -74,8 +74,8 @@ public class GlRenderer implements Renderer {
 	private static float[] quadVertexGirl = new float[] { -9.0f, 16.0f, 0,
 			-9.0f, -16.0f, 0, 9.0f, 16.0f, 0, 9.0f, -16.0f, 0 };
 
-	private static float[] quadTextureGirl = new float[] { 0, 1, 0, 0, 1, 1, 1,
-			0 };
+	private static float[] quadTextureGirl = new float[] { 0, 0, 0, 1, 1, 0, 1,
+			1 };
 
 	private static FloatBuffer quadVertexBufferGirl;
 	private static FloatBuffer quadTextureBufferGirl;
@@ -402,7 +402,7 @@ public class GlRenderer implements Renderer {
 			girls++;
 		}
 		while(girls!=9){
-			texture[girls]=texture[girls-1];
+			texture[girls]=Utils.getTextureFromBitmapResource(context, R.drawable.girl_4_3);
 			girls++;
 			Log.i("GlRenderer girls", String.valueOf(girls));
 		}
