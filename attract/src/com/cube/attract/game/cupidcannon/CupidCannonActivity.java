@@ -83,7 +83,7 @@ public class CupidCannonActivity extends Activity {
 				};
 
 		public float[] powerTubeBaseAdress = {0.0f, 0.0f};
-		public final int POWERSENSITY = 15;
+		public final int POWERSENSITY = 10;
 		public final int RADIUS = 80;
 		public float[] rotateCenter = {0.0f, 0.0f};
 		public float[] targetCenter = {0.0f, 0.0f};
@@ -206,7 +206,7 @@ public class CupidCannonActivity extends Activity {
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			artilleryAnimOdd.setTraceMatrix(initMatrix);
 			
-			artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 5000);
+			artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 3000);
 			artilleryAnimOdd.setRepeatTimes(artilleryAnimOdd.INFINITE);
 			artilleryAnimOdd.start(true);
 			
@@ -232,7 +232,7 @@ public class CupidCannonActivity extends Activity {
 			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 			artilleryAnimEven.setTraceMatrix(initMatrix);
 			
-			artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 5000);
+			artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 3000);
 			artilleryAnimEven.setRepeatTimes(artilleryAnimEven.INFINITE);
 			artilleryAnimEven.start(false);
 			
@@ -258,7 +258,7 @@ public class CupidCannonActivity extends Activity {
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			batteryAnimOdd.setTraceMatrix(initMatrix);
 			
-			batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 5000);
+			batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 3000);
 			batteryAnimOdd.setRepeatTimes(batteryAnimOdd.INFINITE);
 			batteryAnimOdd.start(true);
 			
@@ -284,7 +284,7 @@ public class CupidCannonActivity extends Activity {
 			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 			batteryAnimEven.setTraceMatrix(initMatrix);
 			
-			batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 5000);
+			batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 3000);
 			batteryAnimEven.setRepeatTimes(batteryAnimEven.INFINITE);
 			batteryAnimEven.start(false);
 			
@@ -321,7 +321,7 @@ public class CupidCannonActivity extends Activity {
 				girlAnim.setElements(girl_4_1Bm, new Paint());
 				reconfigureMatrix.setTranslate(0, 0);
 				girlAnim.setStartMatrix(reconfigureMatrix);
-				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setTranslate(0, 0, 1000);
 				girlAnim.setRepeatTimes(1);
 				girlAnim.start(true);
 				girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -338,7 +338,7 @@ public class CupidCannonActivity extends Activity {
 						girlAnim.traceMatrix.getValues(array);
 						reconfigureMatrix.setValues(array);
 						girlAnim.setStartMatrix(reconfigureMatrix);
-						girlAnim.setTranslate(-200, -400, 2000);
+						girlAnim.setTranslate(-200, -400, 1000);
 						girlAnim.setRepeatTimes(1);
 						girlAnim.start(true);
 						girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -348,7 +348,6 @@ public class CupidCannonActivity extends Activity {
 								// TODO Auto-generated method stub
 								lastTargetCenter[0] = targetCenter[0];
 								lastTargetCenter[1] = targetCenter[1];
-								targetCenter[1] = 300;
 								targetCenter[0] = 200;
 								targetCenter[1] = 300;
 								girlAnim.setCallback(null);
@@ -367,7 +366,7 @@ public class CupidCannonActivity extends Activity {
 				heartAnim.transformMatrix.getValues(array1);
 				reconfigureMatrix.setValues(array1);
 				heartAnim.setStartMatrix(reconfigureMatrix);
-				heartAnim.setTranslate(0, 0, 5500);
+				heartAnim.setTranslate(0, 0, 3200);
 				heartAnim.setRepeatTimes(1);
 				heartAnim.start(true);
 				heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -385,7 +384,7 @@ public class CupidCannonActivity extends Activity {
 						heartAnim.setStartMatrix(reconfigureMatrix);
 						heartAnim.setElements(heartBm, new Paint());
 						heartAnim.setTranslate(targetCenter[0]-lastTargetCenter[0], 
-								targetCenter[1]-lastTargetCenter[1], 2000);
+								targetCenter[1]-lastTargetCenter[1], 1000);
 						heartAnim.setRepeatTimes(1);
 						heartAnim.start(true);
 						heartAnim.setCallback(null);
@@ -402,7 +401,7 @@ public class CupidCannonActivity extends Activity {
 				girlAnim.transformMatrix.getValues(array);
 				reconfigureMatrix.setValues(array);
 				girlAnim.setStartMatrix(reconfigureMatrix);
-				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setTranslate(0, 0, 1000);
 				girlAnim.setRepeatTimes(1);
 				girlAnim.start(true);
 				girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -418,7 +417,7 @@ public class CupidCannonActivity extends Activity {
 						girlAnim.transformMatrix.getValues(array);
 						reconfigureMatrix.setValues(array);
 						girlAnim.setStartMatrix(reconfigureMatrix);
-						girlAnim.setTranslate(-100, 100, 1500);
+						girlAnim.setTranslate(-100, 100, 500);
 						girlAnim.setRepeatTimes(1);
 						girlAnim.start(true);
 						girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -434,7 +433,7 @@ public class CupidCannonActivity extends Activity {
 								girlAnim.transformMatrix.getValues(array);
 								reconfigureMatrix.setValues(array);
 								girlAnim.setStartMatrix(reconfigureMatrix);
-								girlAnim.setTranslate(240, 240, 3500);
+								girlAnim.setTranslate(240, 240, 1200);
 								girlAnim.setRepeatTimes(1);
 								girlAnim.start(true);
 								girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -450,7 +449,7 @@ public class CupidCannonActivity extends Activity {
 										girlAnim.transformMatrix.getValues(array);
 										reconfigureMatrix.setValues(array);
 										girlAnim.setStartMatrix(reconfigureMatrix);
-										girlAnim.setTranslate(100, -100, 1500);
+										girlAnim.setTranslate(100, -100, 500);
 										girlAnim.setRepeatTimes(1);
 										girlAnim.start(true);
 										girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -466,7 +465,7 @@ public class CupidCannonActivity extends Activity {
 												girlAnim.transformMatrix.getValues(array);
 												reconfigureMatrix.setValues(array);
 												girlAnim.setStartMatrix(reconfigureMatrix);
-												girlAnim.setTranslate(-240, -240, 3500);
+												girlAnim.setTranslate(-240, -240, 1200);
 												girlAnim.setRepeatTimes(1);
 												girlAnim.start(true);
 												girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -488,7 +487,7 @@ public class CupidCannonActivity extends Activity {
 														girlAnim.setElements(girlsBm[0], new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
-														girlAnim.setTranslate(0, 0, 3000);
+														girlAnim.setTranslate(0, 0, 1000);
 														girlAnim.setRepeatTimes(1);
 														girlAnim.start(true);
 														girlAnim.setCallback(null);
@@ -514,7 +513,7 @@ public class CupidCannonActivity extends Activity {
 				heartAnim.transformMatrix.getValues(array2);
 				reconfigureMatrix.setValues(array2);
 				heartAnim.setStartMatrix(reconfigureMatrix);
-				heartAnim.setTranslate(0, 0, 16500);
+				heartAnim.setTranslate(0, 0, 6000);
 				heartAnim.setRepeatTimes(1);
 				heartAnim.start(true);
 				heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -548,7 +547,7 @@ public class CupidCannonActivity extends Activity {
 				girlAnim.setElements(girlsBm[1], new Paint());
 				reconfigureMatrix.setTranslate(0, 0);
 				girlAnim.setStartMatrix(reconfigureMatrix);
-				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setTranslate(0, 0, 1000);
 				girlAnim.setRepeatTimes(1);
 				girlAnim.start(true);
 				girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -565,7 +564,7 @@ public class CupidCannonActivity extends Activity {
 						girlAnim.traceMatrix.getValues(array);
 						reconfigureMatrix.setValues(array);
 						girlAnim.setStartMatrix(reconfigureMatrix);
-						girlAnim.setTranslate(0, 50, 2000);
+						girlAnim.setTranslate(0, 50, 1000);
 						girlAnim.setRepeatTimes(1);
 						girlAnim.start(true);
 						girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -593,7 +592,7 @@ public class CupidCannonActivity extends Activity {
 				heartAnim.transformMatrix.getValues(array3);
 				reconfigureMatrix.setValues(array3);
 				heartAnim.setStartMatrix(reconfigureMatrix);
-				heartAnim.setTranslate(0, 0, 5500);
+				heartAnim.setTranslate(0, 0, 3200);
 				heartAnim.setRepeatTimes(1);
 				heartAnim.start(true);
 				heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -611,7 +610,7 @@ public class CupidCannonActivity extends Activity {
 						heartAnim.setStartMatrix(reconfigureMatrix);
 						heartAnim.setElements(heartBm, new Paint());
 						heartAnim.setTranslate(targetCenter[0]-lastTargetCenter[0], 
-								targetCenter[1]-lastTargetCenter[1], 2000);
+								targetCenter[1]-lastTargetCenter[1], 1000);
 						heartAnim.setRepeatTimes(1);
 						heartAnim.start(true);
 						heartAnim.setCallback(null);
@@ -628,7 +627,7 @@ public class CupidCannonActivity extends Activity {
 				girlAnim.transformMatrix.getValues(array4);
 				reconfigureMatrix.setValues(array4);
 				girlAnim.setStartMatrix(reconfigureMatrix);
-				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setTranslate(0, 0, 1000);
 				girlAnim.setRepeatTimes(1);
 				girlAnim.start(true);
 				girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -644,7 +643,7 @@ public class CupidCannonActivity extends Activity {
 						girlAnim.transformMatrix.getValues(array);
 						reconfigureMatrix.setValues(array);
 						girlAnim.setStartMatrix(reconfigureMatrix);
-						girlAnim.setTranslate(-100, 100, 1500);
+						girlAnim.setTranslate(-100, 100, 500);
 						girlAnim.setRepeatTimes(1);
 						girlAnim.start(true);
 						girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -660,7 +659,7 @@ public class CupidCannonActivity extends Activity {
 								girlAnim.transformMatrix.getValues(array);
 								reconfigureMatrix.setValues(array);
 								girlAnim.setStartMatrix(reconfigureMatrix);
-								girlAnim.setTranslate(240, 240, 3500);
+								girlAnim.setTranslate(240, 240, 1200);
 								girlAnim.setRepeatTimes(1);
 								girlAnim.start(true);
 								girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -676,7 +675,7 @@ public class CupidCannonActivity extends Activity {
 										girlAnim.transformMatrix.getValues(array);
 										reconfigureMatrix.setValues(array);
 										girlAnim.setStartMatrix(reconfigureMatrix);
-										girlAnim.setTranslate(100, -100, 1500);
+										girlAnim.setTranslate(100, -100, 500);
 										girlAnim.setRepeatTimes(1);
 										girlAnim.start(true);
 										girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -692,7 +691,7 @@ public class CupidCannonActivity extends Activity {
 												girlAnim.transformMatrix.getValues(array);
 												reconfigureMatrix.setValues(array);
 												girlAnim.setStartMatrix(reconfigureMatrix);
-												girlAnim.setTranslate(-240, -240, 3500);
+												girlAnim.setTranslate(-240, -240, 1200);
 												girlAnim.setRepeatTimes(1);
 												girlAnim.start(true);
 												girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -714,7 +713,7 @@ public class CupidCannonActivity extends Activity {
 														girlAnim.setElements(girlsBm[3], new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
-														girlAnim.setTranslate(0, 0, 3000);
+														girlAnim.setTranslate(0, 0, 1000);
 														girlAnim.setRepeatTimes(1);
 														girlAnim.start(true);
 														girlAnim.setCallback(null);
@@ -740,7 +739,7 @@ public class CupidCannonActivity extends Activity {
 				heartAnim.transformMatrix.getValues(array5);
 				reconfigureMatrix.setValues(array5);
 				heartAnim.setStartMatrix(reconfigureMatrix);
-				heartAnim.setTranslate(0, 0, 16500);
+				heartAnim.setTranslate(0, 0, 6000);
 				heartAnim.setRepeatTimes(1);
 				heartAnim.start(true);
 				heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -774,7 +773,7 @@ public class CupidCannonActivity extends Activity {
 				girlAnim.setElements(girlsBm[4], new Paint());
 				reconfigureMatrix.setTranslate(0, 0);
 				girlAnim.setStartMatrix(reconfigureMatrix);
-				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setTranslate(0, 0, 1000);
 				girlAnim.setRepeatTimes(1);
 				girlAnim.start(true);
 				girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -791,7 +790,7 @@ public class CupidCannonActivity extends Activity {
 						girlAnim.traceMatrix.getValues(array);
 						reconfigureMatrix.setValues(array);
 						girlAnim.setStartMatrix(reconfigureMatrix);
-						girlAnim.setTranslate(-50, -100, 2000);
+						girlAnim.setTranslate(-50, -100, 1000);
 						girlAnim.setRepeatTimes(1);
 						girlAnim.start(true);
 						girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -819,7 +818,7 @@ public class CupidCannonActivity extends Activity {
 				heartAnim.transformMatrix.getValues(array6);
 				reconfigureMatrix.setValues(array6);
 				heartAnim.setStartMatrix(reconfigureMatrix);
-				heartAnim.setTranslate(0, 0, 5500);
+				heartAnim.setTranslate(0, 0, 3200);
 				heartAnim.setRepeatTimes(1);
 				heartAnim.start(true);
 				heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -837,7 +836,7 @@ public class CupidCannonActivity extends Activity {
 						heartAnim.setStartMatrix(reconfigureMatrix);
 						heartAnim.setElements(heartBm, new Paint());
 						heartAnim.setTranslate(targetCenter[0]-lastTargetCenter[0], 
-								targetCenter[1]-lastTargetCenter[1], 2000);
+								targetCenter[1]-lastTargetCenter[1], 1000);
 						heartAnim.setRepeatTimes(1);
 						heartAnim.start(true);
 						heartAnim.setCallback(null);
@@ -854,7 +853,7 @@ public class CupidCannonActivity extends Activity {
 				girlAnim.transformMatrix.getValues(array7);
 				reconfigureMatrix.setValues(array7);
 				girlAnim.setStartMatrix(reconfigureMatrix);
-				girlAnim.setTranslate(0, 0, 3000);
+				girlAnim.setTranslate(0, 0, 1000);
 				girlAnim.setRepeatTimes(1);
 				girlAnim.start(true);
 				girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -870,7 +869,7 @@ public class CupidCannonActivity extends Activity {
 						girlAnim.transformMatrix.getValues(array);
 						reconfigureMatrix.setValues(array);
 						girlAnim.setStartMatrix(reconfigureMatrix);
-						girlAnim.setTranslate(-100, 100, 1500);
+						girlAnim.setTranslate(-100, 100, 500);
 						girlAnim.setRepeatTimes(1);
 						girlAnim.start(true);
 						girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -886,7 +885,7 @@ public class CupidCannonActivity extends Activity {
 								girlAnim.transformMatrix.getValues(array);
 								reconfigureMatrix.setValues(array);
 								girlAnim.setStartMatrix(reconfigureMatrix);
-								girlAnim.setTranslate(240, 240, 3500);
+								girlAnim.setTranslate(240, 240, 1200);
 								girlAnim.setRepeatTimes(1);
 								girlAnim.start(true);
 								girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -902,7 +901,7 @@ public class CupidCannonActivity extends Activity {
 										girlAnim.transformMatrix.getValues(array);
 										reconfigureMatrix.setValues(array);
 										girlAnim.setStartMatrix(reconfigureMatrix);
-										girlAnim.setTranslate(100, -100, 1500);
+										girlAnim.setTranslate(100, -100, 500);
 										girlAnim.setRepeatTimes(1);
 										girlAnim.start(true);
 										girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -918,7 +917,7 @@ public class CupidCannonActivity extends Activity {
 												girlAnim.transformMatrix.getValues(array);
 												reconfigureMatrix.setValues(array);
 												girlAnim.setStartMatrix(reconfigureMatrix);
-												girlAnim.setTranslate(-240, -240, 3500);
+												girlAnim.setTranslate(-240, -240, 1200);
 												girlAnim.setRepeatTimes(1);
 												girlAnim.start(true);
 												girlAnim.setCallback(new CanvasAnimation.Callback() {
@@ -940,7 +939,7 @@ public class CupidCannonActivity extends Activity {
 														girlAnim.setElements(girlsBm[6], new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
-														girlAnim.setTranslate(0, 0, 3000);
+														girlAnim.setTranslate(0, 0, 1000);
 														girlAnim.setRepeatTimes(1);
 														girlAnim.start(true);
 														girlAnim.setCallback(null);
@@ -966,7 +965,7 @@ public class CupidCannonActivity extends Activity {
 				heartAnim.transformMatrix.getValues(array8);
 				reconfigureMatrix.setValues(array8);
 				heartAnim.setStartMatrix(reconfigureMatrix);
-				heartAnim.setTranslate(0, 0, 16500);
+				heartAnim.setTranslate(0, 0, 6000);
 				heartAnim.setRepeatTimes(1);
 				heartAnim.start(true);
 				heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -1454,7 +1453,7 @@ public class CupidCannonActivity extends Activity {
 					tubeLength = 32;
 				if (tubeLength == 0)
 					tubeLength = 1;
-				bulletAnim.setAccelerate(vector[0], vector[1], -0.0004f, 200*(float)Math.sqrt(tubeLength));
+				bulletAnim.setAccelerate(vector[0], vector[1], -0.0064f, 50*(float)Math.sqrt(tubeLength));
 				bulletAnim.setRepeatTimes(1);
 				bulletAnim.start(true);
 				bulletEnable = false;		
