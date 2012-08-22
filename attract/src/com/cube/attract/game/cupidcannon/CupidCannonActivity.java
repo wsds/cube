@@ -9,7 +9,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -56,6 +58,8 @@ public class CupidCannonActivity extends Activity {
 		private String picture2 = intent.getStringExtra("picture2");
 		private String picture3 = intent.getStringExtra("picture3");
 		private String weibo = intent.getStringExtra("weibo");
+//		private SoundPool soundPool;
+//		private int bombSound;
 		
 //		public class BulletBoom {
 //			public CanvasAnimation bulletAnimElement = null;
@@ -106,6 +110,10 @@ public class CupidCannonActivity extends Activity {
 			// TODO Auto-generated constructor stub
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
+			
+//			soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+//			bombSound = soundPool.load(mContext, R.raw.bomb, 1);
+			
 			initBackgroundBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.welcome_background);
 			backgroundBm = BitmapFactory.decodeResource(getResources(),
@@ -1321,7 +1329,7 @@ public class CupidCannonActivity extends Activity {
 //			mediaPlayer.prepare();
 //			mediaPlayer.start();
 
-
+		public boolean gameEnded = false;
 		public boolean powerTubeEnable = false;
 		public boolean bulletEnable = false;
 		public boolean achieved = false;
@@ -1431,16 +1439,17 @@ public class CupidCannonActivity extends Activity {
 						boomAnim.start(true);
 						bulletAnim.start(false);
 						
-						try
-						{
-							MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bomb);
-							mediaPlayer.stop();
-							mediaPlayer.prepare();
-							mediaPlayer.start();
-						}
-						catch (Exception e)
-						{		
-						}
+//						soundPool.play(bombSound, 0.2f, 0.2f, 1, 0, 1f);
+//						try
+//						{
+//							MediaPlayer mediaPlayer = MediaPlayer.create(mContext, R.raw.bomb);
+//							mediaPlayer.stop();
+//							mediaPlayer.prepare();
+//							mediaPlayer.start();
+//						}
+//						catch (Exception e)
+//						{		
+//						}
 					}
 				});
 		    	bulletAnim.setElements(bulletBm, new Paint());
