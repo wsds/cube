@@ -5,6 +5,7 @@ import android.util.Log;
 
 
 final class SceneState {
+	static final int TOTAL_GIRLS = 9;
 
 	static SceneState instance = null;
 
@@ -53,7 +54,7 @@ final class SceneState {
 		public float dAngle = 0;
 		public float dy = 0;
 
-		public int totalGirls = 3;
+		public int totalGirls = TOTAL_GIRLS;
 		public double diff = 0;
 		public int frontViewIndex = 0;
 		public boolean isStopping = false;
@@ -114,7 +115,7 @@ final class SceneState {
 		}
 
 		public PictureView[] pictureView;
-		public int viewsNum = 9;
+		public int viewsNum = TOTAL_GIRLS;
 
 		float radius = 25f;
 		double PI = Math.PI;
