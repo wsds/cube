@@ -2,11 +2,11 @@ package com.cube.attract.entry;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import com.cube.common.Settings;
+import com.cube.common.pickup.Matrix4f;
 import com.cube.opengl.common.GlMatrix;
 
 
-final class SceneState {
+public final class SceneState {
 	
 	static SceneState instance = null;
 
@@ -18,6 +18,7 @@ final class SceneState {
 	
 	static final float angleFactor = 0.40f;
 	float dx, dy;
+	public float x, y;
 	float dxSpeed, dySpeed;
 	GlMatrix baseMatrix = new GlMatrix();
 	
@@ -35,7 +36,41 @@ final class SceneState {
 	
 	int screenWidth; 
 	int screenHeight;
-	
+	public float zoom = -6.0f - 0.6f;
+	/**
+	 * 投影矩阵
+	 */
+	public Matrix4f gMatProject = new Matrix4f();
+	/**
+	 * 视图矩阵
+	 */
+	public Matrix4f gMatView = new Matrix4f();
+	/**
+	 * 模型矩阵
+	 */
+	public Matrix4f gMatModel = new Matrix4f();
+	/**
+	 * 视口参数
+	 */
+	public int[] gpViewport = new int[4];
+	/**
+	 * 当前系统的投影矩阵，列序填充
+	 */
+	public float[] gpMatrixProjectArray = new float[16];
+	/**
+	 * 当前系统的视图矩阵，列序填充
+	 */
+	public float[] gpMatrixViewArray = new float[16];
+
+	/**
+	 * 是否有三角形被选中
+	 */
+	public boolean gbTrianglePicked = false;
+	/**
+	 * 是否需要进行拾取检测（当触摸事件发生时）
+	 */
+	public boolean gbNeedPick = false;
+	public int picked = -1;
 	public void toggleLighting() {
 		lighting = !lighting;
 	}
