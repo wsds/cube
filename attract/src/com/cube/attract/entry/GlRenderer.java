@@ -8,9 +8,10 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import ro.brite.android.opengl.common.GlMatrix;
+import ro.brite.android.opengl.common.Utils;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
@@ -21,9 +22,6 @@ import com.cube.common.pickup.IBufferFactory;
 import com.cube.common.pickup.Matrix4f;
 import com.cube.common.pickup.Ray;
 import com.cube.common.pickup.Vector3f;
-import com.cube.opengl.common.GLAnimation;
-import com.cube.opengl.common.GlMatrix;
-import com.cube.opengl.common.Utils;
 
 public class GlRenderer implements Renderer {
 

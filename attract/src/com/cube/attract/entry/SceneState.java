@@ -2,8 +2,9 @@ package com.cube.attract.entry;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import ro.brite.android.opengl.common.GlMatrix;
+
 import com.cube.common.pickup.Matrix4f;
-import com.cube.opengl.common.GlMatrix;
 
 
 public final class SceneState {

@@ -66,7 +66,7 @@ float vertexDotProduct(float* v1, float* v2)
 
 
 void
-Java_com_cube_opengl_common_GlVertex_set(
+Java_ro_brite_android_opengl_common_GlVertex_set(
     JNIEnv* env, jobject thiz,
     jobject buff, jfloat x, jfloat y, jfloat z, jfloat w)
 {
@@ -79,7 +79,7 @@ Java_com_cube_opengl_common_GlVertex_set(
 
 
 void
-Java_com_cube_opengl_common_GlVertex_assign(
+Java_ro_brite_android_opengl_common_GlVertex_assign(
     JNIEnv* env, jobject thiz,
     jobject dstBuff, jobject srcBuff)
 {
@@ -90,7 +90,7 @@ Java_com_cube_opengl_common_GlVertex_assign(
 
 
 void
-Java_com_cube_opengl_common_GlVertex_add(
+Java_ro_brite_android_opengl_common_GlVertex_add(
     JNIEnv* env, jobject thiz,
     jobject dstBuff, jobject srcBuff)
 {
@@ -101,7 +101,7 @@ Java_com_cube_opengl_common_GlVertex_add(
 
 
 void
-Java_com_cube_opengl_common_GlVertex_subtract(
+Java_ro_brite_android_opengl_common_GlVertex_subtract(
     JNIEnv* env, jobject thiz,
     jobject dstBuff, jobject srcBuff)
 {
@@ -112,7 +112,7 @@ Java_com_cube_opengl_common_GlVertex_subtract(
 
 
 void
-Java_com_cube_opengl_common_GlVertex_normalize(
+Java_ro_brite_android_opengl_common_GlVertex_normalize(
     JNIEnv* env, jobject thiz,
     jobject buff)
 {
@@ -122,7 +122,7 @@ Java_com_cube_opengl_common_GlVertex_normalize(
 
 
 void
-Java_com_cube_opengl_common_GlVertex_scale(
+Java_ro_brite_android_opengl_common_GlVertex_scale(
     JNIEnv* env, jobject thiz,
     jobject buff, jfloat factor)
 {
@@ -132,7 +132,7 @@ Java_com_cube_opengl_common_GlVertex_scale(
 
 
 jfloat
-Java_com_cube_opengl_common_GlVertex_dotProduct(
+Java_ro_brite_android_opengl_common_GlVertex_dotProduct(
     JNIEnv* env, jobject thiz,
     jobject buff1, jobject buff2)
 {
@@ -229,7 +229,7 @@ void matrixTranspose(float* m)
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_identity(
+Java_ro_brite_android_opengl_common_GlMatrix_identity(
     JNIEnv* env, jobject thiz,
     jobject buff)
 {
@@ -239,7 +239,7 @@ Java_com_cube_opengl_common_GlMatrix_identity(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_assign(
+Java_ro_brite_android_opengl_common_GlMatrix_assign(
     JNIEnv* env, jobject thiz,
     jobject dstBuff, jobject srcBuff)
 {
@@ -250,7 +250,7 @@ Java_com_cube_opengl_common_GlMatrix_assign(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_multiply(
+Java_ro_brite_android_opengl_common_GlMatrix_multiply(
     JNIEnv* env, jobject thiz,
     jobject dstBuff, jobject srcBuff)
 {
@@ -261,7 +261,7 @@ Java_com_cube_opengl_common_GlMatrix_multiply(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_premultiply(
+Java_ro_brite_android_opengl_common_GlMatrix_premultiply(
     JNIEnv* env, jobject thiz,
     jobject dstBuff, jobject srcBuff)
 {
@@ -272,7 +272,7 @@ Java_com_cube_opengl_common_GlMatrix_premultiply(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_translate(
+Java_ro_brite_android_opengl_common_GlMatrix_translate(
     JNIEnv* env, jobject thiz,
     jobject buff, jfloat dx, jfloat dy, jfloat dz)
 {
@@ -288,7 +288,7 @@ Java_com_cube_opengl_common_GlMatrix_translate(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_rotate(
+Java_ro_brite_android_opengl_common_GlMatrix_rotate(
     JNIEnv* env, jobject thiz,
     jobject buff, jfloat angle, jfloat x, jfloat y, jfloat z)
 {
@@ -332,7 +332,7 @@ Java_com_cube_opengl_common_GlMatrix_rotate(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_transform(
+Java_ro_brite_android_opengl_common_GlMatrix_transform(
     JNIEnv* env, jobject thiz,
     jobject matrixBuff, jobject vertexBuff)
 {
@@ -343,7 +343,7 @@ Java_com_cube_opengl_common_GlMatrix_transform(
 
 
 void
-Java_com_cube_opengl_common_GlMatrix_transpose(
+Java_ro_brite_android_opengl_common_GlMatrix_transpose(
     JNIEnv* env, jobject thiz,
     jobject matrixBuff)
 {
@@ -355,7 +355,7 @@ Java_com_cube_opengl_common_GlMatrix_transpose(
 // *** Utils *** //
 
 void
-Java_com_cube_opengl_common_Utils_computeSphereEnvTexCoords(
+Java_ro_brite_android_opengl_common_Utils_computeSphereEnvTexCoords(
     JNIEnv* env, jobject thiz,
     jobject vEyeBuff, jobject mInvRotBuff,
     jobject coordsBuff, jobject normalsBuff, jobject texCoordsBuff,
