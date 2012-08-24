@@ -31,6 +31,16 @@ public class AnimationManager {
 		memoryMatrix = new Matrix();
 	}
 
+	public AnimationBitmap addAnimationBitmap(Bitmap bitmap) {
+		AnimationBitmap animationBitmap = new AnimationBitmap();
+		animationBitmap.bitmap = bitmap;
+		animationBitmap.matrix = new Matrix();
+		animationBitmaps.add(animationBitmap);
+
+		needRefreshMemory = true;
+		return animationBitmap;
+	}
+
 	public AnimationBitmap addAnimationBitmap(int id) {
 		AnimationBitmap animationBitmap = new AnimationBitmap();
 		animationBitmap.bitmap = BitmapFactory.decodeResource(context.getResources(), id);
