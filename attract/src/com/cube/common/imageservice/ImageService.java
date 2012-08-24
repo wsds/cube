@@ -8,7 +8,6 @@ import com.cube.common.Settings;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 public class ImageService extends IntentService {
@@ -52,32 +51,21 @@ public class ImageService extends IntentService {
 
 	public void initializeImage() {
 
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		WebImage webImage = new WebImage();
-		webImage.initializeWebData(this);
 		for (ServerData.Girl girl : serverData.girls) {
+			WebImage.initializeWebData(this);
 			for (ServerData.Girl.Picture picture : girl.pictures) {
 				String url = picture.url;
 				String filename = url.substring(url.lastIndexOf("/") + 1);
 
-				if (!bitmapPool.map.containsKey(filename) || bitmapPool.map.get(filename) == null) {
-					Bitmap bitmap = webImage.getBitmap(url, filename);
-					if (bitmap != null) {
-						bitmapPool.map.put(filename, bitmap);
-						localData.game.downloadedPictures.add(filename);
+				if (!localData.game.loadedPictures.contains(filename)) {
+					boolean isLoaded = WebImage.getBitmap(url, filename);
+					if (isLoaded == true) {
+						localData.game.loadedPictures.add(filename);
+					}
+					else{
+						Log.d(TAG, filename+" cannot be loaded !");
 					}
 				}
-
-				// LocalData.Game.ActiveGirl activeGirl = new LocalData().new Game().new ActiveGirl();
-				// localData.game.cubeGirls.add(activeGirl);
-				//
-				// activeGirl.id = localData.game.cubeGirls.size();
-				// activeGirl.girl = girl;
 			}
 		}
 	}

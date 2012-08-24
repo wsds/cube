@@ -5,11 +5,13 @@ import com.cube.attract.gameEntry.SceneState;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 public class GameEntryActivity extends Activity {
 	private GLSurfaceView surface;
@@ -34,6 +36,8 @@ public class GameEntryActivity extends Activity {
 		renderer = new GlRenderer(this);
 		surface.setRenderer(renderer);
 		setContentView(surface);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 	}
 
@@ -155,6 +159,19 @@ public class GameEntryActivity extends Activity {
 				switch (GAMENUMBER) {
 				case 1:
 					sceneState.isSelected[0] = false;
+					Intent game1 = new Intent(Intent.ACTION_MAIN);
+					game1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					game1.putExtra("picture1" ,"girl_4_1.jpg");
+					game1.putExtra("picture2" ,"girl_4_2.jpg");
+					game1.putExtra("picture3" ,"girl_4_3.jpg");
+					game1.putExtra("weibo" ,"@小悦悦");
+					game1.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					mContext.startActivity(game1);
+					mActivity.finish();
+					break;
+				case 2:
+					sceneState.isSelected[1] = false;
+					
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					about.putExtra("picture1" ,"girl_4_1.jpg");
@@ -164,9 +181,6 @@ public class GameEntryActivity extends Activity {
 					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
-					break;
-				case 2:
-					sceneState.isSelected[1] = false;
 
 					break;
 				case 3:

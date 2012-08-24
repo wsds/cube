@@ -1,12 +1,14 @@
 package com.cube.attract.entry;
 
 import android.app.Activity;
+import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 public class EntryActivity extends Activity {
@@ -27,7 +29,8 @@ public class EntryActivity extends Activity {
 		renderer = new GlRenderer(this);
 		surface.setRenderer(renderer);
 		setContentView(surface);
-
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	}
 
 	@Override

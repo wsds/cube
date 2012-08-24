@@ -8,6 +8,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -34,6 +35,8 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		initView();
 		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
 		effect_tick = soundPool.load(this, R.raw.effect_tick, 1);
