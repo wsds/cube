@@ -55,8 +55,8 @@ public class MainActivity extends Activity {
 				if (settings.isLogoin == "false") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
-//					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
+//					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 				} else if (settings.isLogoin == "") {

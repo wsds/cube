@@ -49,7 +49,7 @@ public class GameEntryActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		sceneState.notJustComeIn=false;
+		sceneState.notJustComeIn = false;
 		super.onResume();
 		surface.onResume();
 	}
@@ -70,12 +70,8 @@ public class GameEntryActivity extends Activity {
 
 				sceneState.pictureViewGallary.dx = event.getX() - startX;
 				sceneState.pictureViewGallary.dy = event.getY() - startY;
-				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx
-						* TOUCH_SCAL_FACTOR;
-				float path = sceneState.pictureViewGallary.dx
-						* sceneState.pictureViewGallary.dx
-						+ sceneState.pictureViewGallary.dy
-						* sceneState.pictureViewGallary.dy;
+				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx * TOUCH_SCAL_FACTOR;
+				float path = sceneState.pictureViewGallary.dx * sceneState.pictureViewGallary.dx + sceneState.pictureViewGallary.dy * sceneState.pictureViewGallary.dy;
 				if (path > 1600) {
 					if (sceneState.backAnimaLock) {
 						renderer.girlGoBack.start(true);
@@ -111,16 +107,13 @@ public class GameEntryActivity extends Activity {
 
 					// 2
 
-				} else if (normalX > 60 && normalX < 181
-						&& !sceneState.isLocked[0]) {
+				} else if (normalX > 60 && normalX < 181 && !sceneState.isLocked[0]) {
 					GAMENUMBER = 1;
 					Log.i("come in game", "1");
 					// 1
 					sceneState.isSelected[0] = true;
 
-
-				} else if (normalX < 420 && normalX > 300
-						&& !sceneState.isLocked[2]) {
+				} else if (normalX < 420 && normalX > 300 && !sceneState.isLocked[2]) {
 					GAMENUMBER = 3;
 					Log.i("come in game", "3");
 					sceneState.isSelected[2] = true;
@@ -134,8 +127,7 @@ public class GameEntryActivity extends Activity {
 					sceneState.isSelected[3] = true;
 
 					// 4
-				} else if (normalX > 239 && normalX < 361
-						&& !sceneState.isLocked[4]) {
+				} else if (normalX > 239 && normalX < 361 && !sceneState.isLocked[4]) {
 					GAMENUMBER = 5;
 					Log.i("come in game", "5");
 					sceneState.isSelected[4] = true;
@@ -161,24 +153,26 @@ public class GameEntryActivity extends Activity {
 					sceneState.isSelected[0] = false;
 					Intent game1 = new Intent(Intent.ACTION_MAIN);
 					game1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					game1.putExtra("picture1" ,"girl_4_1.jpg");
-					game1.putExtra("picture2" ,"girl_4_2.jpg");
-					game1.putExtra("picture3" ,"girl_4_3.jpg");
-					game1.putExtra("weibo" ,"@小悦悦");
-					game1.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					game1.putExtra("picture1", "girl_4_1.jpg");
+					game1.putExtra("picture2", "girl_4_2.jpg");
+					game1.putExtra("picture3", "girl_4_3.jpg");
+					game1.putExtra("weibo", "@小悦悦");
+					// game1.setClassName("com.cube.attract",
+					// "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					game1.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
 					mContext.startActivity(game1);
 					mActivity.finish();
 					break;
 				case 2:
 					sceneState.isSelected[1] = false;
-					
+
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.putExtra("picture1" ,"girl_4_1.jpg");
-					about.putExtra("picture2" ,"girl_4_2.jpg");
-					about.putExtra("picture3" ,"girl_4_3.jpg");
-					about.putExtra("weibo" ,"@小悦悦");
-					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					about.putExtra("picture1", "girl_4_1.jpg");
+					about.putExtra("picture2", "girl_4_2.jpg");
+					about.putExtra("picture3", "girl_4_3.jpg");
+					about.putExtra("weibo", "@小悦悦");
+					about.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 
@@ -211,11 +205,9 @@ public class GameEntryActivity extends Activity {
 		return super.onTouchEvent(event);
 	}
 
-	private class GlAppGestureListener extends
-			GestureDetector.SimpleOnGestureListener {
+	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 
 			if (sceneState.eventType == sceneState.GIRL) {
 				sceneState.pictureViewGallary.dxSpeed = velocityX / 1100;
