@@ -60,7 +60,7 @@ public class CanvasAnimation {
 
 		public Callback callback = null;
 
-		public static long INFINITE = -9999;
+		public long INFINITE = -9999;
 		public long repeatTimes = 0;
 		public Translate translate = new Translate();
 		public Rotate rotate = new Rotate();

@@ -16,6 +16,7 @@ import android.opengl.GLUtils;
 import android.util.Log;
 
 import com.cube.attract.R;
+import com.cube.common.LocalData;
 import com.cube.common.imageservice.BitmapPool;
 import com.cube.opengl.common.GLAnimation;
 import com.cube.opengl.common.Utils;
@@ -206,7 +207,7 @@ public class GlRenderer implements Renderer {
 			gl.glDisable(GL10.GL_BLEND);
 			gl.glEnable(GL10.GL_CULL_FACE);
 		}
-		sceneState.isLocked[1] = true;
+		sceneState.isLocked[1] = false;
 		sceneState.isLocked[2] = true;
 		sceneState.isLocked[3] = true;
 		sceneState.isLocked[4] = true;
@@ -382,6 +383,7 @@ public class GlRenderer implements Renderer {
 
 	public int textureNum = GIRLSINDEX_S+10;
 	private BitmapPool bitmapPool;
+	LocalData localData = LocalData.getInstance();
 
 	private void loadTexture(GL10 gl) {
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -392,10 +394,10 @@ public class GlRenderer implements Renderer {
 		
 		Bitmap[] texture = new Bitmap[textureNum];		
 		int girls=0;
-		for (String filename : bitmapPool.map.keySet()) {
+		for (String filename : localData.game.loadedPictures) {
 			Log.i("GlRender girls", filename);
 
-			texture[girls] = bitmapPool.map.get(filename);
+			texture[girls] = bitmapPool.get(filename);
 			if(girls>=POLYGON){
 				break;
 			}

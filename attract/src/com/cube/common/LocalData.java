@@ -34,7 +34,7 @@ public class LocalData extends Data {
 	public Game game = new Game();
 
 	public class Game {
-		public ArrayList<String> downloadedPictures = new ArrayList<String>();
+		public ArrayList<String> loadedPictures = new ArrayList<String>();
 		
 		public ArrayList<ActiveGirl> cubeGirls = new ArrayList<ActiveGirl>();
 

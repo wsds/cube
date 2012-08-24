@@ -20,6 +20,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.cube.common.LocalData;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,11 +31,11 @@ import android.util.Log;
 public class WebImage {
 	private static final String TAG = "ImageService";
 
-	public Context mContext = null;
-	String app = "attract";
+	public static Context mContext = null;
+	public static String app = "attract";
 
-	public Bitmap getBitmap(String url, String fileName) {
-		Bitmap bitmap = null;
+	public static boolean getBitmap(String url, String fileName) {
+		boolean isLoaded = false;
 
 		try {
 			InputStream cipherBitmapStream = null;
@@ -60,19 +62,20 @@ public class WebImage {
 			}
 
 			if (bitmapStream != null) {
-				bitmap = BitmapFactory.decodeStream(bitmapStream);
+				// bitmap = BitmapFactory.decodeStream(bitmapStream);
+				isLoaded = true;
 				Log.d(TAG, fileName + " is loaded!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (bitmap == null) {
+		if (isLoaded == false) {
 			Log.d(TAG, fileName + " cannot be loaded!");
 		}
-		return bitmap;
+		return isLoaded;
 	}
 
-	public InputStream getImageStream(String url) throws Exception {
+	public static InputStream getImageStream(String url) throws Exception {
 		HttpGet conn = new HttpGet(url);
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpResponse response = (HttpResponse) httpclient.execute(conn);
@@ -80,18 +83,9 @@ public class WebImage {
 		BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(entity);
 		return bufferedHttpEntity.getContent();
 
-//		URL mURL = new URL(url);
-//		HttpURLConnection conn = (HttpURLConnection) mURL.openConnection();
-//		conn.setConnectTimeout(5 * 1000);
-//		conn.setRequestMethod("GET");
-//		int result = conn.getResponseCode();
-//		if (result == HttpURLConnection.HTTP_OK) {
-//			return conn.getInputStream();
-//		}
-//		return null;
 	}
 
-	public InputStream loadStreamFromSDCard(String fileName) {
+	public static InputStream loadStreamFromSDCard(String fileName) {
 		InputStream fin = null;
 		try {
 			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -110,7 +104,26 @@ public class WebImage {
 		return fin;
 	}
 
-	public void saveStreamToSDCard(InputStream inputStream, String fileName) throws IOException {
+	public static Bitmap loadBitmapFromSDCard(String fileName) {
+		Bitmap bitmap = null;
+		LocalData localData = LocalData.getInstance();
+		if (localData.game.loadedPictures.contains(fileName)) {
+			InputStream cipherBitmapStream = null;
+			InputStream bitmapStream = null;
+
+			cipherBitmapStream = WebImage.loadStreamFromSDCard(fileName);
+			if (cipherBitmapStream != null) {
+				bitmapStream = DecryptInputStream(cipherBitmapStream);
+			}
+
+			if (bitmapStream != null) {
+				bitmap = BitmapFactory.decodeStream(bitmapStream);
+			}
+		}
+		return bitmap;
+	}
+
+	public static void saveStreamToSDCard(InputStream inputStream, String fileName) throws IOException {
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			String SDCardPath = Environment.getExternalStorageDirectory() + "/DataService/" + "/" + app + "/image/";
 
@@ -131,9 +144,9 @@ public class WebImage {
 		}
 	}
 
-	private String sKey = "abcdef123456";
+	private static String sKey = "abcdef123456";
 
-	public InputStream EncryptInputStream(InputStream inputStream) {
+	public static InputStream EncryptInputStream(InputStream inputStream) {
 
 		CipherInputStream cipherInputStream = null;
 		try {
@@ -151,7 +164,7 @@ public class WebImage {
 		return cipherInputStream;
 	}
 
-	public InputStream DecryptInputStream(InputStream inputStream) {
+	public static InputStream DecryptInputStream(InputStream inputStream) {
 
 		CipherInputStream cipherInputStream = null;
 		try {
@@ -169,10 +182,12 @@ public class WebImage {
 		return cipherInputStream;
 	}
 
-	public void initializeWebData(Context mContext) {
-		// here,we get a reference to the instance of the activity or the service that the thread is hold by,
-		// for access the files stored in the <assets> folder of the application.
-		this.mContext = mContext;
+	public static void initializeWebData(Context context) {
+		// here,we get a reference to the instance of the activity or the
+		// service that the thread is hold by,
+		// for access the files stored in the <assets> folder of the
+		// application.
+		mContext = context;
 	}
 
 }

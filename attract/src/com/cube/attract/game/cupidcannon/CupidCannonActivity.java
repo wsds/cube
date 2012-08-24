@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import com.cube.attract.R;
 import com.cube.canvas.common.CanvasAnimation;
@@ -32,6 +33,8 @@ public class CupidCannonActivity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		mContext = this;
 		setContentView(new AnimView(this));
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	}
 
 	public class AnimView extends SurfaceView implements
