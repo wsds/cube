@@ -780,7 +780,8 @@ import com.cube.canvas.common.CanvasAnimation;
 									}
 								});
 								Matrix matrix = new Matrix();
-								matrix.setTranslate(mWidth - 390, mHeight - 460);
+								matrix.setScale(0.7f, 0.7f, 0, 0);
+								matrix.postTranslate(mWidth - 270, mHeight - 350);
 								hintAnim.setStartMatrix(matrix);
 								hintAnim.setTranslate(0, 0, 1000);
 								hintAnim.setRepeatTimes(1);
