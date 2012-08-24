@@ -172,7 +172,7 @@ public class GameEntryActivity extends Activity {
 					about.putExtra("picture2", "girl_4_2.jpg");
 					about.putExtra("picture3", "girl_4_3.jpg");
 					about.putExtra("weibo", "@小悦悦");
-					about.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
+					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 
