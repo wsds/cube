@@ -338,8 +338,8 @@ public class GlRenderer implements Renderer {
 		lastMillis = currentMillis;
 		}
 		gl.glPopMatrix();
-		drawLogo(gl);
-		drawBackground(gl);
+//		drawLogo(gl);
+//		drawBackground(gl);
 		updatePick();
 	}
 
