@@ -394,15 +394,15 @@ public class GlRenderer implements Renderer {
 		
 		Bitmap[] texture = new Bitmap[textureNum];		
 		int girls=0;
-		for (String filename : localData.game.loadedPictures) {
-			Log.i("GlRender girls", filename);
-
-			texture[girls] = bitmapPool.get(filename);
-			if(girls>=POLYGON){
-				break;
-			}
-			girls++;
-		}
+//		for (String filename : localData.game.loadedPictures) {
+//			Log.i("GlRender girls", filename);
+//
+//			texture[girls] = bitmapPool.get(filename);
+//			if(girls>=POLYGON){
+//				break;
+//			}
+//			girls++;
+//		}
 		while(girls!=9){
 			texture[girls]=Utils.getTextureFromBitmapResource(context, R.drawable.girl_4_3);
 			girls++;
