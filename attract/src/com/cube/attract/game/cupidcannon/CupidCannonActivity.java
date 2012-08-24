@@ -44,6 +44,7 @@ public class CupidCannonActivity extends Activity {
 		
 		private boolean isRunning = true;
 		private CanvasAnimation girlAnim = null;
+		private CanvasAnimation hintAnim = null;
 		private CanvasAnimation heartAnim = null;
 		private CanvasAnimation bulletAnim = null;
 		private CanvasAnimation boomAnim = null;
@@ -63,6 +64,12 @@ public class CupidCannonActivity extends Activity {
 		private Canvas mCanvas = null;
 		public Bitmap initBackgroundBm = null;
 		public Bitmap backgroundBm = null;
+		public Bitmap hintCloudBm = null;
+		public Bitmap hintCloud2Bm = null;
+		public Bitmap hintHitBm = null;
+		public Bitmap hintDoubleHitBm = null;
+		public Bitmap hintTooMissBm = null;
+		public Bitmap hintTooStrongBm = null;
 		public Bitmap girl_4_0Bm = null;
 		public Bitmap girl_4_1Bm = null;
 		public Bitmap girl_4_2Bm = null;
@@ -73,11 +80,7 @@ public class CupidCannonActivity extends Activity {
 		public Bitmap bulletBm = null;
 		public Bitmap boomBm = null;
 		public Bitmap testBm = null;
-		public Bitmap [] girlsBm = {
-										null, null, null,
-										null, null, null,
-										null, null, null
-				};
+
 
 		public float[] powerTubeBaseAdress = {0.0f, 0.0f};
 		public final int POWERSENSITY = 10;
@@ -117,6 +120,19 @@ public class CupidCannonActivity extends Activity {
 			
 			backgroundStage = BitmapFactory.decodeResource(getResources(),
 					R.drawable.button_bar);
+			
+			hintCloudBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_cloud);
+			hintCloud2Bm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_cloud2);
+			hintHitBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_hit);
+			hintDoubleHitBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_double_hit);
+			hintTooMissBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_too_miss);
+			hintTooStrongBm = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_too_strong); 
 			
 			powerTube1 = BitmapFactory.decodeResource(getResources(),
 					R.drawable.blue_part1);
@@ -785,37 +801,6 @@ public class CupidCannonActivity extends Activity {
 		    return true;
 		}
 
-		//test game end. Dialog will show on the screen.
-//	    public void CreatDialog(int id) {
-//	    	AlertDialog.Builder builder = new AlertDialog.Builder(MainDialog.this);	
-//
-//	    	    builder.setIcon(R.drawable.icon);
-//	                builder.setTitle("投票");
-//	                builder.setMessage("您认为什么样的内容能吸引您？");
-//	                builder.setPositiveButton("有趣味的", new DialogInterface.OnClickListener() {
-//	                    public void onClick(DialogInterface dialog, int whichButton) {
-//	                        showDialog("你选择了有趣味的");
-//	                    }
-//	                });
-//	                builder.setNeutralButton("有思想的", new DialogInterface.OnClickListener() {
-//	                    public void onClick(DialogInterface dialog, int whichButton) {
-//	                        showDialog("你选择了有思想的");                    
-//	                    }
-//	                });
-//	                builder.setNegativeButton("主题强的", new DialogInterface.OnClickListener() {
-//	                    public void onClick(DialogInterface dialog, int whichButton) {
-//	                        showDialog("你选择了主题强的");  
-//	                    }
-//	                });
-//	    	
-//	        }
-//
-//	        
-//	        private void showDialog(String str) {
-//	    	 new AlertDialog.Builder(mContext.this)
-//	             .setMessage(str)
-//	             .show();
-//	        }
 
 	}
 
