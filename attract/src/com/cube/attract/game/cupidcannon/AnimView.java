@@ -1,6 +1,5 @@
 package com.cube.attract.game.cupidcannon;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,7 +17,6 @@ import com.cube.attract.R;
 import com.cube.canvas.common.CanvasAnimation;
 
 
-	@SuppressLint({ "FloatMath", "FloatMath", "FloatMath", "FloatMath", "FloatMath" })
 	public class AnimView extends SurfaceView implements
 			SurfaceHolder.Callback, Runnable {
 

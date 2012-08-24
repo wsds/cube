@@ -2,7 +2,6 @@ package com.cube.attract.game.mosquito;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
