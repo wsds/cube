@@ -15,4 +15,21 @@ public class BitmapPool {
 			instance = new BitmapPool();
 		return instance;
 	}
+
+	public Bitmap get(String fileName) {
+		Bitmap bitmap = null;
+		if (!map.containsKey(fileName)) {
+			bitmap = WebImage.loadBitmapFromSDCard(fileName);
+			if (bitmap != null) {
+				map.put(fileName, bitmap);
+			}
+		} else {
+			bitmap = map.get(fileName);
+			if (bitmap.isRecycled()) {
+				bitmap = WebImage.loadBitmapFromSDCard(fileName);
+			}
+		}
+		return bitmap;
+	}
+
 }

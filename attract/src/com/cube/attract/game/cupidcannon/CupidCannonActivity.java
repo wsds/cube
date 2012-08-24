@@ -26,6 +26,8 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.view.WindowManager;
+
 import com.cube.attract.R;
 import com.cube.canvas.common.CanvasAnimation;
 import com.cube.common.imageservice.BitmapPool;
@@ -58,6 +60,7 @@ public class CupidCannonActivity extends Activity
 		mActivity = this;
 		
 
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		animView = new AnimView(this);
 		canvasContainer = (RelativeLayout) findViewById(R.id.CanvasContainer);
 		canvasContainer.addView(animView, 0);
@@ -177,6 +180,7 @@ public class CupidCannonActivity extends Activity
 		private String picture3 = intent.getStringExtra("picture3");
 		private String weibo = intent.getStringExtra("weibo");
 
+		
 		public Bitmap memBm = null;
 		private Canvas mCanvas = null;
 		public Bitmap initBackgroundBm = null;
@@ -203,7 +207,10 @@ public class CupidCannonActivity extends Activity
 		public float[] targetCenter = { 0.0f, 0.0f };
 		public float[] lastTargetCenter = { 0.0f, 0.0f };
 		public float[] boomCenter = { 0.0f, 0.0f };
+		public int[] backgroundStagePosition = {0, 0};
 		public Bitmap backgroundStage = null;
+		public int backgroundStageWidth = 0;
+		public int backgroundStageHeight = 0;
 		public Matrix testMatrix = new Matrix();
 		public float[] testMatrixArray;
 
@@ -215,8 +222,8 @@ public class CupidCannonActivity extends Activity
 			super(context);
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
-
-			this.setFocusable(true);
+			
+			
 			this.setFocusableInTouchMode(true);
 
 			initBackgroundBm = BitmapFactory.decodeResource(getResources(),
@@ -229,27 +236,11 @@ public class CupidCannonActivity extends Activity
 					R.drawable.girl_4_2);
 			girl_4_2Bm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.girl_4_1);
-			girlsBm[0] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_5_1);
-			girlsBm[1] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_5_2);
-			girlsBm[2] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_5_3);
-			girlsBm[3] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_6_1);
-			girlsBm[4] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_6_2);
-			girlsBm[5] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_6_3);
-			girlsBm[6] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_7_1);
-			girlsBm[7] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_7_2);
-			girlsBm[8] = BitmapFactory.decodeResource(getResources(),
-					R.drawable.girl_7_3);
+
 
 			backgroundStage = BitmapFactory.decodeResource(getResources(),
 					R.drawable.button_bar);
+			
 			powerTube1 = BitmapFactory.decodeResource(getResources(),
 					R.drawable.blue_part1);
 			powerTube2 = BitmapFactory.decodeResource(getResources(),
@@ -262,6 +253,27 @@ public class CupidCannonActivity extends Activity
 					R.drawable.bullet);
 			boomBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.blast_f09);
+			
+			numbersBm[0] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_0);
+			numbersBm[1] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_1);
+			numbersBm[2] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_2);
+			numbersBm[3] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_3);
+			numbersBm[4] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_4);
+			numbersBm[5] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_5);
+			numbersBm[6] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_6);
+			numbersBm[7] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_7);
+			numbersBm[8] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_8);
+			numbersBm[9] = BitmapFactory.decodeResource(getResources(),
+					R.drawable.number_9);
 
 			testBm = bitmapPool.map.get(picture1);
 
@@ -317,7 +329,7 @@ public class CupidCannonActivity extends Activity
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			artilleryAnimOdd.setTraceMatrix(initMatrix);
 
-			artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 3000);
+			artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 2000);
 			artilleryAnimOdd.setRepeatTimes(artilleryAnimOdd.INFINITE);
 			artilleryAnimOdd.start(true);
 
@@ -327,9 +339,8 @@ public class CupidCannonActivity extends Activity
 			artilleryAnimEven.setCallback(new CanvasAnimation.Callback() {
 
 				@Override
-				public void onEnd()
-				{
-
+				public void onEnd() {
+					
 					artilleryAnimOdd.start(true);
 					artilleryAnimEven.start(false);
 				}
@@ -343,7 +354,7 @@ public class CupidCannonActivity extends Activity
 			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 			artilleryAnimEven.setTraceMatrix(initMatrix);
 
-			artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 3000);
+			artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 2000);
 			artilleryAnimEven.setRepeatTimes(artilleryAnimEven.INFINITE);
 			artilleryAnimEven.start(false);
 
@@ -353,9 +364,8 @@ public class CupidCannonActivity extends Activity
 			batteryAnimOdd.setCallback(new CanvasAnimation.Callback() {
 
 				@Override
-				public void onEnd()
-				{
-
+				public void onEnd() {
+					
 					batteryAnimEven.start(true);
 					batteryAnimOdd.start(false);
 				}
@@ -369,7 +379,7 @@ public class CupidCannonActivity extends Activity
 			initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 			batteryAnimOdd.setTraceMatrix(initMatrix);
 
-			batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 3000);
+			batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 2000);
 			batteryAnimOdd.setRepeatTimes(batteryAnimOdd.INFINITE);
 			batteryAnimOdd.start(true);
 
@@ -379,9 +389,8 @@ public class CupidCannonActivity extends Activity
 			batteryAnimEven.setCallback(new CanvasAnimation.Callback() {
 
 				@Override
-				public void onEnd()
-				{
-
+				public void onEnd() {
+					
 					batteryAnimOdd.start(true);
 					batteryAnimEven.start(false);
 				}
@@ -395,7 +404,7 @@ public class CupidCannonActivity extends Activity
 			initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 			batteryAnimEven.setTraceMatrix(initMatrix);
 
-			batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 3000);
+			batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 2000);
 			batteryAnimEven.setRepeatTimes(batteryAnimEven.INFINITE);
 			batteryAnimEven.start(false);
 
@@ -404,7 +413,7 @@ public class CupidCannonActivity extends Activity
 		private void drawBackground()
 		{
 			Matrix testMatrix = new Matrix();
-			testMatrix.setTranslate(-(480 - mWidth) / 2, mHeight - 290);
+			testMatrix.setTranslate(backgroundStagePosition[0], backgroundStagePosition[1]);
 			mCanvas.drawBitmap(backgroundStage, testMatrix, new Paint());
 			if (powerTubeEnable) {
 				int tubeLength = (int) moveLength / POWERSENSITY;
@@ -419,7 +428,14 @@ public class CupidCannonActivity extends Activity
 				testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - tubeLength * 7 - 14);
 				mCanvas.drawBitmap(powerTube3, testMatrix, new Paint());
 			}
-
+			//Draw timer
+			testMatrix.setScale(0.3f, 0.3f);
+			testMatrix.postTranslate((float)(backgroundStagePosition[0] + 0.8*backgroundStageWidth), (float)(backgroundStagePosition[1] + 0.9*backgroundStageHeight));
+			mCanvas.drawBitmap(timerBm[0], testMatrix, new Paint());
+			testMatrix.postTranslate(25, 0);
+			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());
+		
+			
 		}
 
 		public int achievedCounter = -1;
@@ -430,833 +446,216 @@ public class CupidCannonActivity extends Activity
 			if (achieved == false)
 				return 0;
 			achievedCounter++;
-			int flag = achievedCounter % 8;
-			switch (flag) {
-				case 0:
-					girlAnim.setElements(girl_4_1Bm, new Paint());
-					reconfigureMatrix.setTranslate(0, 0);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 1000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							girlAnim.setElements(girl_4_1Bm, new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.traceMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-200, -400, 1000);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									lastTargetCenter[0] = targetCenter[0];
-									lastTargetCenter[1] = targetCenter[1];
-									targetCenter[0] = 200;
-									targetCenter[1] = 300;
-									girlAnim.setCallback(null);
-								}
-							});
-						}
-					});
-					Paint paint = new Paint();
-					paint.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint);
-					float[] array1 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array1);
-					reconfigureMatrix.setValues(array1);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 3200);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setElements(heartBm, new Paint());
-							heartAnim.setTranslate(targetCenter[0] - lastTargetCenter[0],
-									targetCenter[1] - lastTargetCenter[1], 1000);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 1:
-					girlAnim.setElements(girl_4_2Bm, new Paint());
-					float[] array = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					girlAnim.transformMatrix.getValues(array);
-					reconfigureMatrix.setValues(array);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 1000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-100, 100, 500);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									float[] array = {
+			int flag = achievedCounter%2;
+			switch(flag) {
+			case 0:
+				girlAnim.setElements(girl_4_1Bm, new Paint());
+				reconfigureMatrix.setTranslate(0, 0);
+				girlAnim.setStartMatrix(reconfigureMatrix);
+				girlAnim.setTranslate(0, 0, 1000);
+				girlAnim.setRepeatTimes(1);
+				girlAnim.start(true);
+				girlAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						girlAnim.setElements(girl_4_1Bm, new Paint());
+						float [] array = {
 											0.0f, 0.0f, 0.0f,
 											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f };
-									girlAnim.transformMatrix.getValues(array);
-									reconfigureMatrix.setValues(array);
-									girlAnim.setStartMatrix(reconfigureMatrix);
-									girlAnim.setTranslate(240, 240, 1200);
-									girlAnim.setRepeatTimes(1);
-									girlAnim.start(true);
-									girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-										@Override
-										public void onEnd()
-										{
-											float[] array = {
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f };
-											girlAnim.transformMatrix.getValues(array);
-											reconfigureMatrix.setValues(array);
-											girlAnim.setStartMatrix(reconfigureMatrix);
-											girlAnim.setTranslate(100, -100, 500);
-											girlAnim.setRepeatTimes(1);
-											girlAnim.start(true);
-											girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-												@Override
-												public void onEnd()
-												{
-													float[] array = {
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f };
-													girlAnim.transformMatrix.getValues(array);
-													reconfigureMatrix.setValues(array);
-													girlAnim.setStartMatrix(reconfigureMatrix);
-													girlAnim.setTranslate(-240, -240, 1200);
-													girlAnim.setRepeatTimes(1);
-													girlAnim.start(true);
-													girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-														@Override
-														public void onEnd()
-														{
-															girlAnim.setElements(girlsBm[0], new Paint());
-															reconfigureMatrix.reset();
-															girlAnim.setStartMatrix(reconfigureMatrix);
-															girlAnim.setTranslate(0, 0, 1000);
-															girlAnim.setRepeatTimes(1);
-															girlAnim.start(true);
-															girlAnim.setCallback(null);
-														}
-													});
-
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-					Paint paint1 = new Paint();
-					paint1.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint1);
-					float[] array2 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array2);
-					reconfigureMatrix.setValues(array2);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 6000);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							heartAnim.setElements(heartBm, new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							lastTargetCenter[0] = targetCenter[0];
-							lastTargetCenter[1] = targetCenter[1];
-							targetCenter[0] = 230;
-							targetCenter[1] = 70;
-							reconfigureMatrix.setTranslate(targetCenter[0] - heartBm.getWidth() / 2, targetCenter[1]
-									- heartBm.getHeight() / 2);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setTranslate(0, 0, 20);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 2:
-					girlAnim.setElements(girlsBm[1], new Paint());
-					reconfigureMatrix.setTranslate(0, 0);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 1000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							girlAnim.setElements(girlsBm[1], new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.traceMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(0, 50, 1000);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									lastTargetCenter[0] = targetCenter[0];
-									lastTargetCenter[1] = targetCenter[1];
-									targetCenter[0] = 260 + 0;
-									targetCenter[1] = 380 + 50;
-									girlAnim.setCallback(null);
-								}
-							});
-						}
-					});
-					paint = new Paint();
-					paint.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint);
-					float[] array3 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array3);
-					reconfigureMatrix.setValues(array3);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 3200);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setElements(heartBm, new Paint());
-							heartAnim.setTranslate(targetCenter[0] - lastTargetCenter[0],
-									targetCenter[1] - lastTargetCenter[1], 1000);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 3:
-					girlAnim.setElements(girlsBm[2], new Paint());
-					float[] array4 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					girlAnim.transformMatrix.getValues(array4);
-					reconfigureMatrix.setValues(array4);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 1000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-100, 100, 500);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									float[] array = {
-											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f };
-									girlAnim.transformMatrix.getValues(array);
-									reconfigureMatrix.setValues(array);
-									girlAnim.setStartMatrix(reconfigureMatrix);
-									girlAnim.setTranslate(240, 240, 1200);
-									girlAnim.setRepeatTimes(1);
-									girlAnim.start(true);
-									girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-										@Override
-										public void onEnd()
-										{
-											float[] array = {
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f };
-											girlAnim.transformMatrix.getValues(array);
-											reconfigureMatrix.setValues(array);
-											girlAnim.setStartMatrix(reconfigureMatrix);
-											girlAnim.setTranslate(100, -100, 500);
-											girlAnim.setRepeatTimes(1);
-											girlAnim.start(true);
-											girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-												@Override
-												public void onEnd()
-												{
-													float[] array = {
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f };
-													girlAnim.transformMatrix.getValues(array);
-													reconfigureMatrix.setValues(array);
-													girlAnim.setStartMatrix(reconfigureMatrix);
-													girlAnim.setTranslate(-240, -240, 1200);
-													girlAnim.setRepeatTimes(1);
-													girlAnim.start(true);
-													girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-														@Override
-														public void onEnd()
-														{
-															girlAnim.setElements(girlsBm[3], new Paint());
-															reconfigureMatrix.reset();
-															girlAnim.setStartMatrix(reconfigureMatrix);
-															girlAnim.setTranslate(0, 0, 1000);
-															girlAnim.setRepeatTimes(1);
-															girlAnim.start(true);
-															girlAnim.setCallback(null);
-														}
-													});
-
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-					Paint paint2 = new Paint();
-					paint2.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint2);
-					float[] array5 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array5);
-					reconfigureMatrix.setValues(array5);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 6000);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							heartAnim.setElements(heartBm, new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							lastTargetCenter[0] = targetCenter[0];
-							lastTargetCenter[1] = targetCenter[1];
-							targetCenter[0] = 300;
-							targetCenter[1] = 100;
-							reconfigureMatrix.setTranslate(targetCenter[0] - heartBm.getWidth() / 2, targetCenter[1]
-									- heartBm.getHeight() / 2);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setTranslate(0, 0, 20);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 4:
-					girlAnim.setElements(girlsBm[4], new Paint());
-					reconfigureMatrix.setTranslate(0, 0);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 1000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							girlAnim.setElements(girlsBm[4], new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.traceMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-50, -100, 1000);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									lastTargetCenter[0] = targetCenter[0];
-									lastTargetCenter[1] = targetCenter[1];
-									targetCenter[0] = 250 - 50;
-									targetCenter[1] = 400 - 100;
-									girlAnim.setCallback(null);
-								}
-							});
-						}
-					});
-					paint = new Paint();
-					paint.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint);
-					float[] array6 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array6);
-					reconfigureMatrix.setValues(array6);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 3200);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setElements(heartBm, new Paint());
-							heartAnim.setTranslate(targetCenter[0] - lastTargetCenter[0],
-									targetCenter[1] - lastTargetCenter[1], 1000);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 5:
-					girlAnim.setElements(girlsBm[5], new Paint());
-					float[] array7 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					girlAnim.transformMatrix.getValues(array7);
-					reconfigureMatrix.setValues(array7);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 1000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-100, 100, 500);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									float[] array = {
-											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f };
-									girlAnim.transformMatrix.getValues(array);
-									reconfigureMatrix.setValues(array);
-									girlAnim.setStartMatrix(reconfigureMatrix);
-									girlAnim.setTranslate(240, 240, 1200);
-									girlAnim.setRepeatTimes(1);
-									girlAnim.start(true);
-									girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-										@Override
-										public void onEnd()
-										{
-											// TODO Auto-generated method stub
-											float[] array = {
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f };
-											girlAnim.transformMatrix.getValues(array);
-											reconfigureMatrix.setValues(array);
-											girlAnim.setStartMatrix(reconfigureMatrix);
-											girlAnim.setTranslate(100, -100, 500);
-											girlAnim.setRepeatTimes(1);
-											girlAnim.start(true);
-											girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-												@Override
-												public void onEnd()
-												{
-													float[] array = {
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f };
-													girlAnim.transformMatrix.getValues(array);
-													reconfigureMatrix.setValues(array);
-													girlAnim.setStartMatrix(reconfigureMatrix);
-													girlAnim.setTranslate(-240, -240, 1200);
-													girlAnim.setRepeatTimes(1);
-													girlAnim.start(true);
-													girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-														@Override
-														public void onEnd()
-														{
-															girlAnim.setElements(girlsBm[6], new Paint());
-															reconfigureMatrix.reset();
-															girlAnim.setStartMatrix(reconfigureMatrix);
-															girlAnim.setTranslate(0, 0, 1000);
-															girlAnim.setRepeatTimes(1);
-															girlAnim.start(true);
-															girlAnim.setCallback(null);
-														}
-													});
-
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-					Paint paint3 = new Paint();
-					paint3.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint3);
-					float[] array8 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array8);
-					reconfigureMatrix.setValues(array8);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 6000);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							heartAnim.setElements(heartBm, new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							lastTargetCenter[0] = targetCenter[0];
-							lastTargetCenter[1] = targetCenter[1];
-							targetCenter[0] = 320;
-							targetCenter[1] = 130;
-							reconfigureMatrix.setTranslate(targetCenter[0] - heartBm.getWidth() / 2, targetCenter[1]
-									- heartBm.getHeight() / 2);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setTranslate(0, 0, 20);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 6:
-					girlAnim.setElements(girlsBm[7], new Paint());
-					reconfigureMatrix.setTranslate(0, 0);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 3000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							girlAnim.setElements(girlsBm[7], new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.traceMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-20, -150, 2000);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									lastTargetCenter[0] = targetCenter[0];
-									lastTargetCenter[1] = targetCenter[1];
-									targetCenter[0] = 320 - 20;
-									targetCenter[1] = 430 - 150;
-									girlAnim.setCallback(null);
-								}
-							});
-						}
-					});
-					paint = new Paint();
-					paint.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint);
-					float[] array9 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array9);
-					reconfigureMatrix.setValues(array9);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 5500);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setElements(heartBm, new Paint());
-							heartAnim.setTranslate(targetCenter[0] - lastTargetCenter[0],
-									targetCenter[1] - lastTargetCenter[1], 2000);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-						}
-					});
-					break;
-				case 7:
-					girlAnim.setElements(girlsBm[8], new Paint());
-					float[] array10 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					girlAnim.transformMatrix.getValues(array10);
-					reconfigureMatrix.setValues(array10);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(0, 0, 3000);
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							girlAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(-100, 100, 1500);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd()
-								{
-									float[] array = {
-											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f,
-											0.0f, 0.0f, 0.0f };
-									girlAnim.transformMatrix.getValues(array);
-									reconfigureMatrix.setValues(array);
-									girlAnim.setStartMatrix(reconfigureMatrix);
-									girlAnim.setTranslate(240, 240, 3500);
-									girlAnim.setRepeatTimes(1);
-									girlAnim.start(true);
-									girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-										@Override
-										public void onEnd()
-										{
-											float[] array = {
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f,
-													0.0f, 0.0f, 0.0f };
-											girlAnim.transformMatrix.getValues(array);
-											reconfigureMatrix.setValues(array);
-											girlAnim.setStartMatrix(reconfigureMatrix);
-											girlAnim.setTranslate(100, -100, 1500);
-											girlAnim.setRepeatTimes(1);
-											girlAnim.start(true);
-											girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-												@Override
-												public void onEnd()
-												{
-													float[] array = {
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f,
-															0.0f, 0.0f, 0.0f };
-													girlAnim.transformMatrix.getValues(array);
-													reconfigureMatrix.setValues(array);
-													girlAnim.setStartMatrix(reconfigureMatrix);
-													girlAnim.setTranslate(-240, -240, 3500);
-													girlAnim.setRepeatTimes(1);
-													girlAnim.start(true);
-													girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-														@Override
-														public void onEnd()
-														{
-															girlAnim.setElements(girl_4_0Bm, new Paint());
-															reconfigureMatrix.reset();
-															girlAnim.setStartMatrix(reconfigureMatrix);
-															girlAnim.setTranslate(0, 0, 3000);
-															girlAnim.setRepeatTimes(1);
-															girlAnim.start(true);
-															girlAnim.setCallback(null);
-														}
-													});
-
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-					Paint paint5 = new Paint();
-					paint5.setAlpha(0x00);
-					heartAnim.setElements(heartBm, paint5);
-					float[] array11 = {
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f,
-							0.0f, 0.0f, 0.0f };
-					heartAnim.transformMatrix.getValues(array11);
-					reconfigureMatrix.setValues(array11);
-					heartAnim.setStartMatrix(reconfigureMatrix);
-					heartAnim.setTranslate(0, 0, 16500);
-					heartAnim.setRepeatTimes(1);
-					heartAnim.start(true);
-					heartAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd()
-						{
-							// TODO Auto-generated method stub
-							heartAnim.setElements(heartBm, new Paint());
-							float[] array = {
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f,
-									0.0f, 0.0f, 0.0f };
-							heartAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							lastTargetCenter[0] = targetCenter[0];
-							lastTargetCenter[1] = targetCenter[1];
-							targetCenter[0] = 280;
-							targetCenter[1] = 180;
-							reconfigureMatrix.setTranslate(targetCenter[0] - heartBm.getWidth() / 2, targetCenter[1]
-									- heartBm.getHeight() / 2);
-							heartAnim.setStartMatrix(reconfigureMatrix);
-							heartAnim.setTranslate(0, 0, 20);
-							heartAnim.setRepeatTimes(1);
-							heartAnim.start(true);
-							heartAnim.setCallback(null);
-							girlAnim.setElements(girl_4_0Bm, new Paint());
-						}
-					});
-					break;
-				default:
-					break;
+											0.0f, 0.0f, 0.0f
+						};
+						girlAnim.traceMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						girlAnim.setStartMatrix(reconfigureMatrix);
+						girlAnim.setTranslate(-200, -400, 1000);
+						girlAnim.setRepeatTimes(1);
+						girlAnim.start(true);
+						girlAnim.setCallback(new CanvasAnimation.Callback() {
+							
+							@Override
+							public void onEnd() {
+								lastTargetCenter[0] = targetCenter[0];
+								lastTargetCenter[1] = targetCenter[1];
+								targetCenter[0] = 200;
+								targetCenter[1] = 300;
+								girlAnim.setCallback(null);
+							}
+						});
+					}
+				});
+				Paint paint = new Paint();
+				paint.setAlpha(0x00);
+				heartAnim.setElements(heartBm, paint);
+				float [] array1 = {
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f
+				};
+				heartAnim.transformMatrix.getValues(array1);
+				reconfigureMatrix.setValues(array1);
+				heartAnim.setStartMatrix(reconfigureMatrix);
+				heartAnim.setTranslate(0, 0, 3200);
+				heartAnim.setRepeatTimes(1);
+				heartAnim.start(true);
+				heartAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						float [] array = {
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f
+						};
+						heartAnim.transformMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						heartAnim.setStartMatrix(reconfigureMatrix);
+						heartAnim.setElements(heartBm, new Paint());
+						heartAnim.setTranslate(targetCenter[0]-lastTargetCenter[0], 
+								targetCenter[1]-lastTargetCenter[1], 1000);
+						heartAnim.setRepeatTimes(1);
+						heartAnim.start(true);
+						heartAnim.setCallback(null);
+					}
+				});
+				break;	
+			case 1:
+				girlAnim.setElements(girl_4_2Bm, new Paint());
+				float [] array = {
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f
+				};
+				girlAnim.transformMatrix.getValues(array);
+				reconfigureMatrix.setValues(array);
+				girlAnim.setStartMatrix(reconfigureMatrix);
+				girlAnim.setTranslate(0, 0, 1000);
+				girlAnim.setRepeatTimes(1);
+				girlAnim.start(true);
+				girlAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						float [] array = {
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f
+						};
+						girlAnim.transformMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						girlAnim.setStartMatrix(reconfigureMatrix);
+						girlAnim.setTranslate(-100, 100, 500);
+						girlAnim.setRepeatTimes(1);
+						girlAnim.start(true);
+						girlAnim.setCallback(new CanvasAnimation.Callback() {
+							
+							@Override
+							public void onEnd() {
+								float [] array = {
+										0.0f, 0.0f, 0.0f,
+										0.0f, 0.0f, 0.0f,
+										0.0f, 0.0f, 0.0f
+								};
+								girlAnim.transformMatrix.getValues(array);
+								reconfigureMatrix.setValues(array);
+								girlAnim.setStartMatrix(reconfigureMatrix);
+								girlAnim.setTranslate(240, 240, 1200);
+								girlAnim.setRepeatTimes(1);
+								girlAnim.start(true);
+								girlAnim.setCallback(new CanvasAnimation.Callback() {
+									
+									@Override
+									public void onEnd() {
+										float [] array = {
+												0.0f, 0.0f, 0.0f,
+												0.0f, 0.0f, 0.0f,
+												0.0f, 0.0f, 0.0f
+										};
+										girlAnim.transformMatrix.getValues(array);
+										reconfigureMatrix.setValues(array);
+										girlAnim.setStartMatrix(reconfigureMatrix);
+										girlAnim.setTranslate(100, -100, 500);
+										girlAnim.setRepeatTimes(1);
+										girlAnim.start(true);
+										girlAnim.setCallback(new CanvasAnimation.Callback() {
+											
+											@Override
+											public void onEnd() {
+												float [] array = {
+														0.0f, 0.0f, 0.0f,
+														0.0f, 0.0f, 0.0f,
+														0.0f, 0.0f, 0.0f
+												};
+												girlAnim.transformMatrix.getValues(array);
+												reconfigureMatrix.setValues(array);
+												girlAnim.setStartMatrix(reconfigureMatrix);
+												girlAnim.setTranslate(-240, -240, 1200);
+												girlAnim.setRepeatTimes(1);
+												girlAnim.start(true);
+												girlAnim.setCallback(new CanvasAnimation.Callback() {
+													
+													@Override
+													public void onEnd() {
+														girlAnim.setElements(girl_4_0Bm, new Paint());
+														reconfigureMatrix.reset();
+														girlAnim.setStartMatrix(reconfigureMatrix);
+														girlAnim.setTranslate(0, 0, 1000);
+														girlAnim.setRepeatTimes(1);
+														girlAnim.start(true);
+														girlAnim.setCallback(null);
+													}
+												});
+	
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+				Paint paint1 = new Paint();
+				paint1.setAlpha(0x00);
+				heartAnim.setElements(heartBm, paint1);
+				float [] array2 = {
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 0.0f
+				};
+				heartAnim.transformMatrix.getValues(array2);
+				reconfigureMatrix.setValues(array2);
+				heartAnim.setStartMatrix(reconfigureMatrix);
+				heartAnim.setTranslate(0, 0, 6000);
+				heartAnim.setRepeatTimes(1);
+				heartAnim.start(true);
+				heartAnim.setCallback(new CanvasAnimation.Callback() {
+					
+					@Override
+					public void onEnd() {
+						heartAnim.setElements(heartBm, new Paint());
+						float [] array = {
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f
+						};
+						heartAnim.transformMatrix.getValues(array);
+						reconfigureMatrix.setValues(array);
+						lastTargetCenter[0] = targetCenter[0];
+						lastTargetCenter[1] = targetCenter[1];
+						targetCenter[0] = 280;
+						targetCenter[1] = 180;
+						reconfigureMatrix.setTranslate(targetCenter[0]-heartBm.getWidth()/2, targetCenter[1]-heartBm.getHeight()/2);
+						heartAnim.setStartMatrix(reconfigureMatrix);
+						heartAnim.setTranslate(0, 0, 20);
+						heartAnim.setRepeatTimes(1);
+						heartAnim.start(true);
+						heartAnim.setCallback(null);
+					}
+				});
+				break;
+			
+			default :
+				break;
 			}
 			achieved = false;
 			return 0;
@@ -1304,6 +703,10 @@ public class CupidCannonActivity extends Activity
 			rotateCenter[1] = mHeight + 3;
 			memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 			mCanvas = new Canvas(memBm);
+			backgroundStageWidth = backgroundStage.getWidth();
+			backgroundStageHeight = backgroundStage.getHeight();
+			backgroundStagePosition[0] = -(backgroundStageWidth-mWidth)/2;
+			backgroundStagePosition[1] = mHeight-backgroundStageHeight;
 			initAnimationInstance();
 
 			//Optimize mThread start
@@ -1312,16 +715,48 @@ public class CupidCannonActivity extends Activity
 			mThread.start();
 
 		}
+		
+		//timer
+		public long lastSystemTime = 0;
+		public long timeCounter = 99000;
+		public Bitmap [] numbersBm = {
+				null, null, null, null, null,
+				null, null, null, null, null
+		};
+		public Bitmap [] timerBm = {numbersBm[9], numbersBm[9]};
+		public void timer(){
+			Log.i("WHITEDAWN", "Run into timer()");
+			int counter = 0;
+			long currentTime = 0;
+			if (lastSystemTime == 0){
+				lastSystemTime = System.currentTimeMillis();
+			}
+			else{
+				currentTime = System.currentTimeMillis();
+				timeCounter = timeCounter - 
+						(currentTime -lastSystemTime);
+				lastSystemTime = currentTime;
+			}
+			if (timeCounter >= 0){
+				Log.i("WHITEDAWN", String.valueOf(timeCounter));
+				counter = (int)(timeCounter / 1000);
+				timerBm[0] = numbersBm[counter/10];
+				timerBm[1] = numbersBm[counter%10];
+			}
+			else{
+				timerBm[0] = numbersBm[0];
+				timerBm[1] = numbersBm[0];
+			}
+		}
 
 		@Override
-		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-		{
+		public void surfaceChanged(SurfaceHolder holder, int format, int width,
+				int height) {
 
 		}
 
 		@Override
-		public void surfaceDestroyed(SurfaceHolder holder)
-		{
+		public void surfaceDestroyed(SurfaceHolder holder) {
 			isRunning = false;
 
 		}
@@ -1330,13 +765,13 @@ public class CupidCannonActivity extends Activity
 		public void run()
 		{
 			while (isRunning) {
-
+				timer();
+				
 				drawAnimationInstance();
 
 				try {
 					Thread.sleep(3);
-				}
-				catch (InterruptedException e) {
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				Canvas renderer = null;
@@ -1355,6 +790,7 @@ public class CupidCannonActivity extends Activity
 
 			}
 		}
+
 
 		public boolean gameEnded = false;
 		public boolean powerTubeEnable = false;
@@ -1427,8 +863,7 @@ public class CupidCannonActivity extends Activity
 				bulletAnim.setCallback(new CanvasAnimation.Callback() {
 
 					@Override
-					public void onEnd()
-					{
+					public void onEnd() {
 						Matrix matrix = new Matrix();
 						float[] array = { 1.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f,
@@ -1437,11 +872,10 @@ public class CupidCannonActivity extends Activity
 						boomAnim.setCallback(new CanvasAnimation.Callback() {
 
 							@Override
-							public void onEnd()
-							{
-
-								if (Math.sqrt((boomCenter[0] - targetCenter[0]) * (boomCenter[0] - targetCenter[0])
-										+ (boomCenter[1] - targetCenter[1]) * (boomCenter[1] - targetCenter[1])) < RADIUS)
+							public void onEnd() {
+								
+								if (Math.sqrt((boomCenter[0]-targetCenter[0])*(boomCenter[0]-targetCenter[0]) 
+										+ (boomCenter[1]-targetCenter[1])*(boomCenter[1]-targetCenter[1])) < RADIUS )
 									achieved = true;
 								Paint paint = new Paint();
 								paint.setAlpha(0x00);
@@ -1464,7 +898,8 @@ public class CupidCannonActivity extends Activity
 						boomAnim.start(true);
 						soundPool.play(bombSound, 1.0f, 1.0f, 1, 0, 1f);
 						bulletAnim.start(false);
-
+						
+						
 					}
 				});
 				bulletAnim.setElements(bulletBm, new Paint());
@@ -1486,39 +921,37 @@ public class CupidCannonActivity extends Activity
 			return true;
 		}
 
-//test game end. Dialog will show on the screen.
-		public void CreatDialog()
-		{
-			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
-			builder.setIcon(R.drawable.ic_launcher);
-			builder.setTitle("投票");
-			builder.setMessage("您认为什么样的内容能吸引您？");
-			builder.setPositiveButton("有趣味的", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton)
-				{
-					showDialog("你选择了有趣味的");
-				}
-			});
-			builder.setNeutralButton("有思想的", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton)
-				{
-					showDialog("你选择了有思想的");
-				}
-			});
-			builder.setNegativeButton("主题强的", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton)
-				{
-					showDialog("你选择了主题强的");
-				}
-			});
-
-		}
-
-		private void showDialog(String str)
-		{
-			new AlertDialog.Builder(mContext).setMessage(str).show();
-		}
+		//test game end. Dialog will show on the screen.
+//	    public void CreatDialog(int id) {
+//	    	AlertDialog.Builder builder = new AlertDialog.Builder(MainDialog.this);	
+//
+//	    	    builder.setIcon(R.drawable.icon);
+//	                builder.setTitle("投票");
+//	                builder.setMessage("您认为什么样的内容能吸引您？");
+//	                builder.setPositiveButton("有趣味的", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                        showDialog("你选择了有趣味的");
+//	                    }
+//	                });
+//	                builder.setNeutralButton("有思想的", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                        showDialog("你选择了有思想的");                    
+//	                    }
+//	                });
+//	                builder.setNegativeButton("主题强的", new DialogInterface.OnClickListener() {
+//	                    public void onClick(DialogInterface dialog, int whichButton) {
+//	                        showDialog("你选择了主题强的");  
+//	                    }
+//	                });
+//	    	
+//	        }
+//
+//	        
+//	        private void showDialog(String str) {
+//	    	 new AlertDialog.Builder(mContext.this)
+//	             .setMessage(str)
+//	             .show();
+//	        }
 
 	}
 }

@@ -70,13 +70,24 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.cube.attract.game.mosquito.MosquitoActivity"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="com.cube.attract.game.mosquito.MosquitoActivity" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cube.common.test.TestApp"
             android:exported="true"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
             android:name="com.cube.common.test.TestApp"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
