@@ -125,6 +125,10 @@ public class CupidCannonActivity extends Activity
 							"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了13秒就获得了美女@小悦悦 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 				}
 				else if (onClickButton == "button_return") {
+					Intent about = new Intent(Intent.ACTION_MAIN);
+					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					mContext.startActivity(about);
 					mActivity.finish();
 				}
 				else if (onClickButton == "againChallenge") {
@@ -687,7 +691,6 @@ public class CupidCannonActivity extends Activity
 		private void gameEnd()
 		{
 			Log.i("WHITEDAWN", "Execute here!!!!!");
-			CreatDialog();
 			mThread.stop();
 			Log.i("WHITEDAWN", "Execute here!!!!!");
 		}
@@ -920,38 +923,5 @@ public class CupidCannonActivity extends Activity
 			// return super.onTouchEvent(event);
 			return true;
 		}
-
-		//test game end. Dialog will show on the screen.
-//	    public void CreatDialog(int id) {
-//	    	AlertDialog.Builder builder = new AlertDialog.Builder(MainDialog.this);	
-//
-//	    	    builder.setIcon(R.drawable.icon);
-//	                builder.setTitle("投票");
-//	                builder.setMessage("您认为什么样的内容能吸引您？");
-//	                builder.setPositiveButton("有趣味的", new DialogInterface.OnClickListener() {
-//	                    public void onClick(DialogInterface dialog, int whichButton) {
-//	                        showDialog("你选择了有趣味的");
-//	                    }
-//	                });
-//	                builder.setNeutralButton("有思想的", new DialogInterface.OnClickListener() {
-//	                    public void onClick(DialogInterface dialog, int whichButton) {
-//	                        showDialog("你选择了有思想的");                    
-//	                    }
-//	                });
-//	                builder.setNegativeButton("主题强的", new DialogInterface.OnClickListener() {
-//	                    public void onClick(DialogInterface dialog, int whichButton) {
-//	                        showDialog("你选择了主题强的");  
-//	                    }
-//	                });
-//	    	
-//	        }
-//
-//	        
-//	        private void showDialog(String str) {
-//	    	 new AlertDialog.Builder(mContext.this)
-//	             .setMessage(str)
-//	             .show();
-//	        }
-
 	}
 }
