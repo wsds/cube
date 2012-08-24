@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;

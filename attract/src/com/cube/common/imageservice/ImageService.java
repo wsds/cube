@@ -6,6 +6,7 @@ import com.cube.common.LocalData;
 import com.cube.common.ServerData;
 import com.cube.common.Settings;
 
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ public class ImageService extends IntentService {
 
 	public ImageService() {
 		super(TAG);
+		
 	}
 
 	@Override
