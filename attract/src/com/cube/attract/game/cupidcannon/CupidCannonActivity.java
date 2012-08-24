@@ -110,14 +110,15 @@ public class CupidCannonActivity extends Activity
 							"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了13秒就获得了美女@小悦悦 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 				}
 				else if (onClickButton == "button_return") {
+				
+				}
+				else if (onClickButton == "againChallenge") {
+
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
-				}
-				else if (onClickButton == "againChallenge") {
-
 				}
 
 			}
