@@ -35,7 +35,13 @@ public class RayPickRenderer implements Renderer {
 
 	public float gesDistance = 0.0f;
 	
-
+	private final static float[][] cubeNormalCoords = new float[][] { new float[] { // top
+			0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 }, new float[] { // bottom
+			0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0 }, new float[] { // front
+			0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 }, new float[] { // back
+			0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 }, new float[] { // left
+			-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0 }, new float[] { // right
+			1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 }, };
 	public SceneState sceneState=SceneState.getInstance();
 	private static float[] quadVertexLogo = new float[] { -1.0f, 0.2354f, 0, -1.0f, -0.2354f, 0, 1.0f, 0.2354f, 0, 1.0f, -0.2354f, 0 };
 
@@ -50,13 +56,28 @@ public class RayPickRenderer implements Renderer {
 
 	private static FloatBuffer quadVertexBufferBackground;
 	private static FloatBuffer quadTextureBufferBackground;	
+	private final static float lightAmb[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	private final static float lightDif[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	private final static float lightPos[] = { 0.0f, 0.0f, 2.0f, 1.0f };	
+	private final static FloatBuffer lightAmbBfr;
+	private final static FloatBuffer lightDifBfr;
+	private final static FloatBuffer lightPosBfr;
+	private final static FloatBuffer[] cubeNormalBfr;
 	static {
+		cubeNormalBfr = new FloatBuffer[6];
+		for (int i = 0; i < 6; i++) {
+			cubeNormalBfr[i] = BufferUtil.floatToBuffer(cubeNormalCoords[i]);
+		}
 		
 		quadVertexBufferLogo = BufferUtil.floatToBuffer(quadVertexLogo);
 		quadTextureBufferLogo = BufferUtil.floatToBuffer(quadTextureLogo);
 
 		quadVertexBufferBackground = BufferUtil.floatToBuffer(quadVertexBackground);
 		quadTextureBufferBackground = BufferUtil.floatToBuffer(quadTextureBackground);
+		
+		lightAmbBfr = BufferUtil.floatToBuffer(lightAmb);
+		lightDifBfr = BufferUtil.floatToBuffer(lightDif);
+		lightPosBfr = BufferUtil.floatToBuffer(lightPos);
 	}
 
 	public static class BufferUtil {
@@ -90,9 +111,10 @@ public class RayPickRenderer implements Renderer {
 		cube = new Cube();
 	}
 	public GLAnimation rotate1Animation = new GLAnimation();
-//	public GLAnimation rotate2Animation = new GLAnimation();
+
 	public GLAnimation cube1Animation = new GLAnimation();
-	public GLAnimation cube2Animation = new GLAnimation();
+//	public GLAnimation cube2Animation = new GLAnimation();
+//	public GLAnimation cube3Animation = new GLAnimation();
 	/**
 	 * 逐帧渲染
 	 */
@@ -102,35 +124,35 @@ public class RayPickRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT); // 清除屏幕和深度缓存
 		gl.glLoadIdentity(); // 重置当前的模型观察矩阵
 
+		if (sceneState.lighting) {
+			gl.glEnable(GL10.GL_LIGHTING);
+		} else {
+			gl.glDisable(GL10.GL_LIGHTING);
+		}
+		if (sceneState.blending) {
+			gl.glEnable(GL10.GL_BLEND);
+			gl.glDisable(GL10.GL_CULL_FACE);
+		} else {
+			gl.glDisable(GL10.GL_BLEND);
+			gl.glEnable(GL10.GL_CULL_FACE);
+		}
 		// 紧接着设置模型视图矩阵
 		setUpCamera(gl);
 
-		gl.glPushMatrix();
-		{
+//		gl.glPushMatrix();
+//		{
 			// 渲染物体
 			drawCub(gl);
-		}
-		gl.glPopMatrix();
+//		}
+//		gl.glPopMatrix();
 
-/*		gl.glPushMatrix();
-		{
-			// 渲染射线
-			PickFactory.getPickRay().draw(gl);
-		}
-		gl.glPopMatrix();*/
 
-		gl.glPushMatrix();
-		{
-			// 渲染选中的三角形
-			drawPickedTriangle(gl);
-		}
-		gl.glPopMatrix();
 //		
 //		gl.glEnable(GL10.GL_BLEND);
 //		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 		drawLogo(gl);
 		drawBackground(gl);
-
+		gl.glDisable(GL10.GL_BLEND);
 		updatePick();
 	}
 	public long lastMillis=0;
@@ -139,9 +161,9 @@ public class RayPickRenderer implements Renderer {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(LOGO + 0));
 		gl.glLoadIdentity();
 
-		// gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		gl.glEnable(GL10.GL_BLEND);
 
+		gl.glEnable(GL10.GL_BLEND);
+//		 gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_DST_ALPHA);
 		gl.glTranslatef(0, 1.2f, -3.8f);
 
 //		testAnimation.transformModel(gl);
@@ -157,6 +179,7 @@ public class RayPickRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
+//		gl.glDisable(GL10.GL_BLEND);
 	}
 
 	public int impression = 0;
@@ -167,7 +190,9 @@ public class RayPickRenderer implements Renderer {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
 		gl.glTranslatef(0, 0, -8.5f);
-
+//		gl.glEnable(GL10.GL_BLEND);
+//		 gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_DST_ALPHA);
+//		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.4f);
 		rotate1Animation.transformModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -181,6 +206,7 @@ public class RayPickRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
+//		gl.glDisable(GL10.GL_BLEND);
 
 	}
 	
@@ -210,11 +236,12 @@ public class RayPickRenderer implements Renderer {
 	 */
 	private void drawCub(GL10 gl) {
 
-		gl.glTranslatef(0, -1, 0);
+		gl.glTranslatef(0, -1f, -8f);
+		cube1Animation.transformModel(gl);
 		sceneState.rotateModel(gl);
 
 		// 设置默认颜色
-		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+//		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -227,6 +254,7 @@ public class RayPickRenderer implements Renderer {
 		for (int i = 0; i < 6; i++) // draw each face
 		{
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
+			gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
 			gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, (i+1)*4, GL10.GL_UNSIGNED_BYTE, cube.getIndices());
 		}
 		gl.glDisable(GL10.GL_TEXTURE_2D);
@@ -271,7 +299,7 @@ public class RayPickRenderer implements Renderer {
 		Ray ray = PickFactory.getPickRay();
 
 		GlMatrix translation = new GlMatrix();
-		translation.translate(0, -1, 0);
+		translation.translate(0, -1f, -1f);
 		translation.multiply(sceneState.baseMatrix);
 		sceneState.gMatModel.fillMatrix(translation.data);
 		// 首先把模型的绑定球通过模型矩阵，由模型局部空间变换到世界空间
@@ -323,38 +351,7 @@ public class RayPickRenderer implements Renderer {
 		}
 	}
 
-	/**
-	 * 渲染选中的三角形
-	 */
-	private void drawPickedTriangle(GL10 gl) {
-		if (!sceneState.gbTrianglePicked) {
-			return;
-		}
-		// 由于返回的拾取三角形数据是出于模型坐标系中
-		// 因此需要经过模型变换，将它们变换到世界坐标系中进行渲染
-		// 设置模型变换矩阵
-		gl.glTranslatef(0, -1, 0);
-		sceneState.rotateModel(gl);
-		// gl.glMultMatrixf(AppConfig.gMatModel.asFloatBuffer());
-		// 设置三角形颜色，alpha为0.7
-		gl.glColor4f(0.3f, 0.3f, 0.3f, 0.5f);
-		// 开启Blend混合模式
-		gl.glEnable(GL10.GL_BLEND);
-		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-		// 禁用无关属性，仅仅使用纯色填充
-		gl.glDisable(GL10.GL_DEPTH_TEST);
-		gl.glDisable(GL10.GL_TEXTURE_2D);
-		// 开始绑定渲染顶点数据
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mBufPickedTriangle);
-		// 提交渲染
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
-		// 重置相关属性
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glEnable(GL10.GL_DEPTH_TEST);
-		gl.glDisable(GL10.GL_BLEND);
-	}
 
 
 	/**
@@ -362,24 +359,34 @@ public class RayPickRenderer implements Renderer {
 	 */
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		// 全局性设置
-		gl.glEnable(GL10.GL_DITHER);
+		
+		gl.glShadeModel(GL10.GL_SMOOTH);
+		gl.glClearColor(0, 0, 0, 0);
+
+		gl.glClearDepthf(1.0f);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL10.GL_LEQUAL);
 
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-		// 设置清屏背景颜色
-		// gl.glClearColor(0, 0, 0, 0);
-		gl.glClearColor(0, 0, 0, 0);
-		// 设置着色模型为平滑着色
-		gl.glShadeModel(GL10.GL_SMOOTH);
 
-		// 启用背面剪裁
 		gl.glEnable(GL10.GL_CULL_FACE);
 		gl.glCullFace(GL10.GL_BACK);
-		// 启用深度测试
-		gl.glEnable(GL10.GL_DEPTH_TEST);
-		// 禁用光照和混合
-		gl.glDisable(GL10.GL_LIGHTING);
-		gl.glDisable(GL10.GL_BLEND);
+
+		// lighting
+		gl.glEnable(GL10.GL_LIGHT0);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDifBfr);
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBfr);
+
+		// blending////////////////////////////////////////////////////////////////////////////////////////////
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
+		// 全局性设置
+
+
+
+
+
 
 		
 		
@@ -402,6 +409,14 @@ public class RayPickRenderer implements Renderer {
 		sceneState.gpViewport[2] = width;
 		sceneState.gpViewport[3] = height;
 
+		rotate1Animation.setRotate(360f, 0, 0f, -1f, 30000f);
+		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
+		
+		cube1Animation.setTranslate(0.0f, -0.0f, 7.0f, 3000.0f);
+//		cube1Animation.addNextAnimation(cube2Animation);
+//		cube2Animation.setTranslate(0.0f, -0.5f, -1.0f, 3000.0f);
+//		cube2Animation.addNextAnimation(cube3Animation);
+//		cube3Animation.setTranslate(0.0f,0.0f,0.0f,10.0f);
 		// 设置投影矩阵
 		float ratio = (float) width / height;// 屏幕宽高比
 		gl.glMatrixMode(GL10.GL_PROJECTION);

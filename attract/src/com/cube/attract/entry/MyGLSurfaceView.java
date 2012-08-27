@@ -152,7 +152,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
 				if (sceneState.picked != -1) {
 					if (sceneState.picked == 0) {
-						//context.startActivity(new Intent(context, underclothes.game.diandian.GlApp.class));
+						context.startActivity(new Intent(context, com.cube.attract.gameEntry.GameEntryActivity.class));
 					} else if (sceneState.picked == 1) {
 						//context.startActivity(new Intent(context, underclothes.game.flowers.GlApp.class));
 					} else if (sceneState.picked == 2) {

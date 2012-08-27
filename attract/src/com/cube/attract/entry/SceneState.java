@@ -24,6 +24,7 @@ public class SceneState {
 	public boolean isClicked = false;
 	public float zoom = -6.0f - 0.6f;
 	boolean blending = true;
+	boolean lighting =true;
 	public int NONE = 0;
 	public int CUB = 1;
 	public int BRAND = 2;
