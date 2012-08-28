@@ -274,8 +274,9 @@ public class CanvasAnimation {
 				transformCount++;
 			}
 			alreadyPaused = isPaused;
-			canvas.drawBitmap(mAnimBitmap, transformMatrix, mAnimPaint);
-			//gl.glMultMatrixf(transform.data);
+			if (mAnimBitmap != null)
+				canvas.drawBitmap(mAnimBitmap, transformMatrix, mAnimPaint);
+
 
 			return remainTime + nextRemainTime;
 		}
