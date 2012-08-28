@@ -1,8 +1,5 @@
 package com.cube.attract.game.cupidcannon;
 
-import com.cube.attract.R;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.api.sns.UMSnsService;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +7,19 @@ import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.cube.attract.R;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.api.sns.UMSnsService;
 
 public class CupidCannonActivity extends Activity
 {
@@ -32,6 +34,12 @@ public class CupidCannonActivity extends Activity
 	Animation fromleftAnimation = null;
 	Animation fromrightAnimation = null;
 	public String onClickButton = "null";
+	
+	public final static int WIN = 0;
+	public final static int TIME_OUT = 1;
+	public String gameTime = "";
+	public String weibo = "";
+	public int gameState = TIME_OUT;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -106,19 +114,29 @@ public class CupidCannonActivity extends Activity
 			{
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
-					UMSnsService.shareToSina(CupidCannonActivity.this,
-							"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了13秒就获得了美女@小悦悦 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+					if (gameState == WIN) {
+						UMSnsService.shareToSina(CupidCannonActivity.this,
+								"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了" 
+								+ gameTime 
+								+"秒就获得了美女"
+								+ weibo
+								+ "的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+					}else if (gameState == TIME_OUT) {
+						UMSnsService.shareToSina(CupidCannonActivity.this,
+								"我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
+					}
 				}
 				else if (onClickButton == "button_return") {
-				
-				}
-				else if (onClickButton == "againChallenge") {
-
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
+					
+				}
+				else if (onClickButton == "againChallenge") {
+					animView.againChallenge();
+					
 				}
 
 			}
