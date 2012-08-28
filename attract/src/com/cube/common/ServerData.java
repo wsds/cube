@@ -35,6 +35,8 @@ public class ServerData extends Data {
 
 	public class Girl {
 
+		public long id = 0;
+
 		public String name = "小悦悦";
 
 		public String weibo = "@小悦悦";
@@ -94,13 +96,17 @@ public class ServerData extends Data {
 				JSONArray picturesJSON = girlJSON.getJSONArray("pictures");
 				for (int j = 0; j < picturesJSON.length(); j++) {
 					JSONObject pictureJSON = (JSONObject) picturesJSON.get(j);
-					// Special syntax to resolve the Closure problem for JAVA inner class.
+					// Special syntax to resolve the Closure problem for JAVA
+					// inner class.
 					Girl.Picture picture = new Girl().new Picture();
 					girl.pictures.add(picture);
 					picture.id = pictureJSON.getLong("id");
 					picture.url = pictureJSON.getString("url");
 					picture.status = pictureJSON.getString("status");
 
+					if (!pictureJSON.has("points")) {
+						continue;
+					}
 					JSONArray pointsJSON = pictureJSON.getJSONArray("points");
 					for (int k = 0; k < pointsJSON.length(); k++) {
 						JSONObject pointJSON = (JSONObject) pointsJSON.get(k);
