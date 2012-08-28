@@ -25,6 +25,8 @@ final class SceneState {
 	int filter = 2;
 	
 	public boolean isClicked = false;
+	public boolean isShaked = false;
+	public boolean isShaking = false;
 
 	public int NONE = 0;
 	public int CUB = 1;

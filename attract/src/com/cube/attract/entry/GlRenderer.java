@@ -18,7 +18,7 @@ import com.cube.opengl.common.GLAnimation;
 import com.cube.opengl.common.Utils;
 
 import android.content.Context;
-import android.content.Intent;
+//import android.content.Intent;
 import android.graphics.Bitmap;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
@@ -185,6 +185,8 @@ public class GlRenderer implements Renderer {
 		// reload textures
 		loadTexture(gl);
 		changeCubeTexture(gl);
+		switchGirlsBuffer();
+		changeCubeTexture(gl);
 		// avoid division by zero
 		if (height == 0)
 			height = 1;
@@ -254,6 +256,24 @@ public class GlRenderer implements Renderer {
 		// update rotations
 		if (lastMillis != 0) {
 			long delta = currentMillis - lastMillis;
+
+			if (sceneState.isShaked == true) {
+				float speed = sceneState.dxSpeed * sceneState.dxSpeed + sceneState.dySpeed * sceneState.dySpeed;
+				if (speed > 10) {
+					sceneState.isShaked = false;
+					sceneState.isShaking = true;
+					switchGirlsBuffer();
+				}
+			}
+			if (sceneState.isShaking == true) {
+				float speed = sceneState.dxSpeed * sceneState.dxSpeed + sceneState.dySpeed * sceneState.dySpeed;
+				if (speed < 0.01) {
+					sceneState.isShaking = false;
+					sceneState.dxSpeed = 0;
+					sceneState.dySpeed = 0;
+					changeCubeTexture(gl);
+				}
+			}
 			sceneState.dx += sceneState.dxSpeed * delta;
 			sceneState.dy += sceneState.dySpeed * delta;
 			sceneState.dampenSpeed(delta);
@@ -298,7 +318,7 @@ public class GlRenderer implements Renderer {
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		for (int i = 0; i < 6; i++) // draw each face
 		{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTexturesBuffer.get(i));
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTextures.get(i));
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, cubeVertexBfr[i]);
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
 			gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
@@ -395,10 +415,17 @@ public class GlRenderer implements Renderer {
 
 	}
 
+	private IntBuffer girlsTextures;
 	private IntBuffer girlsTexturesBuffer;
 
 	LocalData localData = LocalData.getInstance();
 	BitmapPool bitmapPool = BitmapPool.getInstance();
+
+	void switchGirlsBuffer() {
+		IntBuffer temp = girlsTextures;
+		girlsTextures = girlsTexturesBuffer;
+		girlsTexturesBuffer = temp;
+	}
 
 	void changeCubeTexture(GL10 gl) {
 		Random random = new Random(System.currentTimeMillis());

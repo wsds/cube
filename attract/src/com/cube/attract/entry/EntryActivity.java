@@ -1,16 +1,20 @@
 package com.cube.attract.entry;
 
+import com.cube.attract.R;
+import com.cube.attract.entry.ShakeListener.OnShakeListener;
+
 import android.app.Activity;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
 public class EntryActivity extends Activity {
+	String TAG = "EntryActivity";
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
 
@@ -20,6 +24,7 @@ public class EntryActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
@@ -30,6 +35,22 @@ public class EntryActivity extends Activity {
 		setContentView(surface);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+		final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		final int loadId1 = soundPool.load(this, R.raw.shake, 1);
+
+		ShakeListener mShakeListener = new ShakeListener(this);
+		mShakeListener.setOnShakeListener(new OnShakeListener() {
+			public void onShake(double speed, float deltaX, float deltaY, float deltaZ) {
+
+				soundPool.play(loadId1, 0.2f, 0.2f, 1, 0, 1f);
+				sceneState.isShaked = true;
+				sceneState.saveRotation();
+				sceneState.dxSpeed = -(deltaX) / 2;
+				sceneState.dySpeed = (deltaY) / 2;
+				Log.v(TAG, "sceneState.dxSpeed = " + sceneState.dxSpeed + " $$ sceneState.dySpeed = " + sceneState.dySpeed);
+			}
+		});
 	}
 
 	@Override
@@ -42,40 +63,6 @@ public class EntryActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		surface.onResume();
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_L:
-			sceneState.toggleLighting();
-			break;
-		case KeyEvent.KEYCODE_F:
-			sceneState.switchToNextFilter();
-			break;
-		case KeyEvent.KEYCODE_DPAD_CENTER:
-			sceneState.saveRotation();
-			sceneState.dxSpeed = 0.0f;
-			sceneState.dySpeed = 0.0f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_LEFT:
-			sceneState.saveRotation();
-			sceneState.dxSpeed -= 0.1f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			sceneState.saveRotation();
-			sceneState.dxSpeed += 0.1f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_UP:
-			sceneState.saveRotation();
-			sceneState.dySpeed -= 0.1f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_DOWN:
-			sceneState.saveRotation();
-			sceneState.dySpeed += 0.1f;
-			break;
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 
 	private float startX, startY;
@@ -109,17 +96,16 @@ public class EntryActivity extends Activity {
 				sceneState.dy = event.getY() - startY;
 			}
 			break;
-			
+
 		case MotionEvent.ACTION_UP:
 			if (sceneState.eventType == sceneState.LOGO) {
 				renderer.logoUp.start(true);
-			} 
+			}
 			break;
 		}
 
 		return super.onTouchEvent(event);
 	}
-
 
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
@@ -128,6 +114,7 @@ public class EntryActivity extends Activity {
 			} else if (sceneState.eventType == sceneState.CUB) {
 				sceneState.dxSpeed = velocityX / 1000;
 				sceneState.dySpeed = velocityY / 1000;
+				Log.v(TAG, "sceneState.dxSpeed = " + sceneState.dxSpeed + " $$ sceneState.dySpeed = " + sceneState.dySpeed);
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);
