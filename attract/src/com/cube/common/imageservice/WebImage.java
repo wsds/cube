@@ -76,12 +76,16 @@ public class WebImage {
 	}
 
 	public static InputStream getImageStream(String url) throws Exception {
+		InputStream inputStream = null;
 		HttpGet conn = new HttpGet(url);
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpResponse response = (HttpResponse) httpclient.execute(conn);
-		HttpEntity entity = response.getEntity();
-		BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(entity);
-		return bufferedHttpEntity.getContent();
+		if (response.getStatusLine().getStatusCode() == 200) {
+			HttpEntity entity = response.getEntity();
+			BufferedHttpEntity bufferedHttpEntity = new BufferedHttpEntity(entity);
+			inputStream = bufferedHttpEntity.getContent();
+		}
+		return inputStream;
 
 	}
 
@@ -93,7 +97,11 @@ public class WebImage {
 				String SDCardPath = Environment.getExternalStorageDirectory() + "/DataService/" + "/" + app + "/image/";
 				File saveFile = new File(SDCardPath, fileName);
 				if (!saveFile.exists() && mContext != null) {
+					try {
 					fin = mContext.getResources().getAssets().open(fileName);
+					}
+					catch (Exception ex) {
+					}
 				} else {
 					fin = new FileInputStream(saveFile);
 				}
@@ -145,10 +153,15 @@ public class WebImage {
 	}
 
 	private static String sKey = "abcdef123456";
+	private static String isEncrypt = "on";
 
 	public static InputStream EncryptInputStream(InputStream inputStream) {
 
+		if (isEncrypt == "off") {
+			return inputStream;
+		}
 		CipherInputStream cipherInputStream = null;
+
 		try {
 			int mode = Cipher.ENCRYPT_MODE;
 			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
@@ -166,6 +179,9 @@ public class WebImage {
 
 	public static InputStream DecryptInputStream(InputStream inputStream) {
 
+		if (isEncrypt == "off") {
+			return inputStream;
+		}
 		CipherInputStream cipherInputStream = null;
 		try {
 			int mode = Cipher.DECRYPT_MODE;

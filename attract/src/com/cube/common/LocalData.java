@@ -21,10 +21,14 @@ public class LocalData extends Data {
 		return instance;
 	}
 
+	public String nativePhoneNumber = "null";
+	
+	public String IMSI = "null";
+
 	public String username = "null";
 
 	public String weibo = "null";
-	
+
 	public String isFisrtRun = "true";
 
 	public String isLogin = "false";
@@ -36,6 +40,8 @@ public class LocalData extends Data {
 	public class Game {
 		public ArrayList<String> loadedPictures = new ArrayList<String>();
 		
+		public ArrayList<ActiveGirl> loadedGirls = new ArrayList<ActiveGirl>();
+
 		public ArrayList<ActiveGirl> cubeGirls = new ArrayList<ActiveGirl>();
 
 		public ArrayList<ActiveGirl> activeGirls = new ArrayList<ActiveGirl>();
@@ -44,11 +50,6 @@ public class LocalData extends Data {
 
 			public ServerData.Girl girl = null;
 			public long id = 0;
-
-			public String cubePicture = "girl_4_1.jpg";
-			public String gameEntryPicture = "girl_4_1.jpg";
-
-			public String status = "";
 
 			public ArrayList<GameData> games = new ArrayList<GameData>();
 

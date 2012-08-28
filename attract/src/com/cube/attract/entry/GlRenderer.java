@@ -4,15 +4,19 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.cube.attract.R;
+import com.cube.common.LocalData;
+import com.cube.common.LocalData.Game.ActiveGirl;
+import com.cube.common.imageservice.BitmapPool;
 import com.cube.opengl.common.GLAnimation;
 import com.cube.opengl.common.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,11 +28,12 @@ import android.util.Log;
 public class GlRenderer implements Renderer {
 
 	private Context context;
-	private Activity mActivity;
+
+	// private Activity mActivity;
 
 	public GlRenderer(Context context) {
 		this.context = context;
-		this.mActivity = (Activity) context;
+		// this.mActivity = (Activity) context;
 	}
 
 	private final static float[][] cubeVertexCoords = new float[][] { new float[] { // top
@@ -38,6 +43,14 @@ public class GlRenderer implements Renderer {
 			1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1, -1 }, new float[] { // left
 			-1, 1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1 }, new float[] { // right
 			1, 1, -1, 1, 1, 1, 1, -1, 1, 1, -1, -1 }, };
+
+	private final static float[][] highLightVertexCoords = new float[][] { new float[] { // top
+			1.46f, 1.0f, -1.46f, -1.46f, 1.0f, -1.46f, -1.46f, 1.0f, 1.46f, 1.46f, 1.0f, 1.46f }, new float[] { // bottom
+			1.46f, -1.0f, 1.46f, -1.46f, -1.0f, 1.46f, -1.46f, -1.0f, -1.46f, 1.46f, -1.0f, -1.46f }, new float[] { // front
+			1.46f, 1.46f, 1.0f, -1.46f, 1.46f, 1.0f, -1.46f, -1.46f, 1.0f, 1.46f, -1.46f, 1.0f }, new float[] { // back
+			1.46f, -1.46f, -1.0f, -1.46f, -1.46f, -1.0f, -1.46f, 1.46f, -1.0f, 1.46f, 1.46f, -1.0f }, new float[] { // left
+			-1.0f, 1.46f, 1.46f, -1.0f, 1.46f, -1.46f, -1.0f, -1.46f, -1.46f, -1.0f, -1.46f, 1.46f }, new float[] { // right
+			1.0f, 1.46f, -1.46f, 1.0f, 1.46f, 1.46f, 1.0f, -1.46f, 1.46f, 1.0f, -1.46f, -1.46f }, };
 
 	private final static float[][] cubeNormalCoords = new float[][] { new float[] { // top
 			0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 }, new float[] { // bottom
@@ -60,12 +73,15 @@ public class GlRenderer implements Renderer {
 	private final static float lightPos[] = { 0.0f, 0.0f, 2.0f, 1.0f };
 
 	private final static FloatBuffer[] cubeVertexBfr;
+	private final static FloatBuffer[] highLightVertexBfr;
 	private final static FloatBuffer[] cubeNormalBfr;
 	private final static FloatBuffer[] cubeTextureBfr;
 
 	private final static FloatBuffer lightAmbBfr;
 	private final static FloatBuffer lightDifBfr;
 	private final static FloatBuffer lightPosBfr;
+
+	private static final String TAG = "GlRenderer";
 
 	private static float[] quadVertexLogo = new float[] { -1.0f, 0.2354f, 0, -1.0f, -0.2354f, 0, 1.0f, 0.2354f, 0, 1.0f, -0.2354f, 0 };
 
@@ -86,9 +102,11 @@ public class GlRenderer implements Renderer {
 
 	static {
 		cubeVertexBfr = new FloatBuffer[6];
+		highLightVertexBfr = new FloatBuffer[6];
 		cubeNormalBfr = new FloatBuffer[6];
 		cubeTextureBfr = new FloatBuffer[6];
 		for (int i = 0; i < 6; i++) {
+			highLightVertexBfr[i] = BufferUtil.floatToBuffer(highLightVertexCoords[i]);
 			cubeVertexBfr[i] = BufferUtil.floatToBuffer(cubeVertexCoords[i]);
 			cubeNormalBfr[i] = BufferUtil.floatToBuffer(cubeNormalCoords[i]);
 			cubeTextureBfr[i] = BufferUtil.floatToBuffer(cubeTextureCoords[i]);
@@ -105,21 +123,18 @@ public class GlRenderer implements Renderer {
 		quadTextureBufferBackground = BufferUtil.floatToBuffer(quadTextureBackground);
 
 	}
-	
-	 
-	 
+
 	public static class BufferUtil {
-	    public static FloatBuffer mBuffer;
-	    public static FloatBuffer floatToBuffer(float[] a){
-	    //鍏堝垵濮嬪寲buffer锛屾暟缁勭殑闀垮害*4锛屽洜涓轰竴涓猣loat鍗�涓瓧鑺�
-	       ByteBuffer mbb = ByteBuffer.allocateDirect(a.length*4);
-	    //鏁扮粍鎺掑簭鐢╪ativeOrder
-	       mbb.order(ByteOrder.nativeOrder());
-	       mBuffer = mbb.asFloatBuffer();
-	       mBuffer.put(a);
-	       mBuffer.position(0);
-	       return mBuffer;
-	    }
+		public static FloatBuffer mBuffer;
+
+		public static FloatBuffer floatToBuffer(float[] a) {
+			ByteBuffer mbb = ByteBuffer.allocateDirect(a.length * 4);
+			mbb.order(ByteOrder.nativeOrder());
+			mBuffer = mbb.asFloatBuffer();
+			mBuffer.put(a);
+			mBuffer.position(0);
+			return mBuffer;
+		}
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -157,19 +172,19 @@ public class GlRenderer implements Renderer {
 	public GLAnimation rotate2Animation = new GLAnimation();
 	public GLAnimation cube1Animation = new GLAnimation();
 	public GLAnimation cube2Animation = new GLAnimation();
-	
+
 	public GLAnimation logoDown = new GLAnimation();
 	public GLAnimation logoUp = new GLAnimation();
-	
 
-	public void onSurfaceChanged(GL10 gl, int width, int height) {
-		sceneState.screenHeight=height;
-		sceneState.screenWidth=width;
-		Log.e("screen", "sceneState.screenHeight="+height);
-		Log.e("screen", "sceneState.screenWidth="+width);
+	public void onSurfaceChanged(final GL10 gl, int width, int height) {
+		sceneState.screenHeight = height;
+		sceneState.screenWidth = width;
+		Log.e("screen", "sceneState.screenHeight=" + height);
+		Log.e("screen", "sceneState.screenWidth=" + width);
 
 		// reload textures
 		loadTexture(gl);
+		changeCubeTexture(gl);
 		// avoid division by zero
 		if (height == 0)
 			height = 1;
@@ -188,7 +203,7 @@ public class GlRenderer implements Renderer {
 
 		testAnimation.addNextAnimation(test1Animation);
 		test1Animation.setRepeatTimes(5);
-		
+
 		test1Animation.setTranslate(-1f, -1f, -0f, 1000.0f);
 		test1Animation.addNextAnimation(test2Animation);
 		test2Animation.setTranslate(1f, 1f, -0f, 1000.0f);
@@ -201,23 +216,25 @@ public class GlRenderer implements Renderer {
 
 		rotate1Animation.setRotate(360f, 0, 0f, -1f, 30000f);
 		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
-		
+
 		testAnimation.addNextAnimation(rotate2Animation);
 
 		rotate2Animation.setRotate(1440f, 0, 1f, 0f, 5000f);
-		
+
 		logoDown.setTranslate(0f, 0.1f, -0.5f, 100.0f);
 		logoDown.start(false);
 		logoUp.setTranslate(0f, -0.1f, 0.5f, 100.0f);
 		logoUp.start(false);
-		
-		
+
 		logoUp.setCallback(new GLAnimation.Callback() {
 			public void onEnd() {
-				Intent about = new Intent(Intent.ACTION_MAIN);
-				about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
-				context.startActivity(about);
+
+				changeCubeTexture(gl);
+				// Intent about = new Intent(Intent.ACTION_MAIN);
+				// about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				// about.setClassName("com.cube.attract",
+				// "com.cube.attract.gameEntry.GameEntryActivity");
+				// context.startActivity(about);
 			}
 		});
 
@@ -226,6 +243,28 @@ public class GlRenderer implements Renderer {
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
+
+		drawCube(gl);
+		drawHighLight(gl);
+		drawLogo(gl);
+		drawBackground(gl);
+		// get current millis
+		long currentMillis = System.currentTimeMillis();
+
+		// update rotations
+		if (lastMillis != 0) {
+			long delta = currentMillis - lastMillis;
+			sceneState.dx += sceneState.dxSpeed * delta;
+			sceneState.dy += sceneState.dySpeed * delta;
+			sceneState.dampenSpeed(delta);
+		}
+
+		// update millis
+		lastMillis = currentMillis;
+	}
+
+	void drawCube(GL10 gl) {
+
 		gl.glLoadIdentity();
 
 		// update lighting
@@ -237,8 +276,9 @@ public class GlRenderer implements Renderer {
 
 		// update blending
 		if (sceneState.blending) {
-			gl.glEnable(GL10.GL_BLEND);
-			gl.glDisable(GL10.GL_CULL_FACE);
+			// gl.glEnable(GL10.GL_BLEND);
+			gl.glDisable(GL10.GL_BLEND);
+			// gl.glDisable(GL10.GL_CULL_FACE);
 		} else {
 			gl.glDisable(GL10.GL_BLEND);
 			gl.glEnable(GL10.GL_CULL_FACE);
@@ -258,7 +298,7 @@ public class GlRenderer implements Renderer {
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		for (int i = 0; i < 6; i++) // draw each face
 		{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTexturesBuffer.get(i));
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, cubeVertexBfr[i]);
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
 			gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
@@ -269,26 +309,45 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 
-		drawLogo(gl);
-		drawBackground(gl);
-		// get current millis
-		long currentMillis = System.currentTimeMillis();
+	}
 
-		// update rotations
-		if (lastMillis != 0) {
-			long delta = currentMillis - lastMillis;
-			sceneState.dx += sceneState.dxSpeed * delta;
-			sceneState.dy += sceneState.dySpeed * delta;
-			sceneState.dampenSpeed(delta);
+	void drawHighLight(GL10 gl) {
+
+		gl.glLoadIdentity();
+
+		gl.glEnable(GL10.GL_BLEND);
+		// gl.glDisable(GL10.GL_CULL_FACE);
+		// draw cube
+
+		gl.glTranslatef(0, 0, -7);
+		gl.glTranslatef(0, 0, -8);
+		// gl.glScalef(1.1f, 1.1f, 1.1f);
+		cube1Animation.transformModel(gl);
+
+		sceneState.rotateModel(gl);
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		for (int i = 0; i < 6; i++) // draw each face
+		{
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(HIGHLIGHT));
+			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, highLightVertexBfr[i]);
+			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
+			gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
+			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);
 		}
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
 
-		// update millis
-		lastMillis = currentMillis;
 	}
 
 	public void drawLogo(GL10 gl) {
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(LOGO + 0));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(LOGO + 0));
 		gl.glLoadIdentity();
 
 		// gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -296,7 +355,7 @@ public class GlRenderer implements Renderer {
 
 		gl.glTranslatef(0, 1.2f, -3.8f);
 
-//		testAnimation.transformModel(gl);
+		// testAnimation.transformModel(gl);
 		logoDown.transformModel(gl);
 		logoUp.transformModel(gl);
 
@@ -316,7 +375,7 @@ public class GlRenderer implements Renderer {
 
 	public void drawBackground(GL10 gl) {
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(BACKGROUND + 0));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
 		gl.glTranslatef(0, 0, -8.5f);
 
@@ -336,36 +395,86 @@ public class GlRenderer implements Renderer {
 
 	}
 
-	private IntBuffer texturesBuffer;
+	private IntBuffer girlsTexturesBuffer;
 
-	public int LOGO = 6;
-	public int BACKGROUND = 8;
+	LocalData localData = LocalData.getInstance();
+	BitmapPool bitmapPool = BitmapPool.getInstance();
 
-	public int textureNum = 9;
+	void changeCubeTexture(GL10 gl) {
+		Random random = new Random(System.currentTimeMillis());
+		@SuppressWarnings("unchecked")
+		ArrayList<ActiveGirl> loadedGirls = (ArrayList<ActiveGirl>) localData.game.loadedGirls.clone();
+		ArrayList<ActiveGirl> cubeGirls = new ArrayList<ActiveGirl>();
+
+		for (int i = 0; i < 6; i++) {
+			int size = loadedGirls.size();
+			int id = 0;
+			if (size > 0) {
+				id = random.nextInt(size);
+			}
+			Log.v(TAG, "size is loaded: " + size + " and id is " + id);
+			ActiveGirl girl = loadedGirls.get(id);
+			cubeGirls.add(girl);
+			loadedGirls.remove(girl);
+		}
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		girlsTexturesBuffer = IntBuffer.allocate(6);
+		gl.glGenTextures(6, girlsTexturesBuffer);
+
+		for (int i = 0; i < 6; i++) {
+			Bitmap texture = null;
+			ActiveGirl girl = cubeGirls.get(i);
+			String url = girl.girl.pictures.get(0).url;
+			String filename = url.substring(url.lastIndexOf("/") + 1);
+			if (!localData.game.loadedPictures.contains(filename)) {
+				texture = Utils.getTextureFromBitmapResource(context, R.drawable.heart_1_s);
+			} else {
+				texture = bitmapPool.get(filename);
+				Log.v(TAG, "texture is loaded: " + filename);
+			}
+			if (texture == null) {
+				texture = Utils.getTextureFromBitmapResource(context, R.drawable.heart_1_s);
+				Log.v(TAG, "texture is null: " + filename);
+			}
+
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTexturesBuffer.get(i));
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
+			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
+			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+
+			texture.recycle();
+		}
+
+	}
+
+	private IntBuffer UITexturesBuffer;
+	public int LOGO = 0;
+	public int BACKGROUND = 2;
+	public int HIGHLIGHT = 3;
+
+	public int textureNum = 4;
 
 	private void loadTexture(GL10 gl) {
 		// create textures
 		gl.glEnable(GL10.GL_TEXTURE_2D);
-		texturesBuffer = IntBuffer.allocate(textureNum);
-		gl.glGenTextures(textureNum, texturesBuffer);
+		UITexturesBuffer = IntBuffer.allocate(textureNum);
+		gl.glGenTextures(3, UITexturesBuffer);
 
 		// load bitmap
 		Bitmap[] texture = new Bitmap[textureNum];
-		texture[0] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_1);
-		texture[1] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_2);
-		texture[2] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_3);
-		texture[3] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_4);
-		texture[4] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_5);
-		texture[5] = Utils.getTextureFromBitmapResource(context, R.drawable.girl_entry_6);
 
 		texture[LOGO + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title1);
 		texture[LOGO + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title2);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.entry_background);
+		texture[HIGHLIGHT + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.highlight);
 
 		for (int i = 0; i < textureNum; i++) {
 
 			// setup texture 0
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(i));
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_NEAREST);
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
 			gl.glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);

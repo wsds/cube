@@ -2,7 +2,6 @@ package com.cube.attract.entry;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import com.cube.common.Settings;
 import com.cube.opengl.common.GlMatrix;
 
 

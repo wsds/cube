@@ -9,7 +9,6 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 public class EntryActivity extends Activity {
 	private GLSurfaceView surface;
