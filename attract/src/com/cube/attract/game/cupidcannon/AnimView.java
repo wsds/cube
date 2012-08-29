@@ -18,6 +18,7 @@ import android.view.SurfaceView;
 
 import com.cube.attract.R;
 import com.cube.canvas.common.CanvasAnimation;
+import com.umeng.analytics.MobclickAgent;
 
 
 	public class AnimView extends SurfaceView implements
@@ -153,9 +154,6 @@ import com.cube.canvas.common.CanvasAnimation;
 					R.drawable.number_8);
 			numbersBm[9] = BitmapFactory.decodeResource(getResources(),
 					R.drawable.number_9);
-
-			
-
 
 			
 		}
@@ -688,6 +686,7 @@ import com.cube.canvas.common.CanvasAnimation;
 							Bundle bundle = new Bundle();
 							bundle.putInt("gameState", TIME_OUT);
 							handler.sendMessage(msg); 
+							MobclickAgent.onEvent(mContext, "cupidGameFailed");
 							trigger = true;
 						}
 					}else if (gameEnded){
@@ -701,6 +700,7 @@ import com.cube.canvas.common.CanvasAnimation;
 							bundle.putInt("gameState", WIN);
 							msg.setData(bundle);
 							handler.sendMessage(msg); 
+							MobclickAgent.onEvent(mContext, "cupidGameWin", String.valueOf(achievedTime));
 							trigger = true;
 						}
 					}

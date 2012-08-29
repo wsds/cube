@@ -25,7 +25,7 @@ public class CupidCannonActivity extends Activity
 {
 
 	AnimView animView = null;
-	Activity mActivity;;
+	Activity mActivity;
 	Context mContext;
 	RelativeLayout canvasContainer = null;
 	ImageView shareSina, againChallenge, button_return;
@@ -59,6 +59,7 @@ public class CupidCannonActivity extends Activity
 		canvasContainer.addView(animView, 0);
 		animView.getHolder().setFormat(PixelFormat.TRANSPARENT);
 
+		MobclickAgent.onEvent(mContext, "cupidCannonStart");
 		shareSina = (ImageView) findViewById(R.id.sharesina);
 		shareSina.setOnClickListener(new OnClickListener() {
 
@@ -88,6 +89,7 @@ public class CupidCannonActivity extends Activity
 			{
 				onClickButton = "againChallenge";
 				hideImage();
+				MobclickAgent.onEvent(mContext, "cupidCannonStart");
 
 			}
 		});
