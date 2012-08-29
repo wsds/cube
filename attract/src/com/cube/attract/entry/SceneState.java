@@ -13,6 +13,7 @@ public class SceneState {
 		return instance;
 	}
 
+	boolean isPicking = false;
 	public float angleFactor = 0.35f;
 	public float x, y;
 	public float dx_CUB = 0, dy_CUB = 0;
@@ -22,8 +23,8 @@ public class SceneState {
 	public float zoom = -6.0f - 0.6f;
 	boolean blending = true;
 	int filter = 2;
-	boolean lighting =true;
-	
+	boolean lighting = true;
+
 	public boolean isShaked = false;
 	public boolean isShaking = false;
 
@@ -57,7 +58,6 @@ public class SceneState {
 		gl.glMultMatrixf(baseMatrix.data);
 	}
 
-
 	public void dampenSpeed_CUB(long deltaMillis) {
 		if (dxSpeed_CUB != 0.0f) {
 			dxSpeed_CUB *= (1.0f - 0.001f * deltaMillis);
@@ -74,36 +74,13 @@ public class SceneState {
 		}
 	}
 
-	/**
-	 * ͶӰ����
-	 */
 	public Matrix4f gMatProject = new Matrix4f();
-	/**
-	 * ��ͼ����
-	 */
 	public Matrix4f gMatView = new Matrix4f();
-	/**
-	 * ģ�;���
-	 */
 	public Matrix4f gMatModel = new Matrix4f();
-	/**
-	 * �ӿڲ���
-	 */
 	public int[] gpViewport = new int[4];
-	/**
-	 * ��ǰϵͳ��ͶӰ�����������
-	 */
 	public float[] gpMatrixProjectArray = new float[16];
-	/**
-	 * ��ǰϵͳ����ͼ�����������
-	 */
 	public float[] gpMatrixViewArray = new float[16];
-
-	/**
-	 * �Ƿ�������α�ѡ��
-	 */
 	public boolean gbTrianglePicked = false;
-
 
 	public SceneState() {
 	}
@@ -113,14 +90,9 @@ public class SceneState {
 	public float minX = 10000;
 	public float minXabs = 10000;
 
-
 	public boolean isStopping = false;
 	public int stop = 10;
 	public int screenWidth;
 	public int screenHeight;
-
-
-
-
 
 }

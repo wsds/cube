@@ -1,5 +1,6 @@
 package com.cube.attract;
 
+import java.util.Date;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.cube.common.LocalData;
@@ -43,6 +44,12 @@ public class MainActivity extends Activity {
 
 		localData.nativePhoneNumber = telephonyManager.getLine1Number();
 		localData.IMSI = telephonyManager.getSubscriberId();
+
+		Date now = new Date(System.currentTimeMillis());
+		int data = now.getDate();
+		if (localData.game.lastGameDate != data) {
+			localData.game.choice = 3;
+		}
 
 		Log.d(TAG, "nativePhoneNumber is " + localData.nativePhoneNumber + " and IMSI is " + localData.IMSI);
 		startServices();
