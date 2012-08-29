@@ -108,15 +108,17 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		Random random = null;
 
 		public void initaize() {
+			Bitmap mosquito1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
+			Bitmap mosquito2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
 			random = new Random(System.currentTimeMillis());
 			for (int i = 0; i < count; i++) {
 				Mosquito mosquito = new Mosquito();
 				int randomType = random.nextInt(1000) % type;
 				mosquito.type = randomType;
 				if (randomType == 0) {
-					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito1);
+					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(mosquito1);
 				} else if (randomType >= 1) {
-					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito2);
+					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(mosquito2);
 				}
 				Log.v(TAG, "randomType is " + randomType);
 				mosquito.x = random.nextInt(mWidth * 10) % mWidth;
@@ -290,6 +292,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 		mCanvas = new Canvas(memBitmap);
 		initGirls();
+		shellBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_shell);
+		cloudBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_cloud);
 		initSoundPool();
 		initAnimationInstance();
 
@@ -353,13 +357,16 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		return (float) angle;
 	}
 
+	Bitmap shellBitmap = null;
+	Bitmap cloudBitmap = null;
+
 	void fire(final float currentX, final float currentY, float angle1) {
 		double dx = currentX - mWidth / 2;
 		double dy = mHeight - 40 - currentY;
 		double theta = Math.atan2(dx, dy);
 		final double angle = theta / Math.PI * 180;
 		double speed = (dx * dx + dy * dy) / (mWidth * mWidth + mHeight * mHeight) * 500;
-		final AnimationBitmap shell = animationDynamicManager.addAnimationBitmap(R.drawable.game2_shell);
+		final AnimationBitmap shell = animationDynamicManager.addAnimationBitmap(shellBitmap);
 
 		shell.matrix.setRotate((float) angle, 23, 66);
 		shell.matrix.postTranslate((mWidth - 46) / 2, mHeight - 142);
@@ -372,7 +379,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 			@Override
 			public void onEnd() {
 				animationDynamicManager.removeAnimationBitmap(shell);
-				final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(R.drawable.game2_cloud);
+				final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(cloudBitmap);
 
 				cloud.matrix.setRotate((float) angle, 23, 66);
 				cloud.matrix.postTranslate(currentX, currentY);
@@ -383,7 +390,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		});
 
 		soundPool.play(fireSound, 0.2f, 0.2f, 1, 0, 1f);
-
 	}
 
 	void explode(final AnimationBitmap cloud) {

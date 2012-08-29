@@ -84,6 +84,7 @@ public class ServerData extends Data {
 				JSONObject girlJSON = (JSONObject) girlsJSON.get(i);
 				Girl girl = new Girl();
 				girls.add(girl);
+				girl.id = girlJSON.getLong("id");
 				girl.name = girlJSON.getString("name");
 				girl.weibo = girlJSON.getString("weibo");
 
