@@ -16,17 +16,17 @@ public class BitmapPool {
 		return instance;
 	}
 
-	public Bitmap get(String fileName) {
+	public Bitmap get(String filename) {
 		Bitmap bitmap = null;
-		if (!map.containsKey(fileName)) {
-			bitmap = WebImage.loadBitmapFromSDCard(fileName);
+		if (!map.containsKey(filename)) {
+			bitmap = WebImage.loadBitmapFromSDCard(filename);
 			if (bitmap != null) {
-				map.put(fileName, bitmap);
+				map.put(filename, bitmap);
 			}
 		} else {
-			bitmap = map.get(fileName);
+			bitmap = map.get(filename);
 			if (bitmap.isRecycled()) {
-				bitmap = WebImage.loadBitmapFromSDCard(fileName);
+				bitmap = WebImage.loadBitmapFromSDCard(filename);
 			}
 		}
 		return bitmap;

@@ -8,6 +8,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -21,6 +24,7 @@ import com.cube.canvas.common.CanvasAnimation;
 			SurfaceHolder.Callback, Runnable {
 
 		Context mContext = null;
+		CupidCannonActivity cupidCannonActivity = null;
 		private int mWidth = 0;
 		private int mHeight = 0;
 		private SurfaceHolder mHolder = null;
@@ -86,6 +90,7 @@ import com.cube.canvas.common.CanvasAnimation;
 			mHolder = this.getHolder();
 			mHolder.addCallback(this);
 			mContext = context;
+			cupidCannonActivity = (CupidCannonActivity)context;
 			
 			initBackgroundBm = BitmapFactory.decodeResource(getResources(),
 					R.drawable.welcome_background);
@@ -149,7 +154,7 @@ import com.cube.canvas.common.CanvasAnimation;
 			numbersBm[9] = BitmapFactory.decodeResource(getResources(),
 					R.drawable.number_9);
 
-//			testBm = bitmapPool.map.get(picture1);				
+			
 
 
 			
@@ -472,6 +477,7 @@ import com.cube.canvas.common.CanvasAnimation;
 													
 													@Override
 													public void onEnd() {
+														gameEnded = true;
 														girlAnim.setElements(girl_4_0Bm, new Paint());
 														reconfigureMatrix.reset();
 														girlAnim.setStartMatrix(reconfigureMatrix);
@@ -528,6 +534,7 @@ import com.cube.canvas.common.CanvasAnimation;
 						heartAnim.setCallback(null);
 					}
 				});
+				
 				break;
 			
 			default :
@@ -546,7 +553,7 @@ import com.cube.canvas.common.CanvasAnimation;
 				hintAnim.transformModel(mCanvas);
 			if (bulletAnim != null)
 				bulletAnim.transformModel(mCanvas);
-
+			
 			batteryAnimOdd.transformModel(mCanvas);	
 			batteryAnimEven.transformModel(mCanvas);
 			batteryAnimOdd.transformModel(mCanvas);	
@@ -576,7 +583,6 @@ import com.cube.canvas.common.CanvasAnimation;
 			backgroundStagePosition[1] = mHeight-backgroundStageHeight;
 			initAnimationInstance();
 			initSound();
-		
 			//Optimize mThread start
 			isRunning = true;
 			mThread = new Thread(this);// 创建一个绘图线程
@@ -617,6 +623,17 @@ import com.cube.canvas.common.CanvasAnimation;
 			}
 		}
 
+
+		public void againChallenge() {
+			trigger = false;
+			timeCounter = 99000;
+			achievedCounter = -1;
+			gameEnded = false;
+			achieved = false;
+			initAnimationInstance();
+			initSound();
+		}
+
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width,
 				int height) {
@@ -629,13 +646,66 @@ import com.cube.canvas.common.CanvasAnimation;
 
 		}
 
+		public final static int WIN = 0;
+		public final static int TIME_OUT = 1;
+		Handler handler = new Handler(){
+			@Override	
+			public void handleMessage(Message msg) {  
+		          
+		        //msg.what为handler接收到的消息编号   
+		        switch(msg.what) {  
+		        case WIN: 
+		        	Bundle bundle = msg.getData();
+		        	cupidCannonActivity.gameTime = bundle.getString("gameTime");
+		        	cupidCannonActivity.weibo = bundle.getString("weibo");
+		        	cupidCannonActivity.gameState = bundle.getInt("gameState");
+					cupidCannonActivity.showImage();
+						Log.v("Handler", ""+msg.what);						
+		        break;  
+		        case TIME_OUT:  
+					cupidCannonActivity.showImage();
+		        break;  
+		        }  
+		        super.handleMessage(msg);  
+		    } 
+			
+		};
+		
 		@Override
 		public void run() {
 			while (isRunning) {
 				
-				timer();
-				
-				drawAnimationInstance();
+				if (achievedCounter < 1)
+					timer();
+				if (!gameEnded&&(timeCounter>=0)) {
+					drawAnimationInstance();
+				}
+				else{
+					Message msg = new Message(); 
+					if (timeCounter < 0){
+						if (trigger == false) {
+							msg.what = TIME_OUT;
+							Bundle bundle = new Bundle();
+							bundle.putInt("gameState", TIME_OUT);
+							handler.sendMessage(msg); 
+							trigger = true;
+						}
+					}else if (gameEnded){
+						float achievedTime = (float)(99000 - timeCounter)/1000.0f;
+//						Log.i("GAMEENDINFO"," " + achievedTime);
+						if (trigger == false) {					
+							msg.what = WIN;
+							Bundle bundle = new Bundle();
+							bundle.putString("gameTime", String.valueOf(achievedTime));
+							bundle.putString("weibo", "@小悦悦");
+							bundle.putInt("gameState", WIN);
+							msg.setData(bundle);
+							handler.sendMessage(msg); 
+							trigger = true;
+						}
+					}
+					Log.i("sendMessage", ""+msg.what);
+				}
 
 				try {
 					Thread.sleep(3);
@@ -659,7 +729,7 @@ import com.cube.canvas.common.CanvasAnimation;
 		}
 		
 
-
+		public boolean trigger = false;
 		public boolean gameEnded = false;
 		public boolean powerTubeEnable = false;
 		public boolean bulletEnable = false;

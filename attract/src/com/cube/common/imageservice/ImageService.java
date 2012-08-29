@@ -3,9 +3,9 @@ package com.cube.common.imageservice;
 import java.util.Date;
 
 import com.cube.common.LocalData;
+import com.cube.common.LocalData.Game.ActiveGirl;
 import com.cube.common.ServerData;
 import com.cube.common.Settings;
-
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -17,7 +17,7 @@ public class ImageService extends IntentService {
 
 	public ImageService() {
 		super(TAG);
-		
+
 	}
 
 	@Override
@@ -52,9 +52,10 @@ public class ImageService extends IntentService {
 	BitmapPool bitmapPool = BitmapPool.getInstance();
 
 	public void initializeImage() {
-
+		WebImage.initializeWebData(this);
+		localData.game.loadedGirls.clear();
 		for (ServerData.Girl girl : serverData.girls) {
-			WebImage.initializeWebData(this);
+			boolean isGirlLoaded = true;
 			for (ServerData.Girl.Picture picture : girl.pictures) {
 				String url = picture.url;
 				String filename = url.substring(url.lastIndexOf("/") + 1);
@@ -63,13 +64,18 @@ public class ImageService extends IntentService {
 					boolean isLoaded = WebImage.getBitmap(url, filename);
 					if (isLoaded == true) {
 						localData.game.loadedPictures.add(filename);
-					}
-					else{
-						Log.d(TAG, filename+" cannot be loaded !");
+					} else {
+						isGirlLoaded = false;
+						Log.d(TAG, filename + " cannot be loaded !");
 					}
 				}
 			}
+			if (isGirlLoaded == true) {
+				ActiveGirl loadedGirl = new LocalData().new Game().new ActiveGirl();
+				loadedGirl.id = girl.id;
+				loadedGirl.girl = girl;
+				localData.game.loadedGirls.add(loadedGirl);
+			}
 		}
 	}
-
 }

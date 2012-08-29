@@ -1,24 +1,29 @@
 package com.cube.attract;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.cube.common.LocalData;
 import com.cube.common.Settings;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 
 	Settings settings = Settings.getInstance();
+	LocalData localData = LocalData.getInstance();
 	Context mContext = null;
 	Activity mActivity = null;
 
@@ -34,7 +39,20 @@ public class MainActivity extends Activity {
 		ImageView mImageView2 = (ImageView) findViewById(R.id.imageView2);
 		Animation translate_title2Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_title2);
 		mImageView2.setAnimation(translate_title2Animation);
-//		startServices();
+
+		TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+		localData.nativePhoneNumber = telephonyManager.getLine1Number();
+		localData.IMSI = telephonyManager.getSubscriberId();
+
+		Date now = new Date(System.currentTimeMillis());
+		int data = now.getDate();
+		if (localData.game.lastGameDate != data) {
+			localData.game.choice = 3;
+		}
+
+		Log.d(TAG, "nativePhoneNumber is " + localData.nativePhoneNumber + " and IMSI is " + localData.IMSI);
+		startServices();
 
 		translate_title2Animation.setAnimationListener(new AnimationListener() {
 			@Override
@@ -55,7 +73,8 @@ public class MainActivity extends Activity {
 				if (settings.isLogoin == "false") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					// about.setClassName("com.cube.attract",
+					// "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
@@ -74,7 +93,7 @@ public class MainActivity extends Activity {
 		Log.d(TAG, "dataService is Starting");
 		mContext.startService(dataService);
 		Log.d(TAG, "dataService Started");
-		
+
 		Intent imageService = new Intent();
 		imageService.setClassName("com.cube.attract", "com.cube.common.imageservice.ImageService");
 		imageService.putExtra("time", System.currentTimeMillis());
