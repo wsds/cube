@@ -1,27 +1,34 @@
 package com.cube.attract.entry;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import com.cube.attract.R;
+import com.cube.attract.entry.ShakeListener.OnShakeListener;
+
 public class EntryActivity extends Activity {
+	String TAG = "EntryActivity";
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
+	Context context;
 
 	private GestureDetector gestureDetector;
-
-	SceneState sceneState = SceneState.getInstance();
-
+//	private GLSurfaceView mGLSurfaceView;
+	public SceneState sceneState = SceneState.getInstance();
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 
+		super.onCreate(savedInstanceState);
+		context = this;
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
 		surface = new GLSurfaceView(this);
@@ -30,12 +37,22 @@ public class EntryActivity extends Activity {
 		setContentView(surface);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
-	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		surface.onPause();
+		final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		final int loadId1 = soundPool.load(this, R.raw.shake, 1);
+
+		ShakeListener mShakeListener = new ShakeListener(this);
+		mShakeListener.setOnShakeListener(new OnShakeListener() {
+			public void onShake(double speed, float deltaX, float deltaY, float deltaZ) {
+
+				soundPool.play(loadId1, 0.2f, 0.2f, 1, 0, 1f);
+				sceneState.isShaked = true;
+				sceneState.saveRotation();
+//				sceneState.dxSpeed = -(deltaX) / 2;
+//				sceneState.dySpeed = (deltaY) / 2;
+//				Log.v(TAG, "sceneState.dxSpeed = " + sceneState.dxSpeed + " $$ sceneState.dySpeed = " + sceneState.dySpeed);
+			}
+		});
 	}
 
 	@Override
@@ -45,41 +62,16 @@ public class EntryActivity extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_L:
-			sceneState.toggleLighting();
-			break;
-		case KeyEvent.KEYCODE_F:
-			sceneState.switchToNextFilter();
-			break;
-		case KeyEvent.KEYCODE_DPAD_CENTER:
-			sceneState.saveRotation();
-			sceneState.dxSpeed = 0.0f;
-			sceneState.dySpeed = 0.0f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_LEFT:
-			sceneState.saveRotation();
-			sceneState.dxSpeed -= 0.1f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_RIGHT:
-			sceneState.saveRotation();
-			sceneState.dxSpeed += 0.1f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_UP:
-			sceneState.saveRotation();
-			sceneState.dySpeed -= 0.1f;
-			break;
-		case KeyEvent.KEYCODE_DPAD_DOWN:
-			sceneState.saveRotation();
-			sceneState.dySpeed += 0.1f;
-			break;
-		}
-		return super.onKeyDown(keyCode, event);
+	protected void onPause() {
+		super.onPause();
+		surface.onPause();
 	}
 
 	private float startX, startY;
 
+	/**
+	 * ��Ӧ�����¼�
+	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
@@ -87,51 +79,106 @@ public class EntryActivity extends Activity {
 		}
 
 		switch (event.getAction()) {
+
 		case MotionEvent.ACTION_DOWN:
-			sceneState.dxSpeed = 0.0f;
-			sceneState.dySpeed = 0.0f;
+			sceneState.isClicked = true;
+
+
 			startX = event.getX();
 			startY = event.getY();
-
-			if (startY * 800 / sceneState.screenHeight < 150 && startY * 800 / sceneState.screenHeight > 80) {
-				sceneState.eventType = sceneState.LOGO;
-				renderer.logoDown.start(true);
-			} else {
+			Log.d("Point:", "startY:" + startY + "  startX:" + startX);
+			if (startY > 240) {
 				sceneState.eventType = sceneState.CUB;
 				sceneState.saveRotation();
+			} else {
 			}
-
+			break;
+		case MotionEvent.ACTION_UP:
+			sceneState.x = event.getX();
+			sceneState.y = event.getY();
+			if (sceneState.isClicked == true && sceneState.eventType == sceneState.CUB) {
+				sceneState.gbNeedPick = true;
+			}
+			Log.i("sceneState.isClicked",String.valueOf(sceneState.isClicked));
 			break;
 		case MotionEvent.ACTION_MOVE:
+			float dx = event.getX() - startX;
+			float dy = event.getY() - startY;
+			if (sceneState.eventType == sceneState.BRAND) {
+			} else if (sceneState.eventType == sceneState.CUB) {
+				sceneState.dx_CUB = dx;
+				sceneState.dy_CUB = dy;
+			}
 
-			if (sceneState.eventType == sceneState.CUB) {
-				sceneState.dx = event.getX() - startX;
-				sceneState.dy = event.getY() - startY;
+			if (sceneState.isClicked == true) {
+				float delta = (dx * dx +  dy * dy);
+				if (delta > 1600) {
+					sceneState.isClicked = false;
+				}
 			}
 			break;
-			
-		case MotionEvent.ACTION_UP:
-			if (sceneState.eventType == sceneState.LOGO) {
-				renderer.logoUp.start(true);
-			} 
+		case MotionEvent.ACTION_CANCEL:
+			sceneState.gbNeedPick = false;
 			break;
 		}
+		Log.i("sceneState.gbNeedPick",String.valueOf(sceneState.gbNeedPick));
+		if (sceneState.gbNeedPick == true) {
+			startActivity t1 = new startActivity();
+			t1.start();
+		}
 
-		return super.onTouchEvent(event);
+		return true;
 	}
-
 
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			if (sceneState.eventType == sceneState.LOGO) {
+			// measure speed in milliseconds
+			if (sceneState.eventType == sceneState.BRAND) {
 			} else if (sceneState.eventType == sceneState.CUB) {
-				sceneState.dxSpeed = velocityX / 1000;
-				sceneState.dySpeed = velocityY / 1000;
+				sceneState.dxSpeed_CUB = velocityX / 1000;
+				sceneState.dySpeed_CUB = velocityY / 1000;
+//				Log.v(TAG, "sceneState.dxSpeed = " + sceneState.dxSpeed + " $$ sceneState.dySpeed = " + sceneState.dySpeed);
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
 	}
 
+	public class startActivity extends Thread {
+
+		boolean isRunning = true;
+
+		int timer = 0;
+
+		/**
+		 * �߳������
+		 */
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(500);
+
+				if (sceneState.picked != -1) {
+					if (sceneState.picked == 0) {
+						context.startActivity(new Intent(context, com.cube.attract.gameEntry.GameEntryActivity.class));
+					} else if (sceneState.picked == 1) {
+						//context.startActivity(new Intent(context, underclothes.game.flowers.GlApp.class));
+					} else if (sceneState.picked == 2) {
+						//context.startActivity(new Intent(context, underclothes.android.pleasewait.GlApp.class));
+					} else if (sceneState.picked == 3) {
+						//context.startActivity(new Intent(context, underclothes.android.pleasewait.GlApp.class));
+					} else if (sceneState.picked == 4) {
+						//context.startActivity(new Intent(context, underclothes.game.masaike.GlApp.class));
+					} else if (sceneState.picked == 5) {
+						//context.startActivity(new Intent(context, underclothes.android.pleasewait.GlApp.class));
+					}
+					sceneState.picked = -1;
+				}
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

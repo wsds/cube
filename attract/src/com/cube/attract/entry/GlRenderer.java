@@ -10,30 +10,38 @@ import java.util.Random;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLU;
+import android.opengl.GLUtils;
+import android.util.Log;
+
 import com.cube.attract.R;
 import com.cube.common.LocalData;
 import com.cube.common.LocalData.Game.ActiveGirl;
 import com.cube.common.imageservice.BitmapPool;
+import com.cube.common.pickup.IBufferFactory;
+import com.cube.common.pickup.Matrix4f;
+import com.cube.common.pickup.Ray;
+import com.cube.common.pickup.Vector3f;
 import com.cube.opengl.common.GLAnimation;
+import com.cube.opengl.common.GlMatrix;
 import com.cube.opengl.common.Utils;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.opengl.GLU;
-import android.opengl.GLUtils;
-import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
+//import android.content.Intent;
 
 public class GlRenderer implements Renderer {
 
 	private Context context;
+	Cube cube;
 
 	// private Activity mActivity;
 
 	public GlRenderer(Context context) {
 		this.context = context;
 		// this.mActivity = (Activity) context;
+		cube = new Cube();
 	}
 
 	private final static float[][] cubeVertexCoords = new float[][] { new float[] { // top
@@ -70,7 +78,7 @@ public class GlRenderer implements Renderer {
 
 	private final static float lightAmb[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	private final static float lightDif[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	private final static float lightPos[] = { 0.0f, 0.0f, 2.0f, 1.0f };
+	private final static float lightPos[] = { 0.0f, 0.0f, 2.0f, 0f };
 
 	private final static FloatBuffer[] cubeVertexBfr;
 	private final static FloatBuffer[] highLightVertexBfr;
@@ -142,14 +150,16 @@ public class GlRenderer implements Renderer {
 		gl.glClearColor(0, 0, 0, 0);
 
 		gl.glClearDepthf(1.0f);
-		gl.glDisable(GL10.GL_DEPTH_TEST);
+
 		gl.glDepthFunc(GL10.GL_LEQUAL);
+		// gl.glEnable(GL10.GL_DEPTH_TEST);
 
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 
 		gl.glEnable(GL10.GL_CULL_FACE);
 		gl.glCullFace(GL10.GL_BACK);
-
+		gl.glLoadIdentity();
+		gl.glEnable(GL10.GL_LIGHTING);
 		// lighting
 		gl.glEnable(GL10.GL_LIGHT0);
 		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbBfr);
@@ -159,6 +169,7 @@ public class GlRenderer implements Renderer {
 		// blending
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
+		// gl.glAlphaFunc(GL10.GL_GREATER,0);
 	}
 
 	public GLAnimation testAnimation = new GLAnimation();
@@ -185,20 +196,13 @@ public class GlRenderer implements Renderer {
 		// reload textures
 		loadTexture(gl);
 		changeCubeTexture(gl);
-		// avoid division by zero
-		if (height == 0)
-			height = 1;
-		// draw on the entire screen
-		gl.glViewport(0, 0, width, height);
-		// setup projection matrix
-		gl.glMatrixMode(GL10.GL_PROJECTION);
-		gl.glLoadIdentity();
-		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
+		switchGirlsBuffer();
+		changeCubeTexture(gl);
 
 		testAnimation.setTranslate(0.0f, 0f, -0.3f, 1000.0f);
 
-		cube1Animation.setTranslate(0.0f, -0.0f, 9.0f, 3000.0f);
-		cube1Animation.addNextAnimation(cube2Animation);
+		cube1Animation.setTranslate(0.0f, -0.0f, 8.0f, 3000.0f);
+//		cube1Animation.addNextAnimation(cube2Animation);
 		cube2Animation.setTranslate(0.0f, -0.5f, -1.0f, 3000.0f);
 
 		testAnimation.addNextAnimation(test1Animation);
@@ -238,91 +242,201 @@ public class GlRenderer implements Renderer {
 			}
 		});
 
+		if (height == 0)
+			height = 1;
+		// draw on the entire screen
+		// setup projection matrix
+		gl.glLoadIdentity();
+		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
+		gl.glViewport(0, 0, width, height);
+		sceneState.gpViewport[0] = 0;
+		sceneState.gpViewport[1] = 0;
+		sceneState.gpViewport[2] = width;
+		sceneState.gpViewport[3] = height;
+
+		float ratio = (float) width / height;// 屏幕宽高比
+		gl.glMatrixMode(GL10.GL_PROJECTION);
+		gl.glLoadIdentity();
+		// GLU.gluPerspective(gl, 45.0f, ratio, 1, 5000);系统提供
+		Matrix4f.gluPersective(45.0f, ratio, 1, 100, sceneState.gMatProject);
+		gl.glLoadMatrixf(sceneState.gMatProject.asFloatBuffer());
+		sceneState.gMatProject.fillFloatArray(sceneState.gpMatrixProjectArray);
+		// 每次修改完GL_PROJECTION后，最好将当前矩阵模型设置回GL_MODELVIEW
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+
 	}
 
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
 
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		drawBackground(gl);
 		drawCube(gl);
+
+		gl.glPushMatrix();
+		{
+			drawPickedTriangle(gl);
+		}
+		gl.glPopMatrix();
 		drawHighLight(gl);
 		drawLogo(gl);
-		drawBackground(gl);
+
 		// get current millis
 		long currentMillis = System.currentTimeMillis();
 
 		// update rotations
 		if (lastMillis != 0) {
 			long delta = currentMillis - lastMillis;
-			sceneState.dx += sceneState.dxSpeed * delta;
-			sceneState.dy += sceneState.dySpeed * delta;
-			sceneState.dampenSpeed(delta);
+
+			if (sceneState.isShaked == true) {
+				float speed = sceneState.dxSpeed_CUB * sceneState.dxSpeed_CUB + sceneState.dySpeed_CUB * sceneState.dySpeed_CUB;
+				if (speed > 10) {
+					sceneState.isShaked = false;
+					sceneState.isShaking = true;
+					switchGirlsBuffer();
+				}
+			}
+			if (sceneState.isShaking == true) {
+				float speed = sceneState.dxSpeed_CUB * sceneState.dxSpeed_CUB + sceneState.dySpeed_CUB * sceneState.dySpeed_CUB;
+				if (speed < 0.01) {
+					sceneState.isShaking = false;
+					sceneState.dxSpeed_CUB = 0;
+					sceneState.dySpeed_CUB = 0;
+					changeCubeTexture(gl);
+				}
+			}
+			sceneState.dx_CUB += sceneState.dxSpeed_CUB * delta;
+			sceneState.dy_CUB += sceneState.dySpeed_CUB * delta;
+			sceneState.dampenSpeed_CUB(delta);
 		}
 
 		// update millis
 		lastMillis = currentMillis;
+
+		updatePick();
+	}
+
+	private Vector3f mvEye = new Vector3f(0, 0, 7f), mvCenter = new Vector3f(0, 0, 0), mvUp = new Vector3f(0, 1, 0);
+
+	private void setUpCamera(GL10 gl) {
+		// 设置模型视图矩阵
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		gl.glLoadIdentity();
+		// GLU.gluLookAt(gl, mfEyeX, mfEyeY, mfEyeZ, mfCenterX, mfCenterY,
+		// mfCenterZ, 0, 1, 0);//系统提供
+		Matrix4f.gluLookAt(mvEye, mvCenter, mvUp, sceneState.gMatView);
+		gl.glLoadMatrixf(sceneState.gMatView.asFloatBuffer());
 	}
 
 	void drawCube(GL10 gl) {
 
 		gl.glLoadIdentity();
+		setUpCamera(gl);
 
-		// update lighting
-		if (sceneState.lighting) {
-			gl.glEnable(GL10.GL_LIGHTING);
-		} else {
-			gl.glDisable(GL10.GL_LIGHTING);
-		}
+//		// update blending
+//		if (sceneState.blending) {
+//			// gl.glEnable(GL10.GL_BLEND);
+//			gl.glDisable(GL10.GL_BLEND);
+//			// gl.glDisable(GL10.GL_CULL_FACE);
+//		} else {
+//			gl.glDisable(GL10.GL_BLEND);
+//			gl.glEnable(GL10.GL_CULL_FACE);
+//		}
 
-		// update blending
-		if (sceneState.blending) {
-			// gl.glEnable(GL10.GL_BLEND);
-			gl.glDisable(GL10.GL_BLEND);
-			// gl.glDisable(GL10.GL_CULL_FACE);
-		} else {
-			gl.glDisable(GL10.GL_BLEND);
-			gl.glEnable(GL10.GL_CULL_FACE);
-		}
-
+		gl.glDisable(GL10.GL_BLEND);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
 		// draw cube
 
-		gl.glTranslatef(0, 0, -7);
-		gl.glTranslatef(0, 0, -8);
-		cube1Animation.transformModel(gl);
+		// gl.glTranslatef(0, 0, -7);
+		 gl.glTranslatef(0, 0, -8);
+		 cube1Animation.transformModel(gl);
 
 		sceneState.rotateModel(gl);
 
+		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
+		// gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		// gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+		// gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+		// gl.glVertexPointer(3, GL10.GL_FLOAT, 0,
+		// cube.getCoordinate(Cube.VERTEX_BUFFER));
+		// gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0,
+		// cube.getCoordinate(Cube.TEXTURE_BUFFER));
+		//
+		// for (int i = 0; i < 6; i++) // draw each face
+		// {
+		// gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTextures.get(i));
+		//
+		// gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, (i + 1) * 4,
+		// GL10.GL_UNSIGNED_BYTE, cube.getIndices());
+		// }
 		for (int i = 0; i < 6; i++) // draw each face
 		{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTexturesBuffer.get(i));
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTextures.get(i));
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, cubeVertexBfr[i]);
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
 			gl.glNormalPointer(GL10.GL_FLOAT, 0, cubeNormalBfr[i]);
 			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);
 		}
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+		// gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 
+	}
+
+	private void drawPickedTriangle(GL10 gl) {
+		if (!sceneState.gbTrianglePicked) {
+			return;
+		}
+		// gl.glLoadIdentity();
+		// 由于返回的拾取三角形数据是出于模型坐标系中
+		// 因此需要经过模型变换，将它们变换到世界坐标系中进行渲染
+		// 设置模型变换矩阵
+		gl.glLoadIdentity();
+		gl.glTranslatef(0, 0, -7);
+		// gl.glTranslatef(0, -0.5f, -2);
+		sceneState.rotateModel(gl);
+		// gl.glMultMatrixf(AppConfig.gMatModel.asFloatBuffer());
+		// 设置三角形颜色，alpha为0.7
+		gl.glColor4f(0.3f, 0.3f, 0.3f, 0.4f);
+		// 开启Blend混合模式
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
+//		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		// 禁用无关属性，仅仅使用纯色填充
+
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		// 开始绑定渲染顶点数据
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mBufPickedTriangle);
+		// 提交渲染
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+		// 重置相关属性
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+
+		gl.glEnable(GL10.GL_DEPTH_TEST);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
+		gl.glDisable(GL10.GL_BLEND);
 	}
 
 	void drawHighLight(GL10 gl) {
 
 		gl.glLoadIdentity();
 
-		gl.glEnable(GL10.GL_BLEND);
 		// gl.glDisable(GL10.GL_CULL_FACE);
 		// draw cube
-
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
 		gl.glTranslatef(0, 0, -7);
-		gl.glTranslatef(0, 0, -8);
-		// gl.glScalef(1.1f, 1.1f, 1.1f);
-		cube1Animation.transformModel(gl);
+		// gl.glTranslatef(0, 0, -8);
+		// // gl.glScalef(1.1f, 1.1f, 1.1f);
+		// cube1Animation.transformModel(gl);
 
 		sceneState.rotateModel(gl);
 
@@ -343,6 +457,9 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 
+		gl.glDisable(GL10.GL_BLEND);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
+
 	}
 
 	public void drawLogo(GL10 gl) {
@@ -352,6 +469,7 @@ public class GlRenderer implements Renderer {
 
 		// gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glEnable(GL10.GL_BLEND);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
 
 		gl.glTranslatef(0, 1.2f, -3.8f);
 
@@ -370,6 +488,8 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
+		gl.glDisable(GL10.GL_BLEND);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
 
 	}
 
@@ -377,7 +497,7 @@ public class GlRenderer implements Renderer {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
-		gl.glTranslatef(0, 0, -8.5f);
+		gl.glTranslatef(0, 0, -15.5f);
 
 		rotate1Animation.transformModel(gl);
 
@@ -395,10 +515,17 @@ public class GlRenderer implements Renderer {
 
 	}
 
+	private IntBuffer girlsTextures;
 	private IntBuffer girlsTexturesBuffer;
 
 	LocalData localData = LocalData.getInstance();
 	BitmapPool bitmapPool = BitmapPool.getInstance();
+
+	void switchGirlsBuffer() {
+		IntBuffer temp = girlsTextures;
+		girlsTextures = girlsTexturesBuffer;
+		girlsTexturesBuffer = temp;
+	}
 
 	void changeCubeTexture(GL10 gl) {
 		Random random = new Random(System.currentTimeMillis());
@@ -484,6 +611,70 @@ public class GlRenderer implements Renderer {
 			texture[i].recycle();
 		}
 
+	}
+
+	private Vector3f transformedSphereCenter = new Vector3f();
+	private Ray transformedRay = new Ray();
+	private Matrix4f matInvertModel = new Matrix4f();
+	private Vector3f[] mpTriangle = { new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f() };
+	private FloatBuffer mBufPickedTriangle = IBufferFactory.newFloatBuffer(4 * 3);
+
+	private void updatePick() {
+		if (!sceneState.gbNeedPick) {
+			return;
+		}
+		sceneState.gbNeedPick = false;
+		// 更新最新的拾取射线
+		PickFactory.update(sceneState.x, sceneState.y);
+		// 获得最新的拾取射线
+		Ray ray = PickFactory.getPickRay();
+
+		GlMatrix translation = new GlMatrix();
+//		 translation.translate(0, 0f, 0f);
+		translation.multiply(sceneState.baseMatrix);
+		sceneState.gMatModel.fillMatrix(translation.data);
+		// 首先把模型的绑定球通过模型矩阵，由模型局部空间变换到世界空间
+		sceneState.gMatModel.transform(cube.getSphereCenter(), transformedSphereCenter);
+
+		Log.i("cubSphereCenter and transformedSphereCenter", String.valueOf(cube.getSphereCenter().x) + String.valueOf(cube.getSphereCenter().y) + String.valueOf(cube.getSphereCenter().z) + "and" + transformedSphereCenter.x + transformedSphereCenter.y + transformedSphereCenter.z);
+
+		// 触碰的立方体面的标记为无
+		cube.surface = -1;
+
+		// 首先检测拾取射线是否与模型绑定球发生相交
+		// 这个检测很快，可以快速排除不必要的精确相交检测
+		if (ray.intersectSphere(transformedSphereCenter, cube.getSphereRadius())) {
+			// 如果射线与绑定球发生相交，那么就需要进行精确的三角面级别的相交检测
+			// 由于我们的模型渲染数据，均是在模型局部坐标系中
+			// 而拾取射线是在世界坐标系中
+			// 因此需要把射线转换到模型坐标系中
+			// 这里首先计算模型矩阵的逆矩阵
+			matInvertModel.set(sceneState.gMatModel);
+			matInvertModel.invert();
+			// 把射线变换到模型坐标系中，把结果存储到transformedRay中
+			ray.transform(matInvertModel, transformedRay);
+			// 将射线与模型做精确相交检测
+			if (cube.intersect(transformedRay, mpTriangle)) {
+				// 如果找到了相交的最近的三角形
+				sceneState.gbTrianglePicked = true;
+				// 触碰了哪一个面
+				Log.i("触碰的立方体面", "=标记=" + cube.surface);
+				// 回调
+				// if (null != onSurfacePickedListener) {
+				// onSurfacePickedListener.onSurfacePicked(cube.surface);
+				// }
+				// 填充数据到被选取三角形的渲染缓存中
+				mBufPickedTriangle.clear();
+				for (int i = 0; i < 4; i++) {
+					IBufferFactory.fillBuffer(mBufPickedTriangle, mpTriangle[i]);
+					// Log.i("点" + i, mpTriangle[i].x + "\t" + mpTriangle[i].y
+					// + "\t" + mpTriangle[i].z);
+				}
+				mBufPickedTriangle.position(0);
+			}
+		} else {
+			sceneState.gbTrianglePicked = false;
+		}
 	}
 
 }
