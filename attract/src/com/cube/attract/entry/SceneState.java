@@ -45,6 +45,8 @@ public class SceneState {
 		}
 		dx_CUB = 0.0f;
 		dy_CUB = 0.0f;
+		dxSpeed_CUB = 0.0f;
+		dySpeed_CUB = 0.0f;
 	}
 
 	public void rotateModel(GL10 gl) {

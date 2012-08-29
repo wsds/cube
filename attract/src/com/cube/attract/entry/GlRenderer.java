@@ -201,8 +201,8 @@ public class GlRenderer implements Renderer {
 
 		testAnimation.setTranslate(0.0f, 0f, -0.3f, 1000.0f);
 
-		cube1Animation.setTranslate(0.0f, -0.0f, 9.0f, 3000.0f);
-		cube1Animation.addNextAnimation(cube2Animation);
+		cube1Animation.setTranslate(0.0f, -0.0f, 8.0f, 3000.0f);
+//		cube1Animation.addNextAnimation(cube2Animation);
 		cube2Animation.setTranslate(0.0f, -0.5f, -1.0f, 3000.0f);
 
 		testAnimation.addNextAnimation(test1Animation);
@@ -348,8 +348,8 @@ public class GlRenderer implements Renderer {
 		// draw cube
 
 		// gl.glTranslatef(0, 0, -7);
-		// gl.glTranslatef(0, 0, -8);
-		// cube1Animation.transformModel(gl);
+		 gl.glTranslatef(0, 0, -8);
+		 cube1Animation.transformModel(gl);
 
 		sceneState.rotateModel(gl);
 
@@ -497,7 +497,7 @@ public class GlRenderer implements Renderer {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(BACKGROUND + 0));
 		gl.glLoadIdentity();
-		gl.glTranslatef(0, 0, -18.5f);
+		gl.glTranslatef(0, 0, -15.5f);
 
 		rotate1Animation.transformModel(gl);
 
@@ -630,7 +630,7 @@ public class GlRenderer implements Renderer {
 		Ray ray = PickFactory.getPickRay();
 
 		GlMatrix translation = new GlMatrix();
-		// translation.translate(0, 0f, -7f);
+//		 translation.translate(0, 0f, 0f);
 		translation.multiply(sceneState.baseMatrix);
 		sceneState.gMatModel.fillMatrix(translation.data);
 		// 首先把模型的绑定球通过模型矩阵，由模型局部空间变换到世界空间

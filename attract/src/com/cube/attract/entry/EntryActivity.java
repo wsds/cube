@@ -1,25 +1,25 @@
 package com.cube.attract.entry;
 
-import com.cube.attract.R;
-import com.cube.attract.entry.ShakeListener.OnShakeListener;
-
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.content.pm.ActivityInfo;
-import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.view.Window;
+
+import com.cube.attract.R;
+import com.cube.attract.entry.ShakeListener.OnShakeListener;
 
 public class EntryActivity extends Activity {
 	String TAG = "EntryActivity";
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
+	Context context;
 
 	private GestureDetector gestureDetector;
 //	private GLSurfaceView mGLSurfaceView;
@@ -28,7 +28,7 @@ public class EntryActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-
+		context = this;
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
 		surface = new GLSurfaceView(this);
@@ -161,7 +161,7 @@ public class EntryActivity extends Activity {
 
 				if (sceneState.picked != -1) {
 					if (sceneState.picked == 0) {
-//						context.startActivity(new Intent(context, com.cube.attract.gameEntry.GameEntryActivity.class));
+						context.startActivity(new Intent(context, com.cube.attract.gameEntry.GameEntryActivity.class));
 					} else if (sceneState.picked == 1) {
 						//context.startActivity(new Intent(context, underclothes.game.flowers.GlApp.class));
 					} else if (sceneState.picked == 2) {
