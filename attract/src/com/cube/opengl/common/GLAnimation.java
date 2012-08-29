@@ -141,7 +141,7 @@ public class GLAnimation {
 
 		if (remainTime == 0) {
 			if (this.callback != null) {
-				this.isStarted = false;
+//				this.isStarted = false;
 				this.callback.onEnd();
 			}
 
@@ -203,6 +203,7 @@ public class GLAnimation {
 	public void reset() {
 		lastMillis = 0;
 		isReset = true;
+		transform.identity();
 		for (int i = 0; i < this.next.size(); i++) {
 			GLAnimation nextAnimation = this.next.get(i);
 			nextAnimation.reset();

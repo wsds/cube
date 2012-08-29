@@ -1,19 +1,23 @@
 package com.cube.attract.entry;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.cube.attract.R;
 import com.cube.attract.entry.ShakeListener.OnShakeListener;
+import com.cube.common.LocalData;
 
 public class EntryActivity extends Activity {
 	String TAG = "EntryActivity";
@@ -22,8 +26,9 @@ public class EntryActivity extends Activity {
 	Context context;
 
 	private GestureDetector gestureDetector;
-//	private GLSurfaceView mGLSurfaceView;
 	public SceneState sceneState = SceneState.getInstance();
+	ShakeListener mShakeListener = null;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -41,16 +46,16 @@ public class EntryActivity extends Activity {
 		final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
 		final int loadId1 = soundPool.load(this, R.raw.shake, 1);
 
-		ShakeListener mShakeListener = new ShakeListener(this);
+		mShakeListener = new ShakeListener(this);
 		mShakeListener.setOnShakeListener(new OnShakeListener() {
 			public void onShake(double speed, float deltaX, float deltaY, float deltaZ) {
 
 				soundPool.play(loadId1, 0.2f, 0.2f, 1, 0, 1f);
 				sceneState.isShaked = true;
 				sceneState.saveRotation();
-//				sceneState.dxSpeed = -(deltaX) / 2;
-//				sceneState.dySpeed = (deltaY) / 2;
-//				Log.v(TAG, "sceneState.dxSpeed = " + sceneState.dxSpeed + " $$ sceneState.dySpeed = " + sceneState.dySpeed);
+				sceneState.dxSpeed_CUB = -(deltaX) / 2;
+				sceneState.dySpeed_CUB = (deltaY) / 2;
+				Log.v(TAG, "sceneState.dxSpeed_CUB = " + sceneState.dxSpeed_CUB + " $$ sceneState.dySpeed_CUB = " + sceneState.dySpeed_CUB);
 			}
 		});
 	}
@@ -59,19 +64,18 @@ public class EntryActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		surface.onResume();
+		mShakeListener.start();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		surface.onPause();
+		mShakeListener.stop();
 	}
 
 	private float startX, startY;
 
-	/**
-	 * ��Ӧ�����¼�
-	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
@@ -82,7 +86,6 @@ public class EntryActivity extends Activity {
 
 		case MotionEvent.ACTION_DOWN:
 			sceneState.isClicked = true;
-
 
 			startX = event.getX();
 			startY = event.getY();
@@ -99,7 +102,7 @@ public class EntryActivity extends Activity {
 			if (sceneState.isClicked == true && sceneState.eventType == sceneState.CUB) {
 				sceneState.gbNeedPick = true;
 			}
-			Log.i("sceneState.isClicked",String.valueOf(sceneState.isClicked));
+			Log.i("sceneState.isClicked", String.valueOf(sceneState.isClicked));
 			break;
 		case MotionEvent.ACTION_MOVE:
 			float dx = event.getX() - startX;
@@ -111,7 +114,7 @@ public class EntryActivity extends Activity {
 			}
 
 			if (sceneState.isClicked == true) {
-				float delta = (dx * dx +  dy * dy);
+				float delta = (dx * dx + dy * dy);
 				if (delta > 1600) {
 					sceneState.isClicked = false;
 				}
@@ -121,13 +124,31 @@ public class EntryActivity extends Activity {
 			sceneState.gbNeedPick = false;
 			break;
 		}
-		Log.i("sceneState.gbNeedPick",String.valueOf(sceneState.gbNeedPick));
-		if (sceneState.gbNeedPick == true) {
+		if (sceneState.gbNeedPick == true && renderer.isPicking == false) {
 			startActivity t1 = new startActivity();
 			t1.start();
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("你好！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					finish();
+				}
+			}).show();
+
+			return true;
+		} else {
+			return super.onKeyDown(keyCode, event);
+		}
 	}
 
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -138,46 +159,68 @@ public class EntryActivity extends Activity {
 			} else if (sceneState.eventType == sceneState.CUB) {
 				sceneState.dxSpeed_CUB = velocityX / 1000;
 				sceneState.dySpeed_CUB = velocityY / 1000;
-//				Log.v(TAG, "sceneState.dxSpeed = " + sceneState.dxSpeed + " $$ sceneState.dySpeed = " + sceneState.dySpeed);
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
 	}
 
+	public LocalData localData = LocalData.getInstance();
+
 	public class startActivity extends Thread {
 
 		boolean isRunning = true;
 
 		int timer = 0;
+		Thread mThread;
 
-		/**
-		 * �߳������
-		 */
 		@Override
 		public void run() {
+			mThread = this;
 			try {
 				Thread.sleep(500);
 
 				if (sceneState.picked != -1) {
-					if (sceneState.picked == 0) {
-						context.startActivity(new Intent(context, com.cube.attract.gameEntry.GameEntryActivity.class));
-					} else if (sceneState.picked == 1) {
-						//context.startActivity(new Intent(context, underclothes.game.flowers.GlApp.class));
-					} else if (sceneState.picked == 2) {
-						//context.startActivity(new Intent(context, underclothes.android.pleasewait.GlApp.class));
-					} else if (sceneState.picked == 3) {
-						//context.startActivity(new Intent(context, underclothes.android.pleasewait.GlApp.class));
-					} else if (sceneState.picked == 4) {
-						//context.startActivity(new Intent(context, underclothes.game.masaike.GlApp.class));
-					} else if (sceneState.picked == 5) {
-						//context.startActivity(new Intent(context, underclothes.android.pleasewait.GlApp.class));
-					}
+					Looper.prepare();
+					showPrompt();
+					Looper.loop();
 					sceneState.picked = -1;
 				}
 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+		}
+
+		int pickIndex[] = { 2, 3, 0, 1, 5, 4 };
+
+		void showPrompt() {
+			Log.v(TAG, "showPrompt");
+			if (sceneState.picked != -1) {
+				if (localData.game.choice > 0) {
+
+					Log.i(TAG, "sceneState.picked=" + sceneState.picked);
+					// ActiveGirl girl = renderer.cubeGirls.get(pickIndex[sceneState.picked]);
+					// String url = girl.girl.pictures.get(0).url;
+					new AlertDialog.Builder(context).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("你今日还有" + localData.game.choice + "次选择机会，确认选择该美女吗，亲？！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							renderer.isShownPrompt = false;
+							renderer.isPicking = false;
+						}
+					}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							renderer.promptID = renderer.ADDGIRL;
+							renderer.isShownPrompt = true;
+							renderer.promptAnimation1.reset();
+							localData.game.choice--;
+						}
+					}).show();
+				} else {
+					renderer.promptID = renderer.RULESELECTED;
+					renderer.isShownPrompt = true;
+					renderer.promptAnimation1.reset();
+				}
 			}
 		}
 	}
