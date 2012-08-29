@@ -3,6 +3,8 @@ package com.cube.attract.entry;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.opengl.GLSurfaceView;
@@ -20,6 +22,7 @@ public class EntryActivity extends Activity {
 	String TAG = "EntryActivity";
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
+	Context context;
 
 	private GestureDetector gestureDetector;
 	// private GLSurfaceView mGLSurfaceView;
@@ -29,7 +32,7 @@ public class EntryActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-
+		context = this;
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
 		surface = new GLSurfaceView(this);
