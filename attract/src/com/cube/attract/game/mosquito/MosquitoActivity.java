@@ -18,14 +18,15 @@ import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-public class MosquitoActivity extends Activity {
+public class MosquitoActivity extends Activity
+{
 
 	private static final String TAG = "MosquitoActivity";
 	AnimView animView = null;
 	Activity mActivity;;
 	Context mContext;
 	RelativeLayout canvasContainer = null;
-	ImageView shareSina, againChallenge, button_return;
+	ImageView shareSina, againChallenge, button_return = null;
 	Animation toleftAnimation = null;
 	Animation torightAnimation = null;
 	Animation fromleftAnimation = null;
@@ -33,14 +34,15 @@ public class MosquitoActivity extends Activity {
 	public String onClickButton = "null";
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		mContext = this;
 		mActivity = this;
 		setContentView(R.layout.game);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		Log.v(TAG, "MosquitoActivity");
-		
+
 		animView = new AnimView(this);
 		canvasContainer = (RelativeLayout) findViewById(R.id.CanvasContainer);
 		canvasContainer.addView(animView, 0);
@@ -105,20 +107,21 @@ public class MosquitoActivity extends Activity {
 							"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了13秒就获得了美女@小悦悦 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 				}
 				else if (onClickButton == "button_return") {
-					
-				}
-				else if (onClickButton == "againChallenge") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 				}
+				else if (onClickButton == "againChallenge") {
+					animView.again();
+				}
 
 			}
 		});
+
 	}
-	
+
 	public void hideImage()
 	{
 		shareSina.startAnimation(torightAnimation);
@@ -131,6 +134,7 @@ public class MosquitoActivity extends Activity {
 
 	public void showImage()
 	{
+		Log.v(TAG, "showImage");
 		shareSina.startAnimation(fromrightAnimation);
 		shareSina.setVisibility(0);
 		againChallenge.startAnimation(fromleftAnimation);

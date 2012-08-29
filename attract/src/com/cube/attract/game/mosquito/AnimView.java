@@ -10,22 +10,25 @@ import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import com.cube.attract.R;
 import com.cube.canvas.common.AnimationManager;
 import com.cube.canvas.common.AnimationManager.AnimationBitmap;
 import com.cube.canvas.common.CanvasAnimation2;
 import com.cube.canvas.common.CanvasAnimation2.Callback;
 
-public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
+public class AnimView extends SurfaceView implements SurfaceHolder.Callback
+{
 
 	private static final String TAG = "MosquitoActivity";
 
 	Context context;
+	MosquitoActivity mosquitoActivity = null;
 	public Bitmap memBitmap;
 
 	private int mWidth = 0;
@@ -36,16 +39,20 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 	DrawThread drawThread = null;
 
-	public AnimView(Context context) {
+	public AnimView(Context context)
+	{
 		super(context);
 		this.context = context;
+		mosquitoActivity = (MosquitoActivity) context;
 		mHolder = this.getHolder();
 		mHolder.addCallback(this);
 
 	}
 
-	class MosquitosPool {
-		public class Mosquito {
+	class MosquitosPool
+	{
+		public class Mosquito
+		{
 			public int blood = 2;
 			public AnimationBitmap animationBitmap = null;
 			int x;
@@ -57,7 +64,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 			int mWidth = 0;
 			int mHeight = 0;
 
-			public void die(final float currentX, final float currentY, float angle1) {
+			public void die(final float currentX, final float currentY, float angle1)
+			{
 				soundPool.play(flyawaySound, 0.2f, 0.2f, 1, 0, 1f);
 				Log.v(TAG, "mosquito is dieing!");
 				double dx = currentX - mWidth / 2;
@@ -78,7 +86,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 				final Mosquito mosquito = this;
 				flyAwayAnimation2.setCallback(new Callback() {
 					@Override
-					public void onEnd() {
+					public void onEnd()
+					{
 						Log.v(TAG, "mosquito is dead!");
 						animationDynamicManager.removeAnimationBitmap(animationBitmap);
 						mosquitos.remove(mosquito);
@@ -90,8 +99,11 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 							covers.remove(cover);
 						}
 						if (remainMosquitos == 0) {
-							winGame();
-						} else {
+							Message msgMessage = new Message();
+							msgMessage.what = WIN;
+							handler.sendMessage(msgMessage);
+						}
+						else {
 
 							Log.v(TAG, "There are " + remainMosquitos + " mosquitos remained.");
 						}
@@ -107,7 +119,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		ArrayList<AnimationBitmap> covers = new ArrayList<AnimationBitmap>();
 		Random random = null;
 
-		public void initaize() {
+		public void initaize()
+		{
 			random = new Random(System.currentTimeMillis());
 			for (int i = 0; i < count; i++) {
 				Mosquito mosquito = new Mosquito();
@@ -115,7 +128,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 				mosquito.type = randomType;
 				if (randomType == 0) {
 					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito1);
-				} else if (randomType >= 1) {
+				}
+				else if (randomType >= 1) {
 					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito2);
 				}
 				Log.v(TAG, "randomType is " + randomType);
@@ -134,14 +148,16 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 
-		void fly(final Mosquito mosquito) {
+		void fly(final Mosquito mosquito)
+		{
 			mosquito.directionX = (int) (50 * Math.cos(mosquito.direction * Math.PI / 180));
 			mosquito.directionY = (int) (50 * Math.sin(mosquito.direction * Math.PI / 180));
 			CanvasAnimation2 flyAnimation = new CanvasAnimation2();
 			flyAnimation.setTranslate(mosquito.directionX, mosquito.directionY, 90);
 			flyAnimation.setCallback(new Callback() {
 				@Override
-				public void onEnd() {
+				public void onEnd()
+				{
 					mosquito.x = mosquito.x + mosquito.directionX;
 					mosquito.y = mosquito.y + mosquito.directionY;
 					if (mosquito.x < -50 || mosquito.x > mWidth + 50) {
@@ -157,11 +173,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 			mosquito.animationBitmap.addAnimation(flyAnimation);
 		}
 
-		void hit(final float currentX, final float currentY, float angle1) {
+		void hit(final float currentX, final float currentY, float angle1)
+		{
 			@SuppressWarnings("unchecked")
 			ArrayList<Mosquito> mosquitos = (ArrayList<Mosquito>) this.mosquitos.clone();
 			for (Mosquito mosquito : mosquitos) {
-				float distance = (mosquito.x - currentX) * (mosquito.x - currentX) + (mosquito.y - currentY) * (mosquito.y - currentY);
+				float distance = (mosquito.x - currentX) * (mosquito.x - currentX) + (mosquito.y - currentY)
+						* (mosquito.y - currentY);
 				if (distance < 10000) {
 					mosquito.blood--;
 					if (mosquito.blood == 0) {
@@ -196,7 +214,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	ArrayList<Bitmap> girls = new ArrayList<Bitmap>();
 	int id = 0;
 
-	void initSoundPool() {
+	void initSoundPool()
+	{
 		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
 		fireSound = soundPool.load(context, R.raw.fire, 1);
 		explodeSound = soundPool.load(context, R.raw.explode, 1);
@@ -205,7 +224,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		flyawaySound = soundPool.load(context, R.raw.flyaway, 1);
 	}
 
-	void initGirls() {
+	void initGirls()
+	{
 		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_1_1));
 		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_2_1));
 		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_3_1));
@@ -214,7 +234,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_6_1));
 	}
 
-	private void initAnimationInstance() {
+	private void initAnimationInstance()
+	{
 
 		animationManager = new AnimationManager(context, mHeight, mWidth);
 
@@ -255,7 +276,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	long drawCount = 0;
 	long lastMillis = 0;
 
-	private void drawAnimationInstance() {
+	private void drawAnimationInstance()
+	{
 
 		mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 		animationManager.drawStatic();
@@ -277,13 +299,15 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void onDraw(Canvas canvas)
+	{
 		super.onDraw(canvas);
 		Log.v(TAG, "ondraw");
 	}
 
 	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
+	public void surfaceCreated(SurfaceHolder holder)
+	{
 		mWidth = this.getWidth();
 		mHeight = this.getHeight();
 
@@ -299,42 +323,45 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+	{
 		mThread.start();
 	}
 
 	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
+	public void surfaceDestroyed(SurfaceHolder holder)
+	{
 		drawThread.isRunning = false;
 	}
 
 	public double moveLength = 0;
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+	public boolean onTouchEvent(MotionEvent event)
+	{
 		int action = event.getAction();
 		float currentX = 0;
 		float currentY = 0;
 		float angle = 0;
 		boolean isfire = false;
 		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			currentX = event.getX();
-			currentY = event.getY();
-			break;
-		case MotionEvent.ACTION_MOVE:
-			currentX = event.getX();
-			currentY = event.getY();
+			case MotionEvent.ACTION_DOWN:
+				currentX = event.getX();
+				currentY = event.getY();
+				break;
+			case MotionEvent.ACTION_MOVE:
+				currentX = event.getX();
+				currentY = event.getY();
 
-			break;
-		case MotionEvent.ACTION_UP:
-			currentX = event.getX();
-			currentY = event.getY();
-			isfire = true;
-			CanvasAnimation2 turn1 = new CanvasAnimation2();
-			turn1.setRotate(1440, 23, 66, 1000);
-			turn1.setRepeatSelfTimes(5);
-			break;
+				break;
+			case MotionEvent.ACTION_UP:
+				currentX = event.getX();
+				currentY = event.getY();
+				isfire = true;
+				CanvasAnimation2 turn1 = new CanvasAnimation2();
+				turn1.setRotate(1440, 23, 66, 1000);
+				turn1.setRepeatSelfTimes(5);
+				break;
 		}
 		angle = turnCannon(currentX, currentY);
 		if (isfire == true) {
@@ -343,7 +370,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		return true;
 	}
 
-	float turnCannon(float currentX, float currentY) {
+	float turnCannon(float currentX, float currentY)
+	{
 		double x = currentX - mWidth / 2;
 		double y = mHeight - 40 - currentY;
 		double theta = Math.atan2(x, y);
@@ -353,7 +381,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		return (float) angle;
 	}
 
-	void fire(final float currentX, final float currentY, float angle1) {
+	void fire(final float currentX, final float currentY, float angle1)
+	{
 		double dx = currentX - mWidth / 2;
 		double dy = mHeight - 40 - currentY;
 		double theta = Math.atan2(dx, dy);
@@ -370,7 +399,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		shell.addAnimation(fireAnimation);
 		fireAnimation.setCallback(new Callback() {
 			@Override
-			public void onEnd() {
+			public void onEnd()
+			{
 				animationDynamicManager.removeAnimationBitmap(shell);
 				final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(R.drawable.game2_cloud);
 
@@ -386,61 +416,86 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 	}
 
-	void explode(final AnimationBitmap cloud) {
+	void explode(final AnimationBitmap cloud)
+	{
 		CanvasAnimation2 explodeAnimation = new CanvasAnimation2();
 		explodeAnimation.setScale(3f, 82, 96, 200);
 		cloud.addAnimation(explodeAnimation);
 		explodeAnimation.setCallback(new Callback() {
 			@Override
-			public void onEnd() {
+			public void onEnd()
+			{
 				animationDynamicManager.removeAnimationBitmap(cloud);
 			}
 		});
 		soundPool.play(explodeSound, 0.2f, 0.2f, 1, 0, 1f);
 	}
 
-	void winGame() {
-		Log.v(TAG, "game is win!");
-		soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
-		final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
+//	void winGame()
+//	{
+//		Log.v(TAG, "game is win!");
+//		soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
+//		final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
+//
+//		win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
+//		win.matrix.preScale(0.5f, 0.5f, 189, 166);
+//
+//		CanvasAnimation2 enlarge = new CanvasAnimation2();
+//		enlarge.setScale(2f, 189, 166, 200);
+//		win.addAnimation(enlarge);
+//
+//		CanvasAnimation2 shrink = new CanvasAnimation2();
+//		shrink.setScale(0.8f, 189, 166, 200);
+//		enlarge.addNextAnimation(shrink);
+//
+//		CanvasAnimation2 up = new CanvasAnimation2();
+//		up.setTranslate(100, -250, 2500);
+//		shrink.addNextAnimation(up);
+//
+//		CanvasAnimation2 shrink1 = new CanvasAnimation2();
+//		shrink1.setScale(0.1f, 189, 166, 1500);
+//		shrink.addNextAnimation(shrink1);
+//		up.setCallback(new Callback() {
+//			@Override
+//			public void onEnd()
+//			{
 
-		win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
-		win.matrix.preScale(0.5f, 0.5f, 189, 166);
+//			}
+//		});
+//
+//	}
 
-		CanvasAnimation2 enlarge = new CanvasAnimation2();
-		enlarge.setScale(2f, 189, 166, 200);
-		win.addAnimation(enlarge);
-
-		CanvasAnimation2 shrink = new CanvasAnimation2();
-		shrink.setScale(0.8f, 189, 166, 200);
-		enlarge.addNextAnimation(shrink);
-
-		CanvasAnimation2 up = new CanvasAnimation2();
-		up.setTranslate(100, -250, 2500);
-		shrink.addNextAnimation(up);
-
-		CanvasAnimation2 shrink1 = new CanvasAnimation2();
-		shrink1.setScale(0.1f, 189, 166, 1500);
-		shrink.addNextAnimation(shrink1);
-
-		up.setCallback(new Callback() {
-			@Override
-			public void onEnd() {
-				next();
-			}
-		});
-
-	}
-
-	void next() {
+	void again()
+	{
 		initAnimationInstance();
 	}
 
-	class DrawThread implements Runnable {
+	private final static int WIN = 0;
+	private boolean isShow = false;
+
+	Handler handler = new Handler() {
+
+		public void handleMessage(Message msg)
+		{
+			switch (msg.what) {
+				case WIN:
+					if (!isShow) {
+						mosquitoActivity.showImage();
+						isShow = true;
+					}
+					break;
+			}
+			super.handleMessage(msg);
+		}
+	};
+
+	class DrawThread implements Runnable
+	{
 		public Boolean isRunning = true;
 
 		@Override
-		public void run() {
+		public void run()
+		{
 
 			while (isRunning) {
 
@@ -452,12 +507,12 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 						if (renderer != null) {
 							renderer.drawBitmap(memBitmap, 0, 0, null);
 						}
-					} finally {
+					}
+					finally {
 						if (renderer != null)
 							mHolder.unlockCanvasAndPost(renderer);
 					}
 				}
-
 			}
 		}
 	}

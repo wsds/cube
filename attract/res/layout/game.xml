@@ -30,12 +30,12 @@
 			android:layout_above="@+id/takeplace1"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/button_again"
-			android:visibility="visible" />
+			android:visibility="invisible" />
 		<ImageView
 			android:id="@+id/takeplace2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_above="@+id/againchallenge"
+			android:layout_above="@+id/button_again"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/takeplace"
 			android:visibility="invisible" />
@@ -46,7 +46,7 @@
 			android:layout_above="@+id/takeplace2"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/button_share"
-			android:visibility="visible" />
+			android:visibility="invisible" />
 		<ImageView
 			android:id="@+id/takeplace3"
 			android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
 			android:layout_above="@+id/sharesina"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/takeplace"
-			android:visibility="invisible" />
+			 android:visibility="invisible" />
 		<ImageView
 			android:id="@+id/button_return"
 			android:layout_width="wrap_content"
@@ -62,5 +62,5 @@
 			android:layout_above="@+id/takeplace3"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/button_return"
-			android:visibility="visible" />
+			android:visibility="invisible" />
 	</RelativeLayout>
