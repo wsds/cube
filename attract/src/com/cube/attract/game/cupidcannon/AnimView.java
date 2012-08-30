@@ -1,5 +1,6 @@
 package com.cube.attract.game.cupidcannon;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import com.cube.canvas.common.CanvasAnimation;
 import com.umeng.analytics.MobclickAgent;
 
 
+	@SuppressLint({ "FloatMath", "FloatMath", "FloatMath", "FloatMath", "FloatMath", "FloatMath" })
 	public class AnimView extends SurfaceView implements
 			SurfaceHolder.Callback, Runnable {
 		
@@ -661,7 +663,7 @@ import com.umeng.analytics.MobclickAgent;
 		        	cupidCannonActivity.weibo = bundle.getString("weibo");
 		        	cupidCannonActivity.gameState = bundle.getInt("gameState");
 					cupidCannonActivity.showImage();
-						Log.v("Handler", ""+msg.what);						
+						Log.v(TAG, "msg.what is "+msg.what);						
 		        break;  
 		        case TIME_OUT:  
 					cupidCannonActivity.showImage();
