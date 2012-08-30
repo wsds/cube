@@ -35,7 +35,7 @@
 			android:id="@+id/takeplace2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_above="@+id/againchallenge"
+			android:layout_above="@+id/button_again"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/takeplace"
 			android:visibility="invisible" />
@@ -54,7 +54,7 @@
 			android:layout_above="@+id/sharesina"
 			android:layout_alignParentLeft="true"
 			android:src="@drawable/takeplace"
-			android:visibility="invisible" />
+			 android:visibility="invisible" />
 		<ImageView
 			android:id="@+id/button_return"
 			android:layout_width="wrap_content"

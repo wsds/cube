@@ -10,11 +10,12 @@ import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import com.cube.attract.R;
 import com.cube.canvas.common.AnimationManager;
 import com.cube.canvas.common.AnimationManager.AnimationBitmap;
@@ -26,6 +27,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	private static final String TAG = "MosquitoActivity";
 
 	Context context;
+	MosquitoActivity mosquitoActivity = null;
 	public Bitmap memBitmap;
 
 	private int mWidth = 0;
@@ -39,6 +41,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	public AnimView(Context context) {
 		super(context);
 		this.context = context;
+		mosquitoActivity = (MosquitoActivity) context;
 		mHolder = this.getHolder();
 		mHolder.addCallback(this);
 
@@ -90,7 +93,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 							covers.remove(cover);
 						}
 						if (remainMosquitos == 0) {
-							winGame();
+							Message msgMessage = new Message();
+							msgMessage.what = WIN;
+							handler.sendMessage(msgMessage);
 						} else {
 
 							Log.v(TAG, "There are " + remainMosquitos + " mosquitos remained.");
@@ -108,22 +113,24 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		Random random = null;
 
 		public void initaize() {
+			Bitmap mosquito1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
+			Bitmap mosquito2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
 			random = new Random(System.currentTimeMillis());
 			for (int i = 0; i < count; i++) {
 				Mosquito mosquito = new Mosquito();
 				int randomType = random.nextInt(1000) % type;
 				mosquito.type = randomType;
 				if (randomType == 0) {
-					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito1);
+					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(mosquito1);
 				} else if (randomType >= 1) {
-					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(R.drawable.game2_mosquito2);
+					mosquito.animationBitmap = animationDynamicManager.addAnimationBitmap(mosquito2);
 				}
 				Log.v(TAG, "randomType is " + randomType);
 				mosquito.x = random.nextInt(mWidth * 10) % mWidth;
 				mosquito.y = (int) (random.nextInt(600 * 10) % (mHeight * 0.8 - 150));
 				mosquito.direction = random.nextInt(1000) % 180;
 				// mosquito.direction = 45;
-				mosquito.animationBitmap.matrix.setTranslate(mosquito.x, mosquito.y);
+				mosquito.animationBitmap.matrix.setTranslate(mosquito.x - 64, mosquito.y - 64);
 				mosquito.animationBitmap.matrix.preScale(0.25f, 0.25f);
 				if (Math.cos(mosquito.direction * Math.PI / 180) < 0) {
 					mosquito.animationBitmap.matrix.preScale(-1, 1);
@@ -290,6 +297,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 		mCanvas = new Canvas(memBitmap);
 		initGirls();
+		shellBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_shell);
+		cloudBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_cloud);
 		initSoundPool();
 		initAnimationInstance();
 
@@ -353,16 +362,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		return (float) angle;
 	}
 
+	Bitmap shellBitmap = null;
+	Bitmap cloudBitmap = null;
+
 	void fire(final float currentX, final float currentY, float angle1) {
 		double dx = currentX - mWidth / 2;
 		double dy = mHeight - 40 - currentY;
 		double theta = Math.atan2(dx, dy);
 		final double angle = theta / Math.PI * 180;
 		double speed = (dx * dx + dy * dy) / (mWidth * mWidth + mHeight * mHeight) * 500;
-		final AnimationBitmap shell = animationDynamicManager.addAnimationBitmap(R.drawable.game2_shell);
+		final AnimationBitmap shell = animationDynamicManager.addAnimationBitmap(shellBitmap);
 
 		shell.matrix.setRotate((float) angle, 23, 66);
-		shell.matrix.postTranslate((mWidth - 46) / 2, mHeight - 142);
+		shell.matrix.postTranslate((mWidth - 23) / 2, mHeight - 92);
 		shell.matrix.preScale(0.5f, 0.8f);
 
 		CanvasAnimation2 fireAnimation = new CanvasAnimation2();
@@ -372,10 +384,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 			@Override
 			public void onEnd() {
 				animationDynamicManager.removeAnimationBitmap(shell);
-				final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(R.drawable.game2_cloud);
+				final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(cloudBitmap);
 
 				cloud.matrix.setRotate((float) angle, 23, 66);
-				cloud.matrix.postTranslate(currentX, currentY);
+				cloud.matrix.postTranslate(currentX - 41, currentY - 48);
 				cloud.matrix.preScale(0.5f, 0.5f);
 				explode(cloud);
 				mosquitosPool.hit(currentX, currentY, (float) angle);
@@ -383,7 +395,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		});
 
 		soundPool.play(fireSound, 0.2f, 0.2f, 1, 0, 1f);
-
 	}
 
 	void explode(final AnimationBitmap cloud) {
@@ -399,42 +410,61 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		soundPool.play(explodeSound, 0.2f, 0.2f, 1, 0, 1f);
 	}
 
-	void winGame() {
-		Log.v(TAG, "game is win!");
-		soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
-		final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
+	// void winGame()
+	// {
+	// Log.v(TAG, "game is win!");
+	// soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
+	// final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
+	//
+	// win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
+	// win.matrix.preScale(0.5f, 0.5f, 189, 166);
+	//
+	// CanvasAnimation2 enlarge = new CanvasAnimation2();
+	// enlarge.setScale(2f, 189, 166, 200);
+	// win.addAnimation(enlarge);
+	//
+	// CanvasAnimation2 shrink = new CanvasAnimation2();
+	// shrink.setScale(0.8f, 189, 166, 200);
+	// enlarge.addNextAnimation(shrink);
+	//
+	// CanvasAnimation2 up = new CanvasAnimation2();
+	// up.setTranslate(100, -250, 2500);
+	// shrink.addNextAnimation(up);
+	//
+	// CanvasAnimation2 shrink1 = new CanvasAnimation2();
+	// shrink1.setScale(0.1f, 189, 166, 1500);
+	// shrink.addNextAnimation(shrink1);
+	// up.setCallback(new Callback() {
+	// @Override
+	// public void onEnd()
+	// {
 
-		win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
-		win.matrix.preScale(0.5f, 0.5f, 189, 166);
+	// }
+	// });
+	//
+	// }
 
-		CanvasAnimation2 enlarge = new CanvasAnimation2();
-		enlarge.setScale(2f, 189, 166, 200);
-		win.addAnimation(enlarge);
-
-		CanvasAnimation2 shrink = new CanvasAnimation2();
-		shrink.setScale(0.8f, 189, 166, 200);
-		enlarge.addNextAnimation(shrink);
-
-		CanvasAnimation2 up = new CanvasAnimation2();
-		up.setTranslate(100, -250, 2500);
-		shrink.addNextAnimation(up);
-
-		CanvasAnimation2 shrink1 = new CanvasAnimation2();
-		shrink1.setScale(0.1f, 189, 166, 1500);
-		shrink.addNextAnimation(shrink1);
-
-		up.setCallback(new Callback() {
-			@Override
-			public void onEnd() {
-				next();
-			}
-		});
-
-	}
-
-	void next() {
+	void again() {
 		initAnimationInstance();
 	}
+
+	private final static int WIN = 0;
+	private boolean isShow = false;
+
+	Handler handler = new Handler() {
+
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WIN:
+				if (!isShow) {
+					mosquitoActivity.showImage();
+					isShow = true;
+				}
+				break;
+			}
+			super.handleMessage(msg);
+		}
+	};
 
 	class DrawThread implements Runnable {
 		public Boolean isRunning = true;
@@ -457,7 +487,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 							mHolder.unlockCanvasAndPost(renderer);
 					}
 				}
-
 			}
 		}
 	}

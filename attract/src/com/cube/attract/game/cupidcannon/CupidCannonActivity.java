@@ -142,6 +142,9 @@ public class CupidCannonActivity extends Activity
 					animView.againChallenge();
 					
 				}
+				else if (onClickButton == "againChallenge") {
+
+				}
 
 			}
 		});

@@ -1,6 +1,7 @@
 package com.cube.attract.gameEntry;
 
 import com.cube.attract.gameEntry.SceneState;
+import com.cube.common.LocalData;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +23,7 @@ public class GameEntryActivity extends Activity {
 	private GestureDetector gestureDetector;
 
 	SceneState sceneState = SceneState.getInstance();
-
+	public LocalData localData = LocalData.getInstance();
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
