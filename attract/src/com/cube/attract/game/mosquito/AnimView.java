@@ -2,6 +2,7 @@ package com.cube.attract.game.mosquito;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,11 +17,17 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 import com.cube.attract.R;
 import com.cube.canvas.common.AnimationManager;
 import com.cube.canvas.common.AnimationManager.AnimationBitmap;
 import com.cube.canvas.common.CanvasAnimation2;
 import com.cube.canvas.common.CanvasAnimation2.Callback;
+import com.cube.common.LocalData;
+import com.cube.common.LocalData.Game.ActiveGirl;
+import com.cube.common.ServerData.Girl.Picture;
+import com.cube.common.imageservice.BitmapPool;
+import com.cube.opengl.common.Utils;
 
 public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -45,6 +52,45 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		mHolder = this.getHolder();
 		mHolder.addCallback(this);
 
+	}
+
+	public ArrayList<Bitmap> girlBitmaps = new ArrayList<Bitmap>();
+	public LocalData localData = LocalData.getInstance();
+	public SceneState sceneState = SceneState.getInstance();
+	public BitmapPool bitmapPool = BitmapPool.getInstance();
+
+	void initGirlBitmaps() {
+		ActiveGirl activegirl = localData.game.activeGirls.get(sceneState.girlNumber);
+		for (Bitmap bitmap : girlBitmaps) {
+			bitmap.recycle();
+		}
+		girlBitmaps.clear();
+		for (int i = 3; i <= 3; i++) {
+			Picture pictures = activegirl.girl.pictures.get(i);
+			String url = pictures.url;
+			String filename = url.substring(url.lastIndexOf("/") + 1);
+			Bitmap bitmap = null;
+
+			if (!localData.game.loadedPictures.contains(filename)) {
+
+			} else {
+				bitmap = bitmapPool.get(filename);
+				Log.v(TAG, "texture is loaded: " + filename);
+			}
+			if (bitmap == null) {
+				bitmap = Utils.getTextureFromBitmapResource(context, R.drawable.heart_1_s);
+			}
+			girlBitmaps.add(bitmap);
+		}
+
+		Picture picture = activegirl.girl.pictures.get(1);
+
+		sceneState.x1 = picture.points.get(0).x;
+		sceneState.y1 = picture.points.get(0).y;
+		sceneState.x2 = picture.points.get(1).x;
+		sceneState.y2 = picture.points.get(1).y;
+
+		sceneState.weibo = activegirl.girl.weibo;
 	}
 
 	class MosquitosPool {
@@ -93,9 +139,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 							covers.remove(cover);
 						}
 						if (remainMosquitos == 0) {
-							Message msgMessage = new Message();
-							msgMessage.what = WIN;
-							handler.sendMessage(msgMessage);
+							winGame();
+
 						} else {
 
 							Log.v(TAG, "There are " + remainMosquitos + " mosquitos remained.");
@@ -200,7 +245,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	int startSound = 0;
 	int flyawaySound = 0;
 
-	ArrayList<Bitmap> girls = new ArrayList<Bitmap>();
 	int id = 0;
 
 	void initSoundPool() {
@@ -212,17 +256,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		flyawaySound = soundPool.load(context, R.raw.flyaway, 1);
 	}
 
-	void initGirls() {
-		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_1_1));
-		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_2_1));
-		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_3_1));
-		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_4_1));
-		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_5_1));
-		girls.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.girl_6_1));
-	}
-
 	private void initAnimationInstance() {
-
+		initGirlBitmaps();
 		animationManager = new AnimationManager(context, mHeight, mWidth);
 
 		animationManager.mCanvas = mCanvas;
@@ -232,7 +267,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		animationDynamicManager1.mCanvas = mCanvas;
 		mosquitosPool = new MosquitosPool();
 
-		background = animationManager.addAnimationBitmap(girls.get(id));
+		background = animationManager.addAnimationBitmap(girlBitmaps.get(0));
 		id = (id + 1) % 6;
 		float sx = ((float) mWidth / 720f);
 		Log.v(TAG, "sx is " + sx);
@@ -274,9 +309,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 			long currentMillis = System.currentTimeMillis();
 
 			if (lastMillis != 0) {
-				long delta = currentMillis - lastMillis;
-				float fps = (float) drawCount / ((float) delta / 1000f);
-				Log.v(TAG, "fps is " + fps);
+				// long delta = currentMillis - lastMillis;
+				// float fps = (float) drawCount / ((float) delta / 1000f);
+				// Log.v(TAG, "fps is " + fps);
 				drawCount = 0;
 			}
 			lastMillis = currentMillis;
@@ -296,7 +331,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 		memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 		mCanvas = new Canvas(memBitmap);
-		initGirls();
 		shellBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_shell);
 		cloudBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_cloud);
 		initSoundPool();
@@ -410,44 +444,48 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		soundPool.play(explodeSound, 0.2f, 0.2f, 1, 0, 1f);
 	}
 
-	// void winGame()
-	// {
-	// Log.v(TAG, "game is win!");
-	// soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
-	// final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
-	//
-	// win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
-	// win.matrix.preScale(0.5f, 0.5f, 189, 166);
-	//
-	// CanvasAnimation2 enlarge = new CanvasAnimation2();
-	// enlarge.setScale(2f, 189, 166, 200);
-	// win.addAnimation(enlarge);
-	//
-	// CanvasAnimation2 shrink = new CanvasAnimation2();
-	// shrink.setScale(0.8f, 189, 166, 200);
-	// enlarge.addNextAnimation(shrink);
-	//
-	// CanvasAnimation2 up = new CanvasAnimation2();
-	// up.setTranslate(100, -250, 2500);
-	// shrink.addNextAnimation(up);
-	//
-	// CanvasAnimation2 shrink1 = new CanvasAnimation2();
-	// shrink1.setScale(0.1f, 189, 166, 1500);
-	// shrink.addNextAnimation(shrink1);
-	// up.setCallback(new Callback() {
-	// @Override
-	// public void onEnd()
-	// {
+	void winGame() {
+		Log.v(TAG, "game is win!");
+		soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
+		final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
 
-	// }
-	// });
-	//
-	// }
+		win.matrix.setTranslate((mWidth - 378) / 2, (mHeight - 332) / 2);
+		win.matrix.preScale(0.5f, 0.5f, 189, 166);
 
-	void again() {
-		initAnimationInstance();
+		CanvasAnimation2 enlarge = new CanvasAnimation2();
+		enlarge.setScale(2f, 189, 166, 200);
+		win.addAnimation(enlarge);
+
+		CanvasAnimation2 shrink = new CanvasAnimation2();
+		shrink.setScale(0.8f, 189, 166, 200);
+		enlarge.addNextAnimation(shrink);
+
+		CanvasAnimation2 up = new CanvasAnimation2();
+		up.setTranslate(100, -250, 2500);
+		shrink.addNextAnimation(up);
+
+		CanvasAnimation2 shrink1 = new CanvasAnimation2();
+		shrink1.setScale(0.1f, 189, 166, 1500);
+		shrink.addNextAnimation(shrink1);
+		up.setCallback(new Callback() {
+			@Override
+			public void onEnd() {
+				Message msgMessage = new Message();
+				msgMessage.what = WIN;
+				handler.sendMessage(msgMessage);
+			}
+		});
+
 	}
 
+	void next() {
+		isShow = false;
+		toNext = true;
+		sceneState.girlNumber = (sceneState.girlNumber + 1) % sceneState.girlsSize;
+		// initAnimationInstance();
+	}
+
+	boolean toNext = false;
 	private final static int WIN = 0;
 	private boolean isShow = false;
 
@@ -474,6 +512,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 			while (isRunning) {
 
+				if (toNext == true) {
+					initAnimationInstance();
+					toNext = false;
+				}
 				drawAnimationInstance();
 				Canvas renderer = null;
 				synchronized (mHolder) {

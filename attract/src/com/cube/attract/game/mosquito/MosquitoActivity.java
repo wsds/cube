@@ -1,22 +1,29 @@
 package com.cube.attract.game.mosquito;
 
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.api.sns.UMSnsService;
-import com.cube.attract.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.cube.attract.R;
+import com.cube.common.LocalData;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.api.sns.UMSnsService;
 
 public class MosquitoActivity extends Activity
 {
@@ -32,6 +39,9 @@ public class MosquitoActivity extends Activity
 	Animation fromleftAnimation = null;
 	Animation fromrightAnimation = null;
 	public String onClickButton = "null";
+	
+	public LocalData localData = LocalData.getInstance();
+	public SceneState sceneState = SceneState.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -42,6 +52,14 @@ public class MosquitoActivity extends Activity
 		setContentView(R.layout.game);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		Log.v(TAG, "MosquitoActivity");
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		
+		Intent intent = getIntent(); 
+		sceneState.girlsSize = localData.game.activeGirls.size();
+		sceneState.weibo = intent.getStringExtra("weibo");
+		sceneState.girlNumber = intent.getIntExtra("girlNumber", -1);
+		sceneState.girlID = intent.getLongExtra("girlID", -1);
 
 		animView = new AnimView(this);
 		canvasContainer = (RelativeLayout) findViewById(R.id.CanvasContainer);
@@ -104,17 +122,17 @@ public class MosquitoActivity extends Activity
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
 					UMSnsService.shareToSina(MosquitoActivity.this,
-							"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了13秒就获得了美女@小悦悦 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+							"我在玩‘魔方石de诱惑’，使用激光大炮，只用了13秒就获得了美女"+sceneState.weibo+" 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 				}
 				else if (onClickButton == "button_return") {
-					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
-					mContext.startActivity(about);
+					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					mContext.startActivity(gameEntry);
 					mActivity.finish();
 				}
 				else if (onClickButton == "againChallenge") {
-					animView.again();
+					animView.next();
 				}
 
 			}
@@ -141,6 +159,30 @@ public class MosquitoActivity extends Activity
 		againChallenge.setVisibility(0);
 		button_return.startAnimation(fromleftAnimation);
 		button_return.setVisibility(0);
+	}
+	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("真的要走吗，亲！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					mContext.startActivity(gameEntry);
+					finish();
+				}
+			}).show();
+
+			return true;
+		} else {
+			return super.onKeyDown(keyCode, event);
+		}
 	}
 
 }

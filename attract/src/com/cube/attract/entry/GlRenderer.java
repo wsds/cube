@@ -10,6 +10,7 @@ import java.util.Random;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -41,11 +42,11 @@ public class GlRenderer implements Renderer {
 	private Context context;
 	Cube cube;
 
-	// private Activity mActivity;
+	private Activity mActivity;
 
 	public GlRenderer(Context context) {
 		this.context = context;
-		// this.mActivity = (Activity) context;
+		this.mActivity = (Activity) context;
 		cube = new Cube();
 	}
 
@@ -229,6 +230,7 @@ public class GlRenderer implements Renderer {
 					activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					activity.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					context.startActivity(activity);
+					mActivity.finish();
 				}
 			}
 		});

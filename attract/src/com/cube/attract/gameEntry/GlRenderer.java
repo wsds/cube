@@ -139,25 +139,7 @@ public class GlRenderer implements Renderer {
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
-	//
-	// GLAnimation girlGoBack = new GLAnimation();
-	// GLAnimation girlGoFront = new GLAnimation();
-	// GLAnimation girlRotateBack = new GLAnimation();
-	// GLAnimation girlRotateFront = new GLAnimation();
 
-	// GLAnimation ploygonColor = new GLAnimation();
-	// GLAnimation girlRotatetoPos = new GLAnimation();
-
-	public void initializeAnimations() {
-		// girlGoBack.setTranslate(0, -11.5f, -5.5f, 200f);
-		// girlGoBack.start(false);
-		// girlGoFront.setTranslate(0, 11.5f, 5.5f, 200f);
-		// girlGoFront.start(false);
-		// girlRotateBack.setRotate(15, 1, 0, 0, 200f);
-		// girlRotateBack.start(false);
-		// girlRotateFront.setRotate(-15, 1, 0, 0, 200f);
-		// girlRotateFront.start(false);
-	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		sceneState.screenHeight = height;
@@ -171,7 +153,6 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
 
-		initializeAnimations();
 		initAnimations();
 		initSoundPool();
 	}
@@ -335,7 +316,6 @@ public class GlRenderer implements Renderer {
 
 		int front = sceneState.pictureViewGallary.frontViewIndex;
 		
-		// Log.v(TAG, "front: " + front);
 		PictureView[] pictureView = sceneState.pictureViewGallary.pictureView;
 		sceneState.girlNumber = (pictureView[front].girlNumber  + girlsSize) % girlsSize;
 		for (int i = -2; i <= +2; i++) {
@@ -344,10 +324,6 @@ public class GlRenderer implements Renderer {
 
 		}
 
-		// for (int i = 0; i < pictureView.length; i++) {
-		// Log.v(TAG, "pictureView[i].girlNumber: " + pictureView[i].girlNumber + "  i=" + i);
-		//
-		// }
 		for (int i = -2; i <= +2; i++) {
 			int j = (front + i + 9) % 9;
 

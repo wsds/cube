@@ -99,28 +99,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		initBackgroundBm = BitmapFactory.decodeResource(getResources(), R.drawable.welcome_background);
 
-		//
-		// backgroundBm = BitmapFactory.decodeResource(getResources(),
-		// R.drawable.girl_4_3);
-		//
-		// for (ActiveGirl activegirl : localData.game.activeGirls) {
-		// Bitmap texture = null;
-		// String url = activegirl.girl.pictures.get(1).url;
-		// String filename = url.substring(url.lastIndexOf("/") + 1);
-		// if (!localData.game.loadedPictures.contains(filename)) {
-		// texture = Utils.getTextureFromBitmapResource(context, R.drawable.heart_1_s);
-		// } else {
-		// texture = bitmapPool.get(filename);
-		// Log.v(TAG, "texture is loaded: " + filename);
-		// }
-		// if (texture == null) {
-		// texture = Utils.getTextureFromBitmapResource(context, R.drawable.heart_1_s);
-		// }
-		// }
 
-		// girlBitmap0 = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_3);
-		// girlBitmap1 = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_2);
-		// girlBitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.girl_4_1);
 
 		backgroundStage = BitmapFactory.decodeResource(getResources(), R.drawable.button_bar);
 

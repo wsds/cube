@@ -1,13 +1,16 @@
 package com.cube.attract.game.cupidcannon;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -22,8 +25,7 @@ import com.cube.common.LocalData;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.api.sns.UMSnsService;
 
-public class CupidCannonActivity extends Activity
-{
+public class CupidCannonActivity extends Activity {
 	private static final String TAG = "CupidCannonActivity";
 
 	AnimView animView = null;
@@ -36,7 +38,7 @@ public class CupidCannonActivity extends Activity
 	Animation fromleftAnimation = null;
 	Animation fromrightAnimation = null;
 	public String onClickButton = "null";
-	
+
 	public final static int WIN = 0;
 	public final static int TIME_OUT = 1;
 	public String gameTime = "";
@@ -45,24 +47,21 @@ public class CupidCannonActivity extends Activity
 
 	public LocalData localData = LocalData.getInstance();
 	public SceneState sceneState = SceneState.getInstance();
-	
-	
+
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		mContext = this;
 		mActivity = this;
 		// 强制为竖屏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		
-		Intent intent = getIntent(); 
+
+		Intent intent = getIntent();
 		sceneState.weibo = intent.getStringExtra("weibo");
 		sceneState.girlNumber = intent.getIntExtra("girlNumber", -1);
 		sceneState.girlID = intent.getLongExtra("girlID", -1);
-		
-		
+
 		setContentView(R.layout.game);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -77,8 +76,7 @@ public class CupidCannonActivity extends Activity
 		shareSina.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				onClickButton = "shareSina";
 				hideImage();
 				MobclickAgent.onEvent(mContext, "event");
@@ -88,8 +86,7 @@ public class CupidCannonActivity extends Activity
 		button_return.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				onClickButton = "button_return";
 				hideImage();
 			}
@@ -98,8 +95,7 @@ public class CupidCannonActivity extends Activity
 		againChallenge.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				onClickButton = "againChallenge";
 				hideImage();
 				MobclickAgent.onEvent(mContext, "cupidCannonStart");
@@ -115,64 +111,53 @@ public class CupidCannonActivity extends Activity
 		toleftAnimation.setAnimationListener(new AnimationListener() {
 
 			@Override
-			public void onAnimationStart(Animation animation)
-			{
+			public void onAnimationStart(Animation animation) {
 			}
 
 			@Override
-			public void onAnimationRepeat(Animation animation)
-			{
+			public void onAnimationRepeat(Animation animation) {
 			}
 
 			@Override
-			public void onAnimationEnd(Animation animation)
-			{
+			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
 					if (gameState == WIN) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了" 
-								+ gameTime 
-								+"秒就获得了美女"
-								+ weibo
-								+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了" + gameTime + "秒就获得了美女" + weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 						Log.v("SINA", "Share with sina");
-					}else if (gameState == TIME_OUT) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
+					} else if (gameState == TIME_OUT) {
+						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
 					}
-				}
-				else if (onClickButton == "button_return") {
+				} else if (onClickButton == "button_return") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
-					
-				}
-				else if (onClickButton == "againChallenge") {
-					animView.againChallenge();
-					
-				}
 
+				} else if (onClickButton == "againChallenge") {
+					animView.againChallenge();
+
+				}
 
 			}
 		});
 	}
 
 	public void onResume() {
-	    super.onResume();
-	    MobclickAgent.onResume(this);
-	    Log.v(TAG, "Run in onResume");
-	    animView.againChallenge();
+		super.onResume();
+		MobclickAgent.onResume(this);
+		Log.v(TAG, "Run in onResume");
+		animView.againChallenge();
 	}
+
 	public void onPause() {
-	    super.onPause();
-	    MobclickAgent.onPause(this);
-	    Log.v(TAG, "Run in onPause");
+		super.onPause();
+		MobclickAgent.onPause(this);
+		Log.v(TAG, "Run in onPause");
 
 	}
-	
+
 	@Override
 	protected void onRestart() {
 		// TODO Auto-generated method stub
@@ -181,8 +166,7 @@ public class CupidCannonActivity extends Activity
 
 	}
 
-	public void hideImage()
-	{
+	public void hideImage() {
 		shareSina.startAnimation(torightAnimation);
 		shareSina.setVisibility(8);
 		againChallenge.startAnimation(toleftAnimation);
@@ -191,14 +175,36 @@ public class CupidCannonActivity extends Activity
 		button_return.setVisibility(8);
 	}
 
-	public void showImage()
-	{
+	public void showImage() {
 		shareSina.startAnimation(fromrightAnimation);
 		shareSina.setVisibility(0);
 		againChallenge.startAnimation(fromleftAnimation);
 		againChallenge.setVisibility(0);
 		button_return.startAnimation(fromleftAnimation);
 		button_return.setVisibility(0);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("真的要走吗，亲！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					mContext.startActivity(gameEntry);
+					finish();
+				}
+			}).show();
+
+			return true;
+		} else {
+			return super.onKeyDown(keyCode, event);
+		}
 	}
 
 }
