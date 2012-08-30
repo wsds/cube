@@ -35,6 +35,9 @@ public class EntryActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		context = this;
+		
+		add3ActiveGirls();
+		
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
 		surface = new GLSurfaceView(this);
@@ -59,6 +62,22 @@ public class EntryActivity extends Activity {
 				Log.v(TAG, "sceneState.dxSpeed_CUB = " + sceneState.dxSpeed_CUB + " $$ sceneState.dySpeed_CUB = " + sceneState.dySpeed_CUB);
 			}
 		});
+	}
+
+	void add3ActiveGirls() {
+		int i = 0;
+		for (ActiveGirl girl : localData.game.loadedGirls) {
+			for (ActiveGirl activeGirl : localData.game.activeGirls) {
+				if (activeGirl.id == girl.id) {
+					return;
+				}
+			}
+			localData.game.activeGirls.add(girl);
+			i++;
+			if (i >= 3) {
+				break;
+			}
+		}
 	}
 
 	@Override

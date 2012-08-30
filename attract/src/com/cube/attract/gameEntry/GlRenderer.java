@@ -215,7 +215,7 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(GIRLSINDEX_S + sceneState.pictureViewGallary.totalGirls));
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(GIRLSINDEX_S + girlsSize));
 		gl.glLoadIdentity();
 		gl.glTranslatef(-0.06f, 1.13f, -4f);
 
@@ -274,7 +274,7 @@ public class GlRenderer implements Renderer {
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 
 		int front = sceneState.pictureViewGallary.frontViewIndex;
-		Log.v(TAG, "front: " + front);
+		// Log.v(TAG, "front: " + front);
 		PictureView[] pictureView = sceneState.pictureViewGallary.pictureView;
 		for (int i = -2; i <= +2; i++) {
 			int j = (front + i + 9) % 9;
