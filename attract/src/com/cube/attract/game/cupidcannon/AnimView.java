@@ -23,7 +23,9 @@ import com.umeng.analytics.MobclickAgent;
 
 	public class AnimView extends SurfaceView implements
 			SurfaceHolder.Callback, Runnable {
-
+		
+		private static final String TAG = "CupidCannonAnimView";
+		
 		Context mContext = null;
 		CupidCannonActivity cupidCannonActivity = null;
 		private int mWidth = 0;
@@ -597,7 +599,7 @@ import com.umeng.analytics.MobclickAgent;
 		};
 		public Bitmap [] timerBm = {numbersBm[9], numbersBm[9]};
 		public void timer(){
-			Log.i("WHITEDAWN", "Run into timer()");
+			Log.i(TAG, "Run into timer()");
 			int counter = 0;
 			long currentTime = 0;
 			if (lastSystemTime == 0){
@@ -630,6 +632,7 @@ import com.umeng.analytics.MobclickAgent;
 			achieved = false;
 			initAnimationInstance();
 			initSound();
+			MobclickAgent.onEvent(mContext, "cupidCannonStart");
 		}
 
 		@Override
@@ -691,7 +694,7 @@ import com.umeng.analytics.MobclickAgent;
 						}
 					}else if (gameEnded){
 						float achievedTime = (float)(99000 - timeCounter)/1000.0f;
-//						Log.i("GAMEENDINFO"," " + achievedTime);
+						Log.i(TAG,"achievedTime is" + achievedTime);
 						if (trigger == false) {					
 							msg.what = WIN;
 							Bundle bundle = new Bundle();
@@ -704,7 +707,7 @@ import com.umeng.analytics.MobclickAgent;
 							trigger = true;
 						}
 					}
-					Log.i("sendMessage", ""+msg.what);
+					Log.i(TAG, "msg.what is"+msg.what);
 				}
 
 				try {

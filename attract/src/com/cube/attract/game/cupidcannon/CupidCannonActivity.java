@@ -23,6 +23,7 @@ import com.umeng.api.sns.UMSnsService;
 
 public class CupidCannonActivity extends Activity
 {
+	private static final String TAG = "CupidCannonActivity";
 
 	AnimView animView = null;
 	Activity mActivity;
@@ -122,7 +123,8 @@ public class CupidCannonActivity extends Activity
 								+ gameTime 
 								+"秒就获得了美女"
 								+ weibo
-								+ "的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+								+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+						Log.v("SINA", "Share with sina");
 					}else if (gameState == TIME_OUT) {
 						UMSnsService.shareToSina(CupidCannonActivity.this,
 								"我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
@@ -143,6 +145,27 @@ public class CupidCannonActivity extends Activity
 
 			}
 		});
+	}
+
+	public void onResume() {
+	    super.onResume();
+	    MobclickAgent.onResume(this);
+	    Log.v(TAG, "Run in onResume");
+	    animView.againChallenge();
+	}
+	public void onPause() {
+	    super.onPause();
+	    MobclickAgent.onPause(this);
+	    Log.v(TAG, "Run in onPause");
+
+	}
+	
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+		Log.v("TAG", "Run in onRestart");
+
 	}
 
 	public void hideImage()
