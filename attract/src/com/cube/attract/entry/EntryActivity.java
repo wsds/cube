@@ -35,9 +35,9 @@ public class EntryActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		context = this;
-		
+
 		add3ActiveGirls();
-		
+
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
 		surface = new GLSurfaceView(this);
@@ -114,6 +114,7 @@ public class EntryActivity extends Activity {
 				sceneState.eventType = sceneState.CUB;
 				sceneState.saveRotation();
 			} else {
+				renderer.logo.addAnimation(renderer.rotateLogo);
 			}
 			break;
 		case MotionEvent.ACTION_UP:

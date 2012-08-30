@@ -16,7 +16,7 @@ import android.view.WindowManager;
 
 public class GameEntryActivity extends Activity {
 	private GLSurfaceView surface;
-	private GlRenderer renderer;
+	private GlRenderer render;
 
 	Context mContext;
 	Activity mActivity;
@@ -24,6 +24,7 @@ public class GameEntryActivity extends Activity {
 
 	SceneState sceneState = SceneState.getInstance();
 	public LocalData localData = LocalData.getInstance();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,8 +35,8 @@ public class GameEntryActivity extends Activity {
 		mActivity = this;
 
 		surface = new GLSurfaceView(this);
-		renderer = new GlRenderer(this);
-		surface.setRenderer(renderer);
+		render = new GlRenderer(this);
+		surface.setRenderer(render);
 		setContentView(surface);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -67,16 +68,24 @@ public class GameEntryActivity extends Activity {
 
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_MOVE:
-			if (sceneState.eventType == sceneState.GIRL) {
+			if (sceneState.state == "TouchDown_Girl" || sceneState.state == "TouchMove") {
 
 				sceneState.pictureViewGallary.dx = event.getX() - startX;
 				sceneState.pictureViewGallary.dy = event.getY() - startY;
 				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx * TOUCH_SCAL_FACTOR;
 				float path = sceneState.pictureViewGallary.dx * sceneState.pictureViewGallary.dx + sceneState.pictureViewGallary.dy * sceneState.pictureViewGallary.dy;
 				if (path > 1600) {
+					if (sceneState.state == "TouchDown_Girl") {
+
+					}
+					sceneState.state = "TouchMove";
 					if (sceneState.backAnimaLock) {
-						renderer.girlGoBack.start(true);
-						renderer.girlRotateBack.start(true);
+						render.girls.addAnimation(render.girlGoBack);
+						render.girls.addAnimation(render.girlRotateBack);
+				
+
+						// renderer.girlGoBack.start(true);
+						// renderer.girlRotateBack.start(true);
 						sceneState.backAnimaLock = false;
 						sceneState.goFrontPermit = true;
 						sceneState.notJustComeIn = true;
@@ -95,6 +104,9 @@ public class GameEntryActivity extends Activity {
 
 			if (normalY < 430) {
 				sceneState.eventType = sceneState.GIRL;
+				if (sceneState.state == "None" || sceneState.state == "Moving") {
+					sceneState.state = "TouchDown_Girl";
+				}
 
 				sceneState.pictureViewGallary.dxSpeed = 0.0f;
 				sceneState.pictureViewGallary.isStopping = false;
@@ -147,7 +159,8 @@ public class GameEntryActivity extends Activity {
 
 		case MotionEvent.ACTION_UP:
 			sceneState.isTouchUp = true;
-			if (sceneState.eventType == sceneState.GIRL) {
+			if (sceneState.state == "TouchMove") {
+				sceneState.state = "Moving";
 			} else {
 				switch (GAMENUMBER) {
 				case 1:
