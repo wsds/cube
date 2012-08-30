@@ -1,66 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<RelativeLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/CanvasContainer"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_centerInParent="true"
-	>
-	
-	 <ImageView
-            android:id="@+id/TextView01"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/relatback" />
-            
-		<ImageView
-			android:id="@+id/takeplace1"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			android:layout_alignParentRight="true"
-			android:src="@drawable/takeplace"
-			android:visibility="invisible" />
-		<ImageView
-			android:id="@+id/againchallenge"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@+id/takeplace1"
-			android:layout_alignParentLeft="true"
-			android:src="@drawable/button_again"
-			android:visibility="invisible" />
-		<ImageView
-			android:id="@+id/takeplace2"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@+id/button_again"
-			android:layout_alignParentLeft="true"
-			android:src="@drawable/takeplace"
-			android:visibility="invisible" />
-		<ImageView
-			android:id="@+id/sharesina"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@+id/takeplace2"
-			android:layout_alignParentLeft="true"
-			android:src="@drawable/button_share"
-			android:visibility="invisible" />
-		<ImageView
-			android:id="@+id/takeplace3"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@+id/sharesina"
-			android:layout_alignParentLeft="true"
-			android:src="@drawable/takeplace"
-			 android:visibility="invisible" />
-		<ImageView
-			android:id="@+id/button_return"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@+id/takeplace3"
-			android:layout_alignParentLeft="true"
-			android:src="@drawable/button_return"
-			android:visibility="invisible" />
-	</RelativeLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/CanvasContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_centerInParent="true" >
+
+    <ImageView
+        android:id="@+id/TextView01"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/relatback" />
+
+    <ImageView
+        android:id="@+id/takeplace1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/takeplace"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/againchallenge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/takeplace1"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/button_again"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/takeplace2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/againchallenge"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/takeplace"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/sharesina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/takeplace2"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/button_share"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/takeplace3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/sharesina"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/takeplace"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/button_return"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/takeplace3"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/button_return"
+        android:visibility="invisible" />
+
+</RelativeLayout>

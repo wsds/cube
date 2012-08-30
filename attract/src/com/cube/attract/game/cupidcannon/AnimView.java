@@ -1,5 +1,6 @@
 package com.cube.attract.game.cupidcannon;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,11 +19,15 @@ import android.view.SurfaceView;
 
 import com.cube.attract.R;
 import com.cube.canvas.common.CanvasAnimation;
+import com.umeng.analytics.MobclickAgent;
 
 
+	@SuppressLint({ "FloatMath", "FloatMath", "FloatMath", "FloatMath", "FloatMath", "FloatMath" })
 	public class AnimView extends SurfaceView implements
 			SurfaceHolder.Callback, Runnable {
-
+		
+		private static final String TAG = "CupidCannonAnimView";
+		
 		Context mContext = null;
 		CupidCannonActivity cupidCannonActivity = null;
 		private int mWidth = 0;
@@ -153,9 +158,6 @@ import com.cube.canvas.common.CanvasAnimation;
 					R.drawable.number_8);
 			numbersBm[9] = BitmapFactory.decodeResource(getResources(),
 					R.drawable.number_9);
-
-			
-
 
 			
 		}
@@ -599,7 +601,7 @@ import com.cube.canvas.common.CanvasAnimation;
 		};
 		public Bitmap [] timerBm = {numbersBm[9], numbersBm[9]};
 		public void timer(){
-			Log.i("WHITEDAWN", "Run into timer()");
+			Log.i(TAG, "Run into timer()");
 			int counter = 0;
 			long currentTime = 0;
 			if (lastSystemTime == 0){
@@ -632,6 +634,7 @@ import com.cube.canvas.common.CanvasAnimation;
 			achieved = false;
 			initAnimationInstance();
 			initSound();
+			MobclickAgent.onEvent(mContext, "cupidCannonStart");
 		}
 
 		@Override
@@ -660,7 +663,7 @@ import com.cube.canvas.common.CanvasAnimation;
 		        	cupidCannonActivity.weibo = bundle.getString("weibo");
 		        	cupidCannonActivity.gameState = bundle.getInt("gameState");
 					cupidCannonActivity.showImage();
-						Log.v("Handler", ""+msg.what);						
+						Log.v(TAG, "msg.what is "+msg.what);						
 		        break;  
 		        case TIME_OUT:  
 					cupidCannonActivity.showImage();
@@ -688,11 +691,12 @@ import com.cube.canvas.common.CanvasAnimation;
 							Bundle bundle = new Bundle();
 							bundle.putInt("gameState", TIME_OUT);
 							handler.sendMessage(msg); 
+							MobclickAgent.onEvent(mContext, "cupidGameFailed");
 							trigger = true;
 						}
 					}else if (gameEnded){
 						float achievedTime = (float)(99000 - timeCounter)/1000.0f;
-//						Log.i("GAMEENDINFO"," " + achievedTime);
+						Log.i(TAG,"achievedTime is" + achievedTime);
 						if (trigger == false) {					
 							msg.what = WIN;
 							Bundle bundle = new Bundle();
@@ -701,10 +705,11 @@ import com.cube.canvas.common.CanvasAnimation;
 							bundle.putInt("gameState", WIN);
 							msg.setData(bundle);
 							handler.sendMessage(msg); 
+							MobclickAgent.onEvent(mContext, "cupidGameWin", String.valueOf(achievedTime));
 							trigger = true;
 						}
 					}
-					Log.i("sendMessage", ""+msg.what);
+					Log.i(TAG, "msg.what is"+msg.what);
 				}
 
 				try {
