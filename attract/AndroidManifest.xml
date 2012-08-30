@@ -15,23 +15,23 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+            android:name=".MainActivity"
             android:finishOnTaskLaunch="true"
             android:label="@string/title_activity_main"
-            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter >
-<!--                 <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" /> -->
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:label="@string/app_name"
             android:name="com.cube.attract.about.AboutActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="com.cube.attract.about.AboutActivity" />
                 <!-- <action android:name="android.intent.action.MAIN" /> -->
 
@@ -39,36 +39,34 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.cube.attract.entry.EntryActivity"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
-            android:name="com.cube.attract.entry.EntryActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="com.cube.attract.entry.EntryActivity" />
             </intent-filter>
         </activity>
         <activity
+            android:name="com.cube.attract.gameEntry.GameEntryActivity"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
-            android:name="com.cube.attract.gameEntry.GameEntryActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="com.cube.attract.gameEntry.GameEntryActivity" />
             </intent-filter>
         </activity>
         <activity
+            android:name="com.cube.attract.game.cupidcannon.CupidCannonActivity"
             android:exported="true"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
-            android:name="com.cube.attract.game.cupidcannon.CupidCannonActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter >
-                               <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+            <intent-filter>
+                <action android:name="com.cube.attract.game.cupidcannon.CupidCannonActivity" />
             </intent-filter>
         </activity>
         <activity
@@ -89,37 +87,41 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
-     <!--            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" /> -->
+                <!--
+                     <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                -->
             </intent-filter>
         </activity>
 
         <service
+            android:name="com.cube.common.dataservice.DataService"
             android:enabled="true"
-            android:exported="true"
-            android:name="com.cube.common.dataservice.DataService" >
-            <intent-filter >
+            android:exported="true" >
+            <intent-filter>
                 <action android:name="com.cube.common.dataservice.DataService" />
             </intent-filter>
         </service>
         <service
+            android:name="com.cube.common.imageservice.ImageService"
             android:enabled="true"
-            android:exported="true"
-            android:name="com.cube.common.imageservice.ImageService" >
-            <intent-filter >
+            android:exported="true" >
+            <intent-filter>
                 <action android:name="com.cube.common.imageservice.ImageService" />
             </intent-filter>
         </service>
+
         <activity
-            android:configChanges="orientation|keyboardHidden"
             android:name="com.umeng.api.activity.OauthActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
-            android:configChanges="orientation|keyboardHidden"
             android:name="com.umeng.api.activity.UpdateStatusActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="unspecified"
             android:theme="@style/Theme.IOSched"
             android:windowSoftInputMode="stateVisible|adjustResize" >
@@ -134,8 +136,6 @@
             android:value="MagicStone" />
     </application>
 
-    <uses-sdk android:minSdkVersion="4" >
-    </uses-sdk>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

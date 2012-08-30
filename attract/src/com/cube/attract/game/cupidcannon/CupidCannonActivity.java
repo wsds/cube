@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.cube.attract.R;
+import com.cube.common.LocalData;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.api.sns.UMSnsService;
 
@@ -42,6 +43,10 @@ public class CupidCannonActivity extends Activity
 	public String weibo = "";
 	public int gameState = TIME_OUT;
 
+	public LocalData localData = LocalData.getInstance();
+	public SceneState sceneState = SceneState.getInstance();
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -51,6 +56,13 @@ public class CupidCannonActivity extends Activity
 		mActivity = this;
 		// 强制为竖屏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+		Intent intent = getIntent(); 
+		sceneState.weibo = intent.getStringExtra("weibo");
+		sceneState.girlNumber = intent.getIntExtra("girlNumber", -1);
+		sceneState.girlID = intent.getLongExtra("girlID", -1);
+		
+		
 		setContentView(R.layout.game);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);

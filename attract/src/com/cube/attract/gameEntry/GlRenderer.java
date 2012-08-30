@@ -334,8 +334,10 @@ public class GlRenderer implements Renderer {
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 
 		int front = sceneState.pictureViewGallary.frontViewIndex;
+		
 		// Log.v(TAG, "front: " + front);
 		PictureView[] pictureView = sceneState.pictureViewGallary.pictureView;
+		sceneState.girlNumber = (pictureView[front].girlNumber  + girlsSize) % girlsSize;
 		for (int i = -2; i <= +2; i++) {
 			int j = (front + i + 9) % 9;
 			pictureView[j].girlNumber = (pictureView[front].girlNumber + i + girlsSize) % girlsSize;

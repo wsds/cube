@@ -1,8 +1,5 @@
 package com.cube.attract.gameEntry;
 
-import com.cube.attract.gameEntry.SceneState;
-import com.cube.common.LocalData;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +10,9 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+
+import com.cube.common.LocalData;
+import com.cube.common.LocalData.Game.ActiveGirl;
 
 public class GameEntryActivity extends Activity {
 	private GLSurfaceView surface;
@@ -82,7 +82,6 @@ public class GameEntryActivity extends Activity {
 					if (sceneState.backAnimaLock) {
 						render.girls.addAnimation(render.girlGoBack);
 						render.girls.addAnimation(render.girlRotateBack);
-				
 
 						// renderer.girlGoBack.start(true);
 						// renderer.girlRotateBack.start(true);
@@ -179,13 +178,15 @@ public class GameEntryActivity extends Activity {
 					break;
 				case 2:
 					sceneState.isSelected[1] = false;
+					ActiveGirl girl = localData.game.activeGirls.get(sceneState.girlNumber);
+					long girlID = girl.id;
+					String weibo=girl.girl.weibo;
 
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.putExtra("picture1", "girl_4_1.jpg");
-					about.putExtra("picture2", "girl_4_2.jpg");
-					about.putExtra("picture3", "girl_4_3.jpg");
-					about.putExtra("weibo", "@小悦悦");
+					about.putExtra("girlNumber", sceneState.girlNumber);
+					about.putExtra("girlID", girlID);
+					about.putExtra("weibo", weibo);
 					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
