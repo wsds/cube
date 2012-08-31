@@ -35,9 +35,9 @@ public class EntryActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		context = this;
-		
+
 		add3ActiveGirls();
-		
+
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
 		surface = new GLSurfaceView(this);
@@ -114,6 +114,7 @@ public class EntryActivity extends Activity {
 				sceneState.eventType = sceneState.CUB;
 				sceneState.saveRotation();
 			} else {
+				renderer.logo.addAnimation(renderer.rotateLogo);
 			}
 			break;
 		case MotionEvent.ACTION_UP:
@@ -155,7 +156,7 @@ public class EntryActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("你好！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("真的要走吗，亲！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 				}

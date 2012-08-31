@@ -15,6 +15,8 @@ final class SceneState {
 		return instance;
 	}
 
+	String state = "None";
+
 	public GlRenderer render = null;
 	boolean blending = false;
 
@@ -29,6 +31,8 @@ final class SceneState {
 	public int POLYGONBUTTON = 3;
 	boolean[] isLocked = new boolean[6];
 	boolean[] isSelected = new boolean[6];
+	int girlNumber = -1;
+	long girlID = -1;
 
 	public int eventType = CUB;
 
@@ -71,12 +75,18 @@ final class SceneState {
 			}
 			if (goFrontPermit) {
 				if (notJustComeIn) {// 刚进入该activity,并且没有onTouchMove事件时，不执行以下代码
-					render.girlGoFront.start(true);
-					render.girlRotateFront.start(true);
+					// render.girlGoFront.start(true);
+					// render.girlRotateFront.start(true);
 				}
 				notJustComeIn = true;
 				backAnimaLock = true;
 				goFrontPermit = false;
+			}
+			if (instance.state == "Moving") {
+				instance.state = "None";
+				render.girls.addAnimation(render.girlRotateFront);
+				render.girls.addAnimation(render.girlGoFront);
+
 			}
 
 		}

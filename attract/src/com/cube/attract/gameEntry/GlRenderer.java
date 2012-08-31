@@ -4,14 +4,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
@@ -22,7 +22,10 @@ import com.cube.attract.gameEntry.SceneState.PictureViewGallary.PictureView;
 import com.cube.common.LocalData;
 import com.cube.common.LocalData.Game.ActiveGirl;
 import com.cube.common.imageservice.BitmapPool;
-import com.cube.opengl.common.GLAnimation;
+import com.cube.opengl.common.AnimationManager;
+import com.cube.opengl.common.AnimationManager.AnimationGl;
+import com.cube.opengl.common.AnimationManager.Callback;
+import com.cube.opengl.common.GLAnimation2;
 import com.cube.opengl.common.Utils;
 
 public class GlRenderer implements Renderer {
@@ -136,24 +139,7 @@ public class GlRenderer implements Renderer {
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 	}
 
-	GLAnimation girlGoBack = new GLAnimation();
-	GLAnimation girlGoFront = new GLAnimation();
-	GLAnimation girlRotateBack = new GLAnimation();
-	GLAnimation girlRotateFront = new GLAnimation();
 
-	// GLAnimation ploygonColor = new GLAnimation();
-	// GLAnimation girlRotatetoPos = new GLAnimation();
-
-	public void initializeAnimations() {
-		girlGoBack.setTranslate(0, -11.5f, -5.5f, 200f);
-		girlGoBack.start(false);
-		girlGoFront.setTranslate(0, 11.5f, 5.5f, 200f);
-		girlGoFront.start(false);
-		girlRotateBack.setRotate(15, 1, 0, 0, 200f);
-		girlRotateBack.start(false);
-		girlRotateFront.setRotate(-15, 1, 0, 0, 200f);
-		girlRotateFront.start(false);
-	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		sceneState.screenHeight = height;
@@ -167,7 +153,62 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 1.0f, 100.0f);
 
-		initializeAnimations();
+		initAnimations();
+		initSoundPool();
+	}
+
+	AnimationManager animationManager = new AnimationManager();
+	AnimationGl girls = null;
+
+	GLAnimation2 girlGoBack = null;
+	GLAnimation2 girlGoFront = null;
+	GLAnimation2 girlRotateBack = null;
+	GLAnimation2 girlRotateFront = null;
+
+	void initAnimations() {
+		animationManager.animationGls.clear();
+		girls = animationManager.addAnimationGl(new Callback() {
+			@Override
+			public void ondraw(GL10 gl) {
+				drawGirls(gl);
+			}
+		});
+		girls.matrix.translate(0, 0f, -62f);
+
+		girlGoBack = new GLAnimation2();
+		girlGoFront = new GLAnimation2();
+		girlRotateBack = new GLAnimation2();
+		girlRotateFront = new GLAnimation2();
+
+		girlRotateFront.setCallback(new GLAnimation2.Callback() {
+			@Override
+			public void onEnd() {
+				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
+			}
+		});
+
+		girlGoBack.setTranslate(0, 4.5f, -12.5f, 200f);
+		girlGoFront.setTranslate(0, -4.5f, 12.5f, 200f);
+		girlRotateBack.setRotate(25, 1, 0, 0, 200f);
+		girlRotateFront.setRotate(-25, 1, 0, 0, 200f);
+	}
+
+	SoundPool soundPool = null;
+	int fireSound = 0;
+	int explodeSound = 0;
+	int passSound = 0;
+	int startSound = 0;
+	int flyawaySound = 0;
+	int effect_tick = 0;
+
+	void initSoundPool() {
+		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		fireSound = soundPool.load(context, R.raw.fire, 1);
+		explodeSound = soundPool.load(context, R.raw.explode, 1);
+		passSound = soundPool.load(context, R.raw.pass, 1);
+		startSound = soundPool.load(context, R.raw.start, 1);
+		flyawaySound = soundPool.load(context, R.raw.flyaway, 1);
+		effect_tick = soundPool.load(context, R.raw.effect_tick, 1);
 	}
 
 	public void onDrawFrame(GL10 gl) {
@@ -192,7 +233,7 @@ public class GlRenderer implements Renderer {
 		drawPolygon(gl, -0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE, sceneState.isLocked[3], sceneState.isSelected[3]);// 4
 		drawPolygon(gl, 0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE, sceneState.isLocked[4], sceneState.isSelected[4]);// 5
 		drawPolygon(gl, 0, -0.316f - 3 * UNIT_SIZE, sceneState.isLocked[5], sceneState.isSelected[5]);// 6
-		drawGirls(gl);
+		animationManager.draw(gl);
 		drawGirlNumber(gl);
 
 	}
@@ -274,18 +315,15 @@ public class GlRenderer implements Renderer {
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 
 		int front = sceneState.pictureViewGallary.frontViewIndex;
-		// Log.v(TAG, "front: " + front);
+		
 		PictureView[] pictureView = sceneState.pictureViewGallary.pictureView;
+		sceneState.girlNumber = (pictureView[front].girlNumber  + girlsSize) % girlsSize;
 		for (int i = -2; i <= +2; i++) {
 			int j = (front + i + 9) % 9;
 			pictureView[j].girlNumber = (pictureView[front].girlNumber + i + girlsSize) % girlsSize;
 
 		}
 
-		// for (int i = 0; i < pictureView.length; i++) {
-		// Log.v(TAG, "pictureView[i].girlNumber: " + pictureView[i].girlNumber + "  i=" + i);
-		//
-		// }
 		for (int i = -2; i <= +2; i++) {
 			int j = (front + i + 9) % 9;
 
@@ -295,16 +333,8 @@ public class GlRenderer implements Renderer {
 			double z = sceneState.pictureViewGallary.pictureView[j].z;
 
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, girlsTexturesBuffer.get(girlNumber));
-			gl.glLoadIdentity();
 
-			girlGoBack.transformModel(gl);
-			girlGoFront.transformModel(gl);
-			girlRotateBack.transformModel(gl);
-			girlRotateFront.transformModel(gl);
-
-			// gl.glEnable(GL10.GL_BLEND);
-			gl.glTranslatef(0, 0f, -62f);
-
+			gl.glPushMatrix();
 			gl.glTranslatef((float) x, (float) y, (float) z);
 			float angle = (float) (-sceneState.pictureViewGallary.pictureView[j].radian * 180 / PI) % 360;
 
@@ -320,6 +350,7 @@ public class GlRenderer implements Renderer {
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 			gl.glDisable(GL10.GL_TEXTURE_2D);
+			gl.glPopMatrix();
 		}
 		long currentMillis = System.currentTimeMillis();
 

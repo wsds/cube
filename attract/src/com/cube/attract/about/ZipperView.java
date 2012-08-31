@@ -95,10 +95,10 @@ public class ZipperView extends View {
 			if (movedY > 600) {
 				if (istartingActivityBoolean == false) {
 					istartingActivityBoolean = true;
-					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
-					context.startActivity(about);
+					Intent entry = new Intent(Intent.ACTION_MAIN);
+					entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+					context.startActivity(entry);
 					((Activity) context).finish();
 				}
 			} else {

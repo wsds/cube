@@ -10,9 +10,12 @@ import java.util.Random;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
@@ -26,7 +29,11 @@ import com.cube.common.pickup.IBufferFactory;
 import com.cube.common.pickup.Matrix4f;
 import com.cube.common.pickup.Ray;
 import com.cube.common.pickup.Vector3f;
+import com.cube.opengl.common.AnimationManager;
+import com.cube.opengl.common.AnimationManager.AnimationGl;
+import com.cube.opengl.common.AnimationManager.Callback;
 import com.cube.opengl.common.GLAnimation;
+import com.cube.opengl.common.GLAnimation2;
 import com.cube.opengl.common.GlMatrix;
 import com.cube.opengl.common.Utils;
 
@@ -35,11 +42,11 @@ public class GlRenderer implements Renderer {
 	private Context context;
 	Cube cube;
 
-	// private Activity mActivity;
+	private Activity mActivity;
 
 	public GlRenderer(Context context) {
 		this.context = context;
-		// this.mActivity = (Activity) context;
+		this.mActivity = (Activity) context;
 		cube = new Cube();
 	}
 
@@ -223,6 +230,7 @@ public class GlRenderer implements Renderer {
 					activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					activity.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					context.startActivity(activity);
+					mActivity.finish();
 				}
 			}
 		});
@@ -246,6 +254,54 @@ public class GlRenderer implements Renderer {
 		sceneState.gMatProject.fillFloatArray(sceneState.gpMatrixProjectArray);
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 
+		initAnimations();
+		initSoundPool();
+
+	}
+
+	AnimationManager animationManager = new AnimationManager();
+	GLAnimation2 rotateLogo = null;
+	AnimationGl logo = null;
+
+	void initAnimations() {
+		animationManager.animationGls.clear();
+		logo = animationManager.addAnimationGl(new Callback() {
+			@Override
+			public void ondraw(GL10 gl) {
+				drawLogo(gl);
+			}
+		});
+		logo.matrix.translate(0, 1.2f, -3.6f);
+
+		rotateLogo = new GLAnimation2();
+		// testAnimation.setTranslate(0.5f, 0.5f, 0.5f, 1000);
+		rotateLogo.setRotate(360, 0, 1, 0, 1000);
+		logo.addAnimation(rotateLogo);
+		rotateLogo.setCallback(new GLAnimation2.Callback() {
+			@Override
+			public void onEnd() {
+				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
+			}
+		});
+
+	}
+
+	SoundPool soundPool = null;
+	int fireSound = 0;
+	int explodeSound = 0;
+	int passSound = 0;
+	int startSound = 0;
+	int flyawaySound = 0;
+	int effect_tick = 0;
+
+	void initSoundPool() {
+		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		fireSound = soundPool.load(context, R.raw.fire, 1);
+		explodeSound = soundPool.load(context, R.raw.explode, 1);
+		passSound = soundPool.load(context, R.raw.pass, 1);
+		startSound = soundPool.load(context, R.raw.start, 1);
+		flyawaySound = soundPool.load(context, R.raw.flyaway, 1);
+		effect_tick = soundPool.load(context, R.raw.effect_tick, 1);
 	}
 
 	public void onDrawFrame(GL10 gl) {
@@ -261,8 +317,9 @@ public class GlRenderer implements Renderer {
 		}
 		gl.glPopMatrix();
 		drawHighLight(gl);
-		drawLogo(gl);
+		// drawLogo(gl);
 		drawPrompt(gl);
+		animationManager.draw(gl);
 
 		long currentMillis = System.currentTimeMillis();
 
@@ -310,7 +367,6 @@ public class GlRenderer implements Renderer {
 
 		gl.glLoadIdentity();
 		setUpCamera(gl);
-
 
 		gl.glDisable(GL10.GL_BLEND);
 		gl.glEnable(GL10.GL_DEPTH_TEST);
@@ -373,7 +429,7 @@ public class GlRenderer implements Renderer {
 
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glDisable(GL10.GL_DEPTH_TEST);
-		
+
 		gl.glTranslatef(0, 0, -8);
 		gl.glTranslatef(0, 0, -7);
 		cube1Animation.transformModel(gl);
@@ -383,8 +439,7 @@ public class GlRenderer implements Renderer {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		for (int i = 0; i < 6; i++) 
-		{
+		for (int i = 0; i < 6; i++) {
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(HIGHLIGHT));
 			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, highLightVertexBfr[i]);
 			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, cubeTextureBfr[i]);
@@ -404,12 +459,12 @@ public class GlRenderer implements Renderer {
 	public void drawLogo(GL10 gl) {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(LOGO + 0));
-		gl.glLoadIdentity();
+		// gl.glLoadIdentity();
 
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glDisable(GL10.GL_DEPTH_TEST);
-
-		gl.glTranslatef(0, 1.2f, -3.8f);
+		gl.glDisable(GL10.GL_CULL_FACE);
+		// gl.glTranslatef(0, 1.2f, -3.8f);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -423,6 +478,7 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 		gl.glDisable(GL10.GL_BLEND);
+		gl.glEnable(GL10.GL_CULL_FACE);
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 
 	}

@@ -1,22 +1,26 @@
 package com.cube.attract.gameEntry;
 
-import com.cube.attract.gameEntry.SceneState;
-import com.cube.common.LocalData;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import com.cube.attract.R;
+import com.cube.common.LocalData;
+import com.cube.common.LocalData.Game.ActiveGirl;
+
 public class GameEntryActivity extends Activity {
 	private GLSurfaceView surface;
-	private GlRenderer renderer;
+	private GlRenderer render;
 
 	Context mContext;
 	Activity mActivity;
@@ -24,6 +28,7 @@ public class GameEntryActivity extends Activity {
 
 	SceneState sceneState = SceneState.getInstance();
 	public LocalData localData = LocalData.getInstance();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,8 +39,8 @@ public class GameEntryActivity extends Activity {
 		mActivity = this;
 
 		surface = new GLSurfaceView(this);
-		renderer = new GlRenderer(this);
-		surface.setRenderer(renderer);
+		render = new GlRenderer(this);
+		surface.setRenderer(render);
 		setContentView(surface);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -67,16 +72,23 @@ public class GameEntryActivity extends Activity {
 
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_MOVE:
-			if (sceneState.eventType == sceneState.GIRL) {
+			if (sceneState.state == "TouchDown_Girl" || sceneState.state == "TouchMove") {
 
 				sceneState.pictureViewGallary.dx = event.getX() - startX;
 				sceneState.pictureViewGallary.dy = event.getY() - startY;
 				sceneState.pictureViewGallary.dAngle = sceneState.pictureViewGallary.dx * TOUCH_SCAL_FACTOR;
 				float path = sceneState.pictureViewGallary.dx * sceneState.pictureViewGallary.dx + sceneState.pictureViewGallary.dy * sceneState.pictureViewGallary.dy;
 				if (path > 1600) {
+					if (sceneState.state == "TouchDown_Girl") {
+
+					}
+					sceneState.state = "TouchMove";
 					if (sceneState.backAnimaLock) {
-						renderer.girlGoBack.start(true);
-						renderer.girlRotateBack.start(true);
+						render.girls.addAnimation(render.girlGoBack);
+						render.girls.addAnimation(render.girlRotateBack);
+
+						// renderer.girlGoBack.start(true);
+						// renderer.girlRotateBack.start(true);
 						sceneState.backAnimaLock = false;
 						sceneState.goFrontPermit = true;
 						sceneState.notJustComeIn = true;
@@ -95,6 +107,9 @@ public class GameEntryActivity extends Activity {
 
 			if (normalY < 430) {
 				sceneState.eventType = sceneState.GIRL;
+				if (sceneState.state == "None" || sceneState.state == "Moving") {
+					sceneState.state = "TouchDown_Girl";
+				}
 
 				sceneState.pictureViewGallary.dxSpeed = 0.0f;
 				sceneState.pictureViewGallary.isStopping = false;
@@ -147,34 +162,39 @@ public class GameEntryActivity extends Activity {
 
 		case MotionEvent.ACTION_UP:
 			sceneState.isTouchUp = true;
-			if (sceneState.eventType == sceneState.GIRL) {
+			if (sceneState.state == "TouchMove") {
+				sceneState.state = "Moving";
 			} else {
 				switch (GAMENUMBER) {
 				case 1:
 					sceneState.isSelected[0] = false;
+					ActiveGirl girl1 = localData.game.activeGirls.get(sceneState.girlNumber);
+					long girlID1 = girl1.id;
+					String weibo1 = girl1.girl.weibo;
+
 					Intent game1 = new Intent(Intent.ACTION_MAIN);
 					game1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					game1.putExtra("picture1", "girl_4_1.jpg");
-					game1.putExtra("picture2", "girl_4_2.jpg");
-					game1.putExtra("picture3", "girl_4_3.jpg");
-					game1.putExtra("weibo", "@小悦悦");
-					// game1.setClassName("com.cube.attract",
-					// "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					game1.putExtra("girlNumber", sceneState.girlNumber);
+					game1.putExtra("girlID", girlID1);
+					game1.putExtra("weibo", weibo1);
+
 					game1.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
 					mContext.startActivity(game1);
 					mActivity.finish();
 					break;
 				case 2:
 					sceneState.isSelected[1] = false;
+					ActiveGirl girl2 = localData.game.activeGirls.get(sceneState.girlNumber);
+					long girlID2 = girl2.id;
+					String weibo2 = girl2.girl.weibo;
 
-					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.putExtra("picture1", "girl_4_1.jpg");
-					about.putExtra("picture2", "girl_4_2.jpg");
-					about.putExtra("picture3", "girl_4_3.jpg");
-					about.putExtra("weibo", "@小悦悦");
-					about.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
-					mContext.startActivity(about);
+					Intent game2 = new Intent(Intent.ACTION_MAIN);
+					game2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					game2.putExtra("girlNumber", sceneState.girlNumber);
+					game2.putExtra("girlID", girlID2);
+					game2.putExtra("weibo", weibo2);
+					game2.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
+					mContext.startActivity(game2);
 					mActivity.finish();
 
 					break;
@@ -216,6 +236,32 @@ public class GameEntryActivity extends Activity {
 			}
 
 			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("真的要走吗，亲！").setNegativeButton("返回", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+					Intent entry = new Intent(Intent.ACTION_MAIN);
+					entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+					mContext.startActivity(entry);
+					finish();
+
+				}
+			}).setPositiveButton("完全退出", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					finish();
+				}
+			}).show();
+
+			return true;
+		} else {
+			return super.onKeyDown(keyCode, event);
 		}
 	}
 
