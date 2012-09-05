@@ -15,9 +15,13 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.cube.common.LocalData;
 import com.cube.common.Settings;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
 
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
@@ -30,6 +34,33 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		UmengUpdateAgent.update(this);
+		UmengUpdateAgent.setUpdateAutoPopup(false);
+		UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+		        @Override
+		        public void onUpdateReturned(int updateStatus,UpdateResponse updateInfo) {
+		            switch (updateStatus) {
+		            case 0: // has update
+		                UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
+		                break;
+		            case 1: // has no update
+		                Toast.makeText(mContext, "没有更新", Toast.LENGTH_SHORT)
+		                        .show();
+		                break;
+		            case 2: // none wifi
+		                Toast.makeText(mContext, "没有wifi连接， 只在wifi下更新", Toast.LENGTH_SHORT)
+		                        .show();
+		                break;
+		            case 3: // time out
+		                Toast.makeText(mContext, "超时", Toast.LENGTH_SHORT)
+		                        .show();
+		                break;
+		            }
+		        }
+		});
+		
+		
 		mContext = this;
 		mActivity = this;
 		setContentView(R.layout.activity_main);
