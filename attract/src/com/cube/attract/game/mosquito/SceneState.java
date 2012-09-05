@@ -16,9 +16,9 @@ final class SceneState {
 	String weibo = null;
 	int girlNumber = -1;
 	long girlID = -1;
-	long x1=0;
-	long y1=0;
-	long x2=0;
-	long y2=0;
-
+	long x1 = 0;
+	long y1 = 0;
+	long x2 = 0;
+	long y2 = 0;
+	int girlsSize = 0;
 }

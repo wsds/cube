@@ -153,7 +153,7 @@ public class WebImage {
 	}
 
 	private static String sKey = "abcdef123456";
-	private static String isEncrypt = "off";
+	private static String isEncrypt = "on";
 
 	public static InputStream EncryptInputStream(InputStream inputStream) {
 
