@@ -105,7 +105,7 @@ public class GameEntryActivity extends Activity {
 			float normalY = startY * 800 / sceneState.screenHeight;
 			float normalX = startX * 480 / sceneState.screenWidth;
 
-			if (normalY < 430) {
+			if ((normalY < 440)||(normalY>2.09*normalX+369)||(1258.7-1.77*normalX<normalY)) {
 				sceneState.eventType = sceneState.GIRL;
 				if (sceneState.state == "None" || sceneState.state == "Moving") {
 					sceneState.state = "TouchDown_Girl";
