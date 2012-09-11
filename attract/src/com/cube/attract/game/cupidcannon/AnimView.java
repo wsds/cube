@@ -710,14 +710,16 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			Log.v("test", "ACTION_MOVE");
 			currentX = event.getX();
 			currentY = event.getY();
-			moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
+			if (currentY >= startY)
+				moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
 			break;
 		// 触摸抬起的事件
 		case MotionEvent.ACTION_UP:
 			Log.v("test", "ACTION_UP");
 			currentX = event.getX();
 			currentY = event.getY();
-			moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
+			if (currentY >= startY)
+				moveLength = Math.sqrt((currentX - startX) * (currentX - startX) + (currentY - startY) * (currentY - startY));
 			powerTubeEnable = false;
 			bulletEnable = true;
 			break;
