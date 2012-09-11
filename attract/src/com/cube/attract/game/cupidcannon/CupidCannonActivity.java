@@ -149,6 +149,7 @@ public class CupidCannonActivity extends Activity {
 		MobclickAgent.onResume(this);
 		Log.v(TAG, "Run in onResume");
 		animView.againChallenge();
+//		animView.initGirlBitmaps();
 	}
 
 	public void onPause() {

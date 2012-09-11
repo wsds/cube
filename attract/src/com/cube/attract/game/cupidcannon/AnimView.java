@@ -352,8 +352,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						public void onEnd() {
 							lastTargetCenter[0] = targetCenter[0];
 							lastTargetCenter[1] = targetCenter[1];
-							targetCenter[0] = sceneState.x2;
-							targetCenter[1] = sceneState.y2;
+							targetCenter[0] = sceneState.x2-200;
+							targetCenter[1] = sceneState.y2-400;
 							girlAnim.setCallback(null);
 						}
 					});
