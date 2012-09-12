@@ -31,6 +31,7 @@ final class SceneState {
 	public int POLYGONBUTTON = 3;
 	boolean[] isLocked = new boolean[6];
 	boolean[] isSelected = new boolean[6];
+	boolean isReturn = false;
 	int girlNumber = -1;
 	long girlID = -1;
 

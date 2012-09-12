@@ -98,7 +98,8 @@ public class GlRenderer implements Renderer {
 	private static final String TAG = "GlRenderer";
 
 	private static float[] quadVertexLogo = new float[] { -1.0f, 0.2354f, 0, -1.0f, -0.2354f, 0, 1.0f, 0.2354f, 0, 1.0f, -0.2354f, 0 };
-
+	private static float[] quadVertexButton = new float[]{-1.0f, 0.363f, 0, -1.0f, -0.363f, 0, 1.0f, 0.363f, 0, 1.0f, -0.363f, 0};
+	
 	private static float[] quadVertexPrompt = new float[] { -1.0f, 0.813f, 0, -1.0f, -0.813f, 0, 1.0f, 0.813f, 0, 1.0f, -0.813f, 0 };
 
 	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
@@ -106,6 +107,7 @@ public class GlRenderer implements Renderer {
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
 	private static FloatBuffer quadTextureBufferPrompt;
+	private static FloatBuffer quadVertexBufferButton;
 
 	private static float[] quadVertexBackground = new float[] { -8.0f, 8.0f, 0, -8.0f, -8.0f, 0, 8.0f, 8.0f, 0, 8.0f, -8.0f, 0 };
 
@@ -137,6 +139,8 @@ public class GlRenderer implements Renderer {
 		quadTextureBufferLogo = BufferUtil.floatToBuffer(quadTextureLogo);
 
 		quadTextureBufferPrompt = BufferUtil.floatToBuffer(quadVertexPrompt);
+		
+		quadVertexBufferButton = BufferUtil.floatToBuffer(quadVertexButton);
 
 		quadVertexBufferBackground = BufferUtil.floatToBuffer(quadVertexBackground);
 		quadTextureBufferBackground = BufferUtil.floatToBuffer(quadTextureBackground);
@@ -308,9 +312,10 @@ public class GlRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
+		
 		drawBackground(gl);
 		drawCube(gl);
-
+		
 		gl.glPushMatrix();
 		{
 			drawPickedTriangle(gl);
@@ -319,6 +324,7 @@ public class GlRenderer implements Renderer {
 		drawHighLight(gl);
 		// drawLogo(gl);
 		drawPrompt(gl);
+		drawButton(gl);
 		animationManager.draw(gl);
 
 		long currentMillis = System.currentTimeMillis();
@@ -455,7 +461,32 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 
 	}
+	public void drawButton(GL10 gl) {
 
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(BUTTON+0));
+		gl.glLoadIdentity();
+
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glDisable(GL10.GL_DEPTH_TEST);
+		gl.glTranslatef(0, -1.6f, -5f);
+
+
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, quadVertexBufferButton);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, quadTextureBufferLogo);
+
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		gl.glDisable(GL10.GL_BLEND);
+		gl.glEnable(GL10.GL_DEPTH_TEST);
+
+	}
+	
 	public void drawLogo(GL10 gl) {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(LOGO + 0));
@@ -612,11 +643,12 @@ public class GlRenderer implements Renderer {
 
 	private IntBuffer UITexturesBuffer;
 	public int LOGO = 0;
-	public int BACKGROUND = 2;
-	public int HIGHLIGHT = 3;
-	public int PROMPT = 4;
+	public int BACKGROUND = LOGO+2;
+	public int HIGHLIGHT = BACKGROUND+1;
+	public int PROMPT = HIGHLIGHT+1;
+	public int BUTTON = PROMPT +3;
 
-	public int textureNum = 7;
+	public int textureNum = BUTTON+1;
 
 	private void loadTexture(GL10 gl) {
 		// create textures
@@ -627,6 +659,7 @@ public class GlRenderer implements Renderer {
 		// load bitmap
 		Bitmap[] texture = new Bitmap[textureNum];
 
+		
 		texture[LOGO + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title1);
 		texture[LOGO + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title2);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.entry_background);
@@ -634,7 +667,7 @@ public class GlRenderer implements Renderer {
 		texture[PROMPT + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.prompt_add_girl);
 		texture[PROMPT + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.prompt_rule_selected);
 		texture[PROMPT + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.prompt_shake);
-
+		texture[BUTTON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.ccc);
 		for (int i = 0; i < textureNum; i++) {
 
 			// setup texture 0

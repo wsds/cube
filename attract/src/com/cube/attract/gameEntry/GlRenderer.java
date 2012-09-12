@@ -53,6 +53,8 @@ public class GlRenderer implements Renderer {
 	private static float[] girlIndexVertexCoords = new float[] { 0.6f, 0.23f, 0, 0.6f, 0.11f, 0, 0.72f, 0.23f, 0, 0.72f, 0.11f, 0 };
 	private static float[] girlTotalVertexCoords = new float[] { 0.72f, 0.23f, 0, 0.72f, 0.11f, 0, 0.9f, 0.23f, 0, 0.9f, 0.11f, 0 };
 
+	private static float[] retnBtnVertxCoords = new float[] {-0.31f,0.23f,0, -0.31f,-0.13f,0, 0.3395f,0.23f,0, 0.3395f,-0.13f,0};
+	
 	final static float UNIT_SIZE = 0.35f;
 	static float[] quadVertexLogo = new float[] { 0 * UNIT_SIZE, 1 * UNIT_SIZE, 0, 0.8f * UNIT_SIZE, 0.5f * UNIT_SIZE, 0, 0.8f * UNIT_SIZE, -0.5f * UNIT_SIZE, 0, 0 * UNIT_SIZE, -1 * UNIT_SIZE, 0, -0.8f * UNIT_SIZE, -0.5f * UNIT_SIZE, 0, -0.8f * UNIT_SIZE, 0.5f * UNIT_SIZE, 0 };
 
@@ -60,6 +62,8 @@ public class GlRenderer implements Renderer {
 
 	private static float[] quadTextureLogo = new float[] { 0.5f, 0, 0, 0.25f, 0, 0.75f, 0.5f, 1f, 1f, 0.75f, 1f, 0.25f };
 
+	private static FloatBuffer retnBtnVertxBuffer;
+	
 	private static FloatBuffer quadVertexBufferLogo;
 	private static FloatBuffer quadTextureBufferLogo;
 
@@ -99,6 +103,8 @@ public class GlRenderer implements Renderer {
 
 		quadVertexBufferGirl = BufferUtil.floatToBuffer(quadVertexGirl);
 		quadTextureBufferGirl = BufferUtil.floatToBuffer(quadTextureGirl);
+		
+		retnBtnVertxBuffer = BufferUtil.floatToBuffer(retnBtnVertxCoords);
 
 	}
 
@@ -235,6 +241,7 @@ public class GlRenderer implements Renderer {
 		drawPolygon(gl, 0, -0.316f - 3 * UNIT_SIZE, sceneState.isLocked[5], sceneState.isSelected[5]);// 6
 		animationManager.draw(gl);
 		drawGirlNumber(gl);
+		drawReturnButton(gl);
 
 	}
 
@@ -274,6 +281,32 @@ public class GlRenderer implements Renderer {
 
 	}
 
+	public void drawReturnButton(GL10 gl){
+		if(sceneState.isReturn == true){
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(RETURNBUTTON + 1));
+		}
+		else{
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(RETURNBUTTON + 0));			
+		}
+
+		gl.glLoadIdentity();
+		gl.glColor4f(1f, 1f, 1f, 1f);
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glTranslatef(-1.6f * UNIT_SIZE, 1.43f, -4.5f);
+		
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, retnBtnVertxBuffer);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, girlTotalTextureBuffer);
+
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		
+	}
 	public void drawPolygon(GL10 gl, float xaxis, float yaxis, boolean isLocked, boolean isSelected) {
 
 		if (isLocked) {
@@ -283,11 +316,13 @@ public class GlRenderer implements Renderer {
 		}
 
 		gl.glLoadIdentity();
+		gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
 		if (isSelected) {
-			gl.glColor4f(1f, 0.4f, 0.4f, 1f);
-		} else {
+			gl.glBindTexture(GL10.GL_TEXTURE_2D,texturesBuffer.get(POLYGON + 2));
+//			gl.glColor4f(1f, 0.4f, 0.4f, 1f);
+		}/* else {
 			gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
-		}
+		}*/
 
 		// gl.glDisable(GL10.GL_BLEND);
 		gl.glEnable(GL10.GL_BLEND);
@@ -409,11 +444,12 @@ public class GlRenderer implements Renderer {
 	private IntBuffer texturesBuffer;
 	LocalData localData = LocalData.getInstance();
 	public int POLYGON = 0;
-	public int BACKGROUND = POLYGON + 2;
+	public int BACKGROUND = POLYGON + 3;
 	public int GIRLSINDEX = BACKGROUND + 1;
 	public int GIRLSINDEX_S = GIRLSINDEX + 10;
+	public int RETURNBUTTON = GIRLSINDEX_S+10;
 
-	public int textureNum = GIRLSINDEX_S + 10;
+	public int textureNum = RETURNBUTTON + 2;
 	private BitmapPool bitmapPool;
 
 	private void loadTexture(GL10 gl) {
@@ -427,6 +463,7 @@ public class GlRenderer implements Renderer {
 
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_locked);
 		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_cupid);
+		texture[POLYGON + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_cupid_down);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.gameentry_background);
 		texture[GIRLSINDEX + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.number_0);
 		texture[GIRLSINDEX + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.number_1);
@@ -449,7 +486,10 @@ public class GlRenderer implements Renderer {
 		texture[GIRLSINDEX_S + 7] = Utils.getTextureFromBitmapResource(context, R.drawable.number_s_7);
 		texture[GIRLSINDEX_S + 8] = Utils.getTextureFromBitmapResource(context, R.drawable.number_s_8);
 		texture[GIRLSINDEX_S + 9] = Utils.getTextureFromBitmapResource(context, R.drawable.number_s_9);
+		texture[RETURNBUTTON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.returnbutton);
+		texture[RETURNBUTTON + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.returnbuttondown);
 
+		
 		for (int i = 0; i < textureNum; i++) {
 
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(i));
