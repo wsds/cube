@@ -309,12 +309,26 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - tubeLength * 7 - 14);
 			mCanvas.drawBitmap(powerTube3, testMatrix, new Paint());
 		}
+		
+		//Draw bulletCounter
+		testMatrix.setScale(0.3f, 0.3f);
+		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.21 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));		
+		bulletCounterBm[0] = numbersBm[(int)(bulletCounter/10)];
+		if (bulletCounterBm[0] != null)
+			mCanvas.drawBitmap(bulletCounterBm[0], testMatrix, new Paint());
+		testMatrix.postTranslate(20, 0);
+		bulletCounterBm[1] = numbersBm[(int)(bulletCounter%10)];
+		if (bulletCounterBm[1] != null)
+			mCanvas.drawBitmap(bulletCounterBm[1], testMatrix, new Paint());
+		
 		// Draw timer
 		testMatrix.setScale(0.3f, 0.3f);
 		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.8 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));
-		mCanvas.drawBitmap(timerBm[0], testMatrix, new Paint());
+		if (timerBm[0] != null)
+			mCanvas.drawBitmap(timerBm[0], testMatrix, new Paint());
 		testMatrix.postTranslate(25, 0);
-		mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());
+		if (timerBm[1] != null)
+			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());
 
 	}
 
@@ -575,6 +589,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 	}
 
+	public long bulletCounter = 50;
+	public Bitmap[] bulletCounterBm = {numbersBm[5], numbersBm[0] };
+	
 	public void againChallenge() {
 		trigger = false;
 		timeCounter = 99000;
@@ -726,6 +743,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 
 		if (bulletEnable == true) {
+			bulletCounter--;
+			if(bulletCounter < 0){
+				bulletCounter = 0;
+			}
 			Matrix matrix = new Matrix();
 			float[] vector = { 0.0f, 0.0f };
 			float[] array1 = { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
