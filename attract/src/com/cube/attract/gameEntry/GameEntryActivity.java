@@ -62,7 +62,7 @@ public class GameEntryActivity extends Activity {
 
 	private float startX, startY;
 	float TOUCH_SCAL_FACTOR = 180f / 320;
-	private int GAMENUMBER = 7;
+	private int GAMENUMBER = -1;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -104,8 +104,13 @@ public class GameEntryActivity extends Activity {
 
 			float normalY = startY * 800 / sceneState.screenHeight;
 			float normalX = startX * 480 / sceneState.screenWidth;
+			
+			if(normalY < 105&&normalY>50&&normalX>65 &&normalX<181){
+				GAMENUMBER = 7;
+				sceneState.isReturn = true;
+			}
 
-			if (normalY < 430) {
+			if ((normalY < 440)||(normalY>2.09*normalX+369)||(1258.7-1.77*normalX<normalY)) {
 				sceneState.eventType = sceneState.GIRL;
 				if (sceneState.state == "None" || sceneState.state == "Moving") {
 					sceneState.state = "TouchDown_Girl";
@@ -213,6 +218,14 @@ public class GameEntryActivity extends Activity {
 				case 6:
 					sceneState.isSelected[5] = false;
 
+					break;
+				case 7:
+					sceneState.isReturn = false;
+					Intent entry = new Intent(Intent.ACTION_MAIN);
+					entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+					mContext.startActivity(entry);
+					finish();
 					break;
 				}
 			}
