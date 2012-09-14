@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
@@ -25,8 +26,7 @@ import com.cube.common.LocalData;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.api.sns.UMSnsService;
 
-public class MosquitoActivity extends Activity
-{
+public class MosquitoActivity extends Activity {
 
 	private static final String TAG = "MosquitoActivity";
 	AnimView animView = null;
@@ -39,13 +39,12 @@ public class MosquitoActivity extends Activity
 	Animation fromleftAnimation = null;
 	Animation fromrightAnimation = null;
 	public String onClickButton = "null";
-	
+
 	public LocalData localData = LocalData.getInstance();
 	public SceneState sceneState = SceneState.getInstance();
 
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = this;
 		mActivity = this;
@@ -54,8 +53,8 @@ public class MosquitoActivity extends Activity
 		Log.v(TAG, "MosquitoActivity");
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
-		
-		Intent intent = getIntent(); 
+
+		Intent intent = getIntent();
 		sceneState.girlsSize = localData.game.activeGirls.size();
 		sceneState.weibo = intent.getStringExtra("weibo");
 		sceneState.girlNumber = intent.getIntExtra("girlNumber", -1);
@@ -70,8 +69,7 @@ public class MosquitoActivity extends Activity
 		shareSina.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				onClickButton = "shareSina";
 				hideImage();
 				MobclickAgent.onEvent(mContext, "event");
@@ -81,8 +79,7 @@ public class MosquitoActivity extends Activity
 		button_return.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				onClickButton = "button_return";
 				hideImage();
 			}
@@ -91,8 +88,7 @@ public class MosquitoActivity extends Activity
 		againChallenge.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v)
-			{
+			public void onClick(View v) {
 				onClickButton = "againChallenge";
 				hideImage();
 
@@ -107,31 +103,25 @@ public class MosquitoActivity extends Activity
 		toleftAnimation.setAnimationListener(new AnimationListener() {
 
 			@Override
-			public void onAnimationStart(Animation animation)
-			{
+			public void onAnimationStart(Animation animation) {
 			}
 
 			@Override
-			public void onAnimationRepeat(Animation animation)
-			{
+			public void onAnimationRepeat(Animation animation) {
 			}
 
 			@Override
-			public void onAnimationEnd(Animation animation)
-			{
+			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
-					UMSnsService.shareToSina(MosquitoActivity.this,
-							"我在玩‘魔方石de诱惑’，使用激光大炮，只用了13秒就获得了美女"+sceneState.weibo+" 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
-				}
-				else if (onClickButton == "button_return") {
+					UMSnsService.shareToSina(MosquitoActivity.this, "我在玩‘魔方石de诱惑’，使用激光大炮，只用了13秒就获得了美女" + sceneState.weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+				} else if (onClickButton == "button_return") {
 					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(gameEntry);
 					mActivity.finish();
-				}
-				else if (onClickButton == "againChallenge") {
+				} else if (onClickButton == "againChallenge") {
 					animView.next();
 				}
 
@@ -140,8 +130,7 @@ public class MosquitoActivity extends Activity
 
 	}
 
-	public void hideImage()
-	{
+	public void hideImage() {
 		shareSina.startAnimation(torightAnimation);
 		shareSina.setVisibility(8);
 		againChallenge.startAnimation(toleftAnimation);
@@ -150,8 +139,7 @@ public class MosquitoActivity extends Activity
 		button_return.setVisibility(8);
 	}
 
-	public void showImage()
-	{
+	public void showImage() {
 		Log.v(TAG, "showImage");
 		shareSina.startAnimation(fromrightAnimation);
 		shareSina.setVisibility(0);
@@ -160,16 +148,21 @@ public class MosquitoActivity extends Activity
 		button_return.startAnimation(fromleftAnimation);
 		button_return.setVisibility(0);
 	}
-	
-	
+
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("真的要走吗，亲！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-				}
-			}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+			builder.setIcon(R.drawable.cupid);
+
+			builder.setTitle("再点击一次退出");
+
+			builder.setMessage("真的要走吗，亲？");
+
+			builder.setPositiveButton("退出", new DialogInterface.OnClickListener() {
+
 				public void onClick(DialogInterface dialog, int whichButton) {
 					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -177,8 +170,35 @@ public class MosquitoActivity extends Activity
 					mContext.startActivity(gameEntry);
 					finish();
 				}
-			}).show();
+			});
 
+			builder.setNeutralButton("继续", new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int whichButton) {
+				}
+			});
+
+			builder.setNegativeButton("重试", new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int whichButton) {
+					animView.next();
+				}
+
+			});
+		
+			builder.setOnCancelListener(new OnCancelListener(){
+
+				@Override
+				public void onCancel(DialogInterface arg0) {
+					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					mContext.startActivity(gameEntry);
+					finish();
+				}
+				
+			});
+			builder.create().show();
 			return true;
 		} else {
 			return super.onKeyDown(keyCode, event);

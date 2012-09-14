@@ -15,7 +15,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.cube.common.LocalData;
 import com.cube.common.Settings;
@@ -34,33 +33,30 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		UmengUpdateAgent.update(this);
 		UmengUpdateAgent.setUpdateAutoPopup(false);
 		UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
-		        @Override
-		        public void onUpdateReturned(int updateStatus,UpdateResponse updateInfo) {
-		            switch (updateStatus) {
-		            case 0: // has update
-		                UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
-		                break;
-		            case 1: // has no update
-		                Toast.makeText(mContext, "没有更新", Toast.LENGTH_SHORT)
-		                        .show();
-		                break;
-		            case 2: // none wifi
-		                Toast.makeText(mContext, "没有wifi连接， 只在wifi下更新", Toast.LENGTH_SHORT)
-		                        .show();
-		                break;
-		            case 3: // time out
-		                Toast.makeText(mContext, "超时", Toast.LENGTH_SHORT)
-		                        .show();
-		                break;
-		            }
-		        }
+			@Override
+			public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
+				switch (updateStatus) {
+				case 0:
+					Log.d(TAG, "Umeng Update");
+					UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
+					break;
+				case 1:
+					Log.d(TAG, "no update in Umeng server");
+					break;
+				case 2:
+					Log.d(TAG, "none wifi for update");
+					break;
+				case 3:
+					Log.d(TAG, "time out");
+					break;
+				}
+			}
 		});
-		
-		
+
 		mContext = this;
 		mActivity = this;
 		setContentView(R.layout.activity_main);
