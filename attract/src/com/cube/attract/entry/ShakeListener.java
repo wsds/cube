@@ -5,8 +5,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 import android.util.FloatMath;
+import android.util.Log;
 
 public class ShakeListener implements SensorEventListener {
 	String TAG = "ShakeListener";

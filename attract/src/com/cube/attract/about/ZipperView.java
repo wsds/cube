@@ -1,7 +1,5 @@
 package com.cube.attract.about;
 
-import com.cube.attract.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +13,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.cube.attract.R;
 
 public class ZipperView extends View {
 
