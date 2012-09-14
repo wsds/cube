@@ -1,7 +1,5 @@
 package com.cube.attract.about;
 
-import com.cube.common.Settings;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -10,6 +8,8 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Scroller;
+
+import com.cube.common.Settings;
 
 public class MyScrollLayout extends ViewGroup {
 

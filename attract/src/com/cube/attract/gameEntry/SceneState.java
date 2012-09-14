@@ -1,8 +1,8 @@
 package com.cube.attract.gameEntry;
 
-import com.cube.common.LocalData;
-
 import android.util.Log;
+
+import com.cube.common.LocalData;
 
 final class SceneState {
 	static final int TOTAL_GIRLS = 9;

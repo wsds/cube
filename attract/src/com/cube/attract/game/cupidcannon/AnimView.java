@@ -65,16 +65,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public Bitmap hintTooMissBm = null;
 	public Bitmap hintTooStrongBm = null;
 	public ArrayList<Bitmap> girlBitmaps = new ArrayList<Bitmap>();
-	// public Bitmap girlBitmap0 = null;
-	// public Bitmap girlBitmap1 = null;
-	// public Bitmap girlBitmap2 = null;
+
 	public Bitmap powerTube1 = null;
 	public Bitmap powerTube2 = null;
 	public Bitmap powerTube3 = null;
 	public Bitmap heartBm = null;
 	public Bitmap bulletBm = null;
 	public Bitmap boomBm = null;
-	public Bitmap testBm = null;
+	public Bitmap popMaskBm = null;
 
 	public float[] powerTubeBaseAdress = { 0.0f, 0.0f };
 	public final int POWERSENSITY = 10;
@@ -124,7 +122,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		heartBm = BitmapFactory.decodeResource(getResources(), R.drawable.heart_3_s);
 		bulletBm = BitmapFactory.decodeResource(getResources(), R.drawable.bullet);
 		boomBm = BitmapFactory.decodeResource(getResources(), R.drawable.blast_f09);
-
+		popMaskBm = BitmapFactory.decodeResource(getResources(), R.drawable.popmask);
+		
 		numbersBm[0] = BitmapFactory.decodeResource(getResources(), R.drawable.number_0);
 		numbersBm[1] = BitmapFactory.decodeResource(getResources(), R.drawable.number_1);
 		numbersBm[2] = BitmapFactory.decodeResource(getResources(), R.drawable.number_2);
@@ -572,13 +571,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);	
 				targetNewStartPosition[0] = targetCenter[0];
 				targetNewStartPosition[1] = targetCenter[1];
-				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-				Log.v(TAG, "vectorX = "+vectorX);
-				Log.v(TAG, "vectorY = "+vectorY);
+//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
+//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
+//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
+//				Log.v(TAG, "vectorX = "+vectorX);
+//				Log.v(TAG, "vectorY = "+vectorY);
 			}else if (targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2){
 //				targetIsInScreen = false;
 				Log.v(TAG, "targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2 "+(mWidth-heartAnim.mAnimBitmapWidth/2));
@@ -591,13 +590,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);
 				targetNewStartPosition[0] = targetCenter[0];
 				targetNewStartPosition[1] = targetCenter[1];
-				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-				Log.v(TAG, "vectorX = "+vectorX);
-				Log.v(TAG, "vectorY = "+vectorY);
+//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
+//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
+//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
+//				Log.v(TAG, "vectorX = "+vectorX);
+//				Log.v(TAG, "vectorY = "+vectorY);
 			}else if (targetCenter[1] < heartAnim.mAnimBitmapHeight/2){
 //				targetIsInScreen = false;
 				Log.v(TAG, "targetCenter[1] < heartAnim.mAnimBitmapHeight/2 "+heartAnim.mAnimBitmapHeight/2 );
@@ -610,13 +609,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);
 				targetNewStartPosition[0] = targetCenter[0];
 				targetNewStartPosition[1] = targetCenter[1];
-				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-				Log.v(TAG, "vectorX = "+vectorX);
-				Log.v(TAG, "vectorY = "+vectorY);
+//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
+//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
+//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
+//				Log.v(TAG, "vectorX = "+vectorX);
+//				Log.v(TAG, "vectorY = "+vectorY);
 			}else if (targetCenter[1] > mHeight-200){
 				Log.v(TAG, "targetCenter[1] > mHeight-200 "+(mHeight-200));
 				remainTranslateDistance = targetTranslateDistance 
@@ -628,13 +627,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);
 				targetNewStartPosition[0] = targetCenter[0];
 				targetNewStartPosition[1] = targetCenter[1];
-				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-				Log.v(TAG, "vectorX = "+vectorX);
-				Log.v(TAG, "vectorY = "+vectorY);
+//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
+//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
+//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
+//				Log.v(TAG, "vectorX = "+vectorX);
+//				Log.v(TAG, "vectorY = "+vectorY);
 			}
 		}else{
 			if ((targetCenter[0]>heartAnim.mAnimBitmapWidth/2)&&(targetCenter[0]<mWidth-heartAnim.mAnimBitmapWidth/2)
@@ -782,7 +781,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				timer();
 			if (!gameEnded && (timeCounter >= 0)) {
 				drawAnimationInstance();
-			} else {
+			} else {				
 				Message msg = new Message();
 				if (timeCounter < 0) {
 					if (trigger == false) {
@@ -791,6 +790,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						bundle.putInt("gameState", TIME_OUT);
 						handler.sendMessage(msg);
 						MobclickAgent.onEvent(mContext, "cupidGameFailed");
+						//Mask
+						Paint mPaint = new Paint();
+						mPaint.setAlpha(0xaa);
+						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
 					}
 				} else if (gameEnded) {
@@ -805,6 +808,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						msg.setData(bundle);
 						handler.sendMessage(msg);
 						MobclickAgent.onEvent(mContext, "cupidGameWin", String.valueOf(achievedTime));
+						//Mask
+						Paint mPaint = new Paint();
+						mPaint.setAlpha(0xaa);
+						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
 					}
 				}
