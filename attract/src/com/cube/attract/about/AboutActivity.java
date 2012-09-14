@@ -27,9 +27,9 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 	final Context mContext = this;
 	final Activity mActivity = this;
 
-	private SoundPool soundPool;
+	public SoundPool soundPool;
 
-	private int effect_tick;
+	public int effect_tick;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
