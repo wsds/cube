@@ -158,8 +158,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		Random random = null;
 
 		public void initaize() {
-			Bitmap mosquito1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito3);
-			Bitmap mosquito2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito4);
+			Bitmap mosquito1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
+			Bitmap mosquito2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito2);
 			random = new Random(System.currentTimeMillis());
 			for (int i = 0; i < count; i++) {
 				Mosquito mosquito = new Mosquito();

@@ -124,17 +124,27 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		boomBm = BitmapFactory.decodeResource(getResources(), R.drawable.blast_f09);
 		popMaskBm = BitmapFactory.decodeResource(getResources(), R.drawable.popmask);
 		
-		numbersBm[0] = BitmapFactory.decodeResource(getResources(), R.drawable.number_0);
-		numbersBm[1] = BitmapFactory.decodeResource(getResources(), R.drawable.number_1);
-		numbersBm[2] = BitmapFactory.decodeResource(getResources(), R.drawable.number_2);
-		numbersBm[3] = BitmapFactory.decodeResource(getResources(), R.drawable.number_3);
-		numbersBm[4] = BitmapFactory.decodeResource(getResources(), R.drawable.number_4);
-		numbersBm[5] = BitmapFactory.decodeResource(getResources(), R.drawable.number_5);
-		numbersBm[6] = BitmapFactory.decodeResource(getResources(), R.drawable.number_6);
-		numbersBm[7] = BitmapFactory.decodeResource(getResources(), R.drawable.number_7);
-		numbersBm[8] = BitmapFactory.decodeResource(getResources(), R.drawable.number_8);
-		numbersBm[9] = BitmapFactory.decodeResource(getResources(), R.drawable.number_9);
+		numbersBm[0] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_0);
+		numbersBm[1] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_1);
+		numbersBm[2] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_2);
+		numbersBm[3] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_3);
+		numbersBm[4] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_4);
+		numbersBm[5] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_5);
+		numbersBm[6] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_6);
+		numbersBm[7] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_7);
+		numbersBm[8] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_8);
+		numbersBm[9] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_9);
 
+		redNumbersBm[0] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_0);
+		redNumbersBm[1] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_1);
+		redNumbersBm[2] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_2);
+		redNumbersBm[3] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_3);
+		redNumbersBm[4] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_4);
+		redNumbersBm[5] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_5);
+		redNumbersBm[6] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_6);
+		redNumbersBm[7] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_7);
+		redNumbersBm[8] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_8);
+		redNumbersBm[9] = BitmapFactory.decodeResource(getResources(), R.drawable.little_r_num_9);
 	}
 
 	void initGirlBitmaps() {
@@ -311,6 +321,11 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		targetNewStartPosition[1] = sceneState.y2;	
 	}
 	
+	private void initBulletCounter(){
+		bulletCounter = 50;
+		bulletCounterBm[0] = numbersBm[5];
+		bulletCounterBm[1] = numbersBm[0];
+	}
 	private void drawBackground() {
 		Matrix testMatrix = new Matrix();
 		testMatrix.setTranslate(backgroundStagePosition[0], backgroundStagePosition[1]);
@@ -330,22 +345,20 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 		
 		//Draw bulletCounter
-		testMatrix.setScale(0.3f, 0.3f);
-		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.21 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));		
-		bulletCounterBm[0] = numbersBm[(int)(bulletCounter/10)];
+		testMatrix.setScale(1.0f, 1.0f);
+		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.22 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));				
 		if (bulletCounterBm[0] != null)
 			mCanvas.drawBitmap(bulletCounterBm[0], testMatrix, new Paint());
-		testMatrix.postTranslate(20, 0);
-		bulletCounterBm[1] = numbersBm[(int)(bulletCounter%10)];
+		testMatrix.postTranslate(10, 0);
 		if (bulletCounterBm[1] != null)
 			mCanvas.drawBitmap(bulletCounterBm[1], testMatrix, new Paint());
 		
 		// Draw timer
-		testMatrix.setScale(0.3f, 0.3f);
-		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.8 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));
+		testMatrix.setScale(1.0f, 1.0f);
+		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.85 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));
 		if (timerBm[0] != null)
 			mCanvas.drawBitmap(timerBm[0], testMatrix, new Paint());
-		testMatrix.postTranslate(25, 0);
+		testMatrix.postTranslate(20, 0);
 		if (timerBm[1] != null)
 			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());
 
@@ -386,9 +399,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					girlAnim.setStartMatrix(reconfigureMatrix);
 					
 					double vectorLength = Math.sqrt((0.5f*mWidth-sceneState.x2)*(0.5f*mWidth-sceneState.x2)
-							+ (0.5f*mHeight-sceneState.y2)*(0.5f*mHeight-sceneState.y2));
+							+ (0.5f*(mHeight-200)-sceneState.y2)*(0.5f*(mHeight-200)-sceneState.y2));
 					targetMoveDirection[0] = (0.5f*mWidth-sceneState.x2)/vectorLength;
-					targetMoveDirection[1] = (0.5f*mHeight-sceneState.y2)/vectorLength;
+					targetMoveDirection[1] = (0.5f*(mHeight-200)-sceneState.y2)/vectorLength;
 					double vectorX = targetTranslateDistance*targetMoveDirection[0];
 					double vectorY = targetTranslateDistance*targetMoveDirection[1];	
 					girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000);
@@ -687,6 +700,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		//Initialize some data about target moving.
 		initConflictData();
 		
+		//Initialize bulletCounter
+		initBulletCounter();
+		
 		// Optimize mThread start
 		isRunning = true;
 		mThread = new Thread(this);// 创建一个绘图线程
@@ -698,11 +714,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public long lastSystemTime = 0;
 	public long timeCounter = 99000;
 	public Bitmap[] numbersBm = { null, null, null, null, null, null, null, null, null, null };
+	public Bitmap[] redNumbersBm = { null, null, null, null, null, null, null, null, null, null };
 	public Bitmap[] timerBm = { numbersBm[9], numbersBm[9] };
 
 	public void timer() {
 //		Log.i(TAG, "Run into timer()");
 		int counter = 0;
+		int counterReminder = 0;
 		long currentTime = 0;
 		if (lastSystemTime == 0) {
 			lastSystemTime = System.currentTimeMillis();
@@ -713,11 +731,23 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 		if (timeCounter >= 0) {
 			counter = (int) (timeCounter / 1000);
-			timerBm[0] = numbersBm[counter / 10];
-			timerBm[1] = numbersBm[counter % 10];
+			counterReminder = (int)(timeCounter % 1000);
+			if(counter>10){
+				timerBm[0] = numbersBm[counter / 10];
+				timerBm[1] = numbersBm[counter % 10];	
+			}else{
+				//timer shining
+				if (counterReminder>500){
+					timerBm[0] = numbersBm[counter / 10];
+					timerBm[1] = numbersBm[counter % 10];
+				}else{
+					timerBm[0] = redNumbersBm[counter / 10];
+					timerBm[1] = redNumbersBm[counter % 10];
+				}
+			}
 		} else {
-			timerBm[0] = numbersBm[0];
-			timerBm[1] = numbersBm[0];
+			timerBm[0] = redNumbersBm[0];
+			timerBm[1] = redNumbersBm[0];
 		}
 	}
 
@@ -734,6 +764,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initAnimationInstance();
 		initSound();
 		initConflictData();
+		initBulletCounter();
 		MobclickAgent.onEvent(mContext, "cupidCannonStart");
 	}
 
@@ -750,6 +781,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 	public final static int WIN = 0;
 	public final static int TIME_OUT = 1;
+	public final static int NO_BULLET_LEFT = 2;
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -767,6 +799,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			case TIME_OUT:
 				cupidCannonActivity.showImage();
 				break;
+			case NO_BULLET_LEFT:
+				cupidCannonActivity.showImage();
+				break;
 			}
 			super.handleMessage(msg);
 		}
@@ -779,11 +814,24 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 			if (achievedCounter < 1)
 				timer();
-			if (!gameEnded && (timeCounter >= 0)) {
+			if (!gameEnded && (timeCounter >= 0)&&(bulletCounter>=0)) {
 				drawAnimationInstance();
 			} else {				
 				Message msg = new Message();
-				if (timeCounter < 0) {
+				if (bulletCounter < 0) {
+					if (trigger == false) {
+						msg.what = NO_BULLET_LEFT;
+						Bundle bundle = new Bundle();
+						bundle.putInt("gameState", NO_BULLET_LEFT);
+						handler.sendMessage(msg);
+						MobclickAgent.onEvent(mContext, "cupidGameFailed");
+						//Mask
+						Paint mPaint = new Paint();
+						mPaint.setAlpha(0xaa);
+						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
+						trigger = true;
+					}	
+				}else if (timeCounter < 0) {
 					if (trigger == false) {
 						msg.what = TIME_OUT;
 						Bundle bundle = new Bundle();
@@ -885,8 +933,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		if (bulletEnable == true) {
 			bulletCounter--;
-			if(bulletCounter < 0){
-				bulletCounter = 0;
+			if (bulletCounter >=0){
+				bulletCounterBm[0] = numbersBm[(int)(bulletCounter/10)];
+				bulletCounterBm[1] = numbersBm[(int)(bulletCounter%10)];	
+			}else{
+				bulletCounter = -1;
+				bulletCounterBm[0] = numbersBm[0];
+				bulletCounterBm[1] = numbersBm[0];
 			}
 			Matrix matrix = new Matrix();
 			float[] vector = { 0.0f, 0.0f };
