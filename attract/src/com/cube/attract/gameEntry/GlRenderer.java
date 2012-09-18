@@ -233,6 +233,7 @@ public class GlRenderer implements Renderer {
 		sceneState.isLocked[2] = true;
 		sceneState.isLocked[3] = true;
 		sceneState.isLocked[4] = true;
+		sceneState.isLocked[5] = true;
 		drawPolygon(gl, 0, -0.316f, sceneState.isLocked[1], sceneState.isSelected[1]);// 2
 		drawPolygon(gl, -1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[0], sceneState.isSelected[0]);// 1
 		drawPolygon(gl, 1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[2], sceneState.isSelected[2]);// 3
