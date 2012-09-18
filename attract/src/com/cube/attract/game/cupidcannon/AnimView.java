@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.AudioManager;
@@ -64,6 +66,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public Bitmap hintDoubleHitBm = null;
 	public Bitmap hintTooMissBm = null;
 	public Bitmap hintTooStrongBm = null;
+	public Bitmap hintLeftUpBm = null;
+	public Bitmap hintLeftDownBm = null;
+	public Bitmap hintRightUpBm = null;
+	public Bitmap hintRightDownBm = null;
 	public ArrayList<Bitmap> girlBitmaps = new ArrayList<Bitmap>();
 
 	public Bitmap powerTube1 = null;
@@ -89,6 +95,11 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public boolean targetIsInScreen = false;
 	public boolean targetIsMoving = false;
 	public double[] targetMoveDirection = {0.0f, 0.0f};
+	private static final int LEFTUP = 0;
+	private static final int LEFTDOWN = 1;
+	private static final int RIGHTUP = 2;
+	private static final int RIGHTDOWN = 3;
+	private int targetLocationState = 0;
 	
 	public Bitmap backgroundStage = null;
 	public int backgroundStageWidth = 0;
@@ -115,7 +126,11 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		hintDoubleHitBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_double_hit);
 		hintTooMissBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_too_miss);
 		hintTooStrongBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_too_strong);
-
+		hintLeftUpBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_left_up);
+		hintLeftDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_left_down);
+		hintRightUpBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_up);
+		hintRightDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_down);
+		
 		powerTube1 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part1);
 		powerTube2 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part2);
 		powerTube3 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part3);
@@ -326,6 +341,22 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		bulletCounterBm[0] = numbersBm[5];
 		bulletCounterBm[1] = numbersBm[0];
 	}
+	
+	private void targetLocationStateJudge(){
+		if (targetCenter[0] < mWidth/2){
+			if (targetCenter[1] < mHeight/2){
+				targetLocationState = LEFTUP;
+			}else {
+				targetLocationState = LEFTDOWN;
+			}
+		}else {
+			if (targetCenter[1] < mHeight/2){
+				targetLocationState = RIGHTUP;
+			}else {
+				targetLocationState = RIGHTDOWN;
+			}
+		}
+	}
 	private void drawBackground() {
 		Matrix testMatrix = new Matrix();
 		testMatrix.setTranslate(backgroundStagePosition[0], backgroundStagePosition[1]);
@@ -360,8 +391,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			mCanvas.drawBitmap(timerBm[0], testMatrix, new Paint());
 		testMatrix.postTranslate(20, 0);
 		if (timerBm[1] != null)
-			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());
-
+			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());	
+		
 	}
 
 	public int achievedCounter = -1;
@@ -443,6 +474,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					heartAnim.setRepeatTimes(1);
 					heartAnim.start(true);
 					heartAnim.setCallback(null);
+					targetLocationStateJudge();
+
 				}
 			});
 			break;
@@ -550,6 +583,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					heartAnim.setRepeatTimes(1);
 					heartAnim.start(true);
 					heartAnim.setCallback(null);
+					targetLocationStateJudge();
 				}
 			});
 
@@ -703,6 +737,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		//Initialize bulletCounter
 		initBulletCounter();
 		
+		targetLocationStateJudge();
+		
 		// Optimize mThread start
 		isRunning = true;
 		mThread = new Thread(this);// 创建一个绘图线程
@@ -765,8 +801,36 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initSound();
 		initConflictData();
 		initBulletCounter();
+		targetLocationStateJudge();
 		MobclickAgent.onEvent(mContext, "cupidCannonStart");
 	}
+ 
+	private Bitmap createHintBitmap(Bitmap src, String str) {
+		String tag = "createBitmap";
+		Log.d(tag, "create a new bitmap");
+		if (src == null) {
+			return null;
+		}
+
+		int w = src.getWidth();
+		int h = src.getHeight();
+
+		// create the new blank bitmap
+		Bitmap newb = Bitmap.createBitmap(w, h, Config.ARGB_8888);// 创建一个新的和SRC长度宽度一样的位图
+		Canvas cv = new Canvas(newb);
+		// draw src into
+		cv.drawBitmap(src, 0, 0, null);// 在 0，0坐标开始画入src
+		// draw str into
+		Paint paint = new Paint();
+		paint.setTextSize(30);
+		paint.setColor(Color.GREEN);
+		cv.drawText(str, w / 7, 4*h / 7, paint);		
+		// save all clip
+		cv.save(Canvas.ALL_SAVE_FLAG);// 保存
+		// store
+		cv.restore();// 存储
+		return newb;
+	}  
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -976,16 +1040,121 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 							double targetCenter2RotateCenter = Math.sqrt((targetCenter[0] - rotateCenter[0]) * (targetCenter[0] - rotateCenter[0]) + (targetCenter[1] - rotateCenter[1]) * (targetCenter[1] - rotateCenter[1]));
 							if (boomCenter2TargetCenter < RADIUS) {
 								achieved = true;
-								hintAnim.setElements(hintHitBm, new Paint());
+								Matrix matrix = new Matrix();
+								switch(targetLocationState){
+								case LEFTUP:
+									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "Hit!!!"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case LEFTDOWN:
+									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "Hit!!!"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTUP:
+									hintAnim.setElements(createHintBitmap(hintRightUpBm, "Hit!!!"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTDOWN:
+									hintAnim.setElements(createHintBitmap(hintRightDownBm, "Hit!!!"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								}
+								
 							} else if (boomCenter2RotateCenter < targetCenter2RotateCenter - RADIUS) {
 								achieved = false;
-								hintAnim.setElements(hintCloudBm, new Paint());
+								Matrix matrix = new Matrix();
+								switch(targetLocationState){
+								case LEFTUP:
+									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "浮云。。。"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case LEFTDOWN:
+									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "浮云。。。"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTUP:
+									hintAnim.setElements(createHintBitmap(hintRightUpBm, "浮云。。。"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTDOWN:
+									hintAnim.setElements(createHintBitmap(hintRightDownBm, "浮云。。。"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								}
 							} else if ((targetCenter2RotateCenter - RADIUS <= boomCenter2RotateCenter) && (boomCenter2RotateCenter <= targetCenter2RotateCenter + RADIUS)) {
 								achieved = false;
-								hintAnim.setElements(hintTooMissBm, new Paint());
+								Matrix matrix = new Matrix();
+								switch(targetLocationState){
+								case LEFTUP:
+									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "打偏了"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case LEFTDOWN:
+									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "打偏了"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTUP:
+									hintAnim.setElements(createHintBitmap(hintRightUpBm, "打偏了"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTDOWN:
+									hintAnim.setElements(createHintBitmap(hintRightDownBm, "打偏了"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								}
 							} else if (boomCenter2RotateCenter > targetCenter2RotateCenter + RADIUS) {
 								achieved = false;
-								hintAnim.setElements(hintTooStrongBm, new Paint());
+								Matrix matrix = new Matrix();
+								switch(targetLocationState){
+								case LEFTUP:
+									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "太用力了"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case LEFTDOWN:
+									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "太用力了"), new Paint());
+									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTUP:
+									hintAnim.setElements(createHintBitmap(hintRightUpBm, "太用力了"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								case RIGHTDOWN:
+									hintAnim.setElements(createHintBitmap(hintRightDownBm, "太用力了"), new Paint());
+									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									hintAnim.setStartMatrix(matrix);
+									hintAnim.setTranslate(0, 0, 1000);
+									break;
+								}
 							}
 							Paint paint = new Paint();
 							paint.setAlpha(0x00);
@@ -1000,11 +1169,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 									hintAnim.start(false);
 								}
 							});
-							Matrix matrix = new Matrix();
-							matrix.setScale(0.7f, 0.7f, 0, 0);
-							matrix.postTranslate(mWidth - 270, mHeight - 350);
-							hintAnim.setStartMatrix(matrix);
-							hintAnim.setTranslate(0, 0, 1000);
 							hintAnim.setRepeatTimes(1);
 							hintAnim.start(true);
 
