@@ -43,6 +43,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	private Thread mThread = null;
 
 	private boolean isRunning = true;
+	private CanvasAnimation handAnim = null;
 	private CanvasAnimation girlAnim = null;
 	private CanvasAnimation hintAnim = null;
 	private CanvasAnimation heartAnim = null;
@@ -65,6 +66,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public Bitmap hintLeftDownBm = null;
 	public Bitmap hintRightUpBm = null;
 	public Bitmap hintRightDownBm = null;
+	public Bitmap handBm = null;
 	public ArrayList<Bitmap> girlBitmaps = new ArrayList<Bitmap>();
 
 	public Bitmap powerTube1 = null;
@@ -123,6 +125,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		hintLeftDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_left_down);
 		hintRightUpBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_up);
 		hintRightDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_down);
+		
+		handBm = BitmapFactory.decodeResource(getResources(), R.drawable.hand);
 		
 		powerTube1 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part1);
 		powerTube2 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part2);
@@ -192,6 +196,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		Matrix initMatrix = new Matrix();
 
+		handAnim = new CanvasAnimation();
+		handAnim.setElements(handBm, new Paint());
+		initMatrix.setTranslate(mWidth/2, mHeight/3);
+		handAnim.setStartMatrix(initMatrix);
+		handAnim.setTranslate(0, mHeight/3, 2000);
+		handAnim.setRepeatTimes(handAnim.INFINITE);
+		handAnim.start(true);
+		
 		girlAnim = new CanvasAnimation();
 		girlAnim.setElements(girlBitmaps.get(0), new Paint());
 		initMatrix.setTranslate(0, 0);
@@ -768,6 +780,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		drawBackground();
 		reconfigureAnimationInstance();
 		targetBorderConflictProbe();
+		
+		if (handAnim != null)
+			handAnim.transformModel(mCanvas);
 		if (hintAnim != null)
 			hintAnim.transformModel(mCanvas);
 		if (bulletAnim != null)
@@ -1065,6 +1080,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		switch (action) {
 		// 触摸按下的事件
 		case MotionEvent.ACTION_DOWN:
+			handAnim = null;
 			Log.v("test", "ACTION_DOWN");
 			powerTubeEnable = true;
 			startX = event.getX();
