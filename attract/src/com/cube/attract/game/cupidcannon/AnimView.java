@@ -60,12 +60,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	private Canvas mCanvas = null;
 	public Bitmap initBackgroundBm = null;
 	// public Bitmap backgroundBm = null;
-	public Bitmap hintCloudBm = null;
-	public Bitmap hintCloud2Bm = null;
-	public Bitmap hintHitBm = null;
-	public Bitmap hintDoubleHitBm = null;
-	public Bitmap hintTooMissBm = null;
-	public Bitmap hintTooStrongBm = null;
+
 	public Bitmap hintLeftUpBm = null;
 	public Bitmap hintLeftDownBm = null;
 	public Bitmap hintRightUpBm = null;
@@ -77,6 +72,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public Bitmap powerTube3 = null;
 	public Bitmap heartBm = null;
 	public Bitmap bulletBm = null;
+	public Bitmap bulletTrackBm = null;
 	public Bitmap boomBm = null;
 	public Bitmap popMaskBm = null;
 
@@ -95,6 +91,11 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public boolean targetIsInScreen = false;
 	public boolean targetIsMoving = false;
 	public double[] targetMoveDirection = {0.0f, 0.0f};
+	public boolean insecuritySpaceUp = false;
+	public boolean insecuritySpaceDown = false;
+	public boolean insecuritySpaceLeft = false;
+	public boolean insecuritySpaceRight = false;
+	
 	private static final int LEFTUP = 0;
 	private static final int LEFTDOWN = 1;
 	private static final int RIGHTUP = 2;
@@ -116,16 +117,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		initBackgroundBm = BitmapFactory.decodeResource(getResources(), R.drawable.welcome_background);
 
-
-
 		backgroundStage = BitmapFactory.decodeResource(getResources(), R.drawable.button_bar);
 
-		hintCloudBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_cloud);
-		hintCloud2Bm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_cloud2);
-		hintHitBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_hit);
-		hintDoubleHitBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_double_hit);
-		hintTooMissBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_too_miss);
-		hintTooStrongBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_too_strong);
 		hintLeftUpBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_left_up);
 		hintLeftDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_left_down);
 		hintRightUpBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_up);
@@ -285,7 +278,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimOdd.setStartMatrix(initMatrix);
 		// configure the battery odd trace matrix
-		initMatrix.setTranslate(rotateCenter[0], 670);
+		initMatrix.setTranslate(rotateCenter[0], rotateCenter[1]-133);
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimOdd.setTraceMatrix(initMatrix);
 
@@ -308,7 +301,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimEven.setStartMatrix(initMatrix);
 		// configure the battery even trace matrix
-		initMatrix.setTranslate(rotateCenter[0], 670);
+		initMatrix.setTranslate(rotateCenter[0], rotateCenter[1]-133);
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimEven.setTraceMatrix(initMatrix);
 
@@ -329,11 +322,18 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	private void initConflictData(){
 		targetTranslateDistance = 5 * mWidth / 2;
 		remainTranslateDistance = targetTranslateDistance;
-		if ((sceneState.x2>= heartAnim.mAnimBitmapWidth/2)&&(sceneState.x2<=mWidth-heartAnim.mAnimBitmapWidth/2)
-				&&(sceneState.y2<=mHeight-200)&&(sceneState.x2>= heartAnim.mAnimBitmapHeight/2))
+		if ((sceneState.x2>= heartAnim.mAnimBitmapWidth/2+5)&&(sceneState.x2<=mWidth-heartAnim.mAnimBitmapWidth/2-5)
+				&&(sceneState.y2<=mHeight-200-5)&&(sceneState.x2>= heartAnim.mAnimBitmapHeight/2+5))
 			targetIsInScreen = true;
+		else
+			targetIsInScreen = false;
 		targetNewStartPosition[0] = sceneState.x2;
 		targetNewStartPosition[1] = sceneState.y2;	
+		
+		insecuritySpaceUp = false;
+		insecuritySpaceDown = false;
+		insecuritySpaceLeft = false;
+		insecuritySpaceRight = false;
 	}
 	
 	private void initBulletCounter(){
@@ -393,6 +393,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		if (timerBm[1] != null)
 			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());	
 		
+//		bulletTrackBm = createBulletTrackBitmap(bulletTrackBm, 100, 100);
+//		mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
 	}
 
 	public int achievedCounter = -1;
@@ -608,85 +610,150 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		if (targetIsInScreen == true){
 			if (targetCenter[0] < heartAnim.mAnimBitmapWidth/2){
 //				targetIsInScreen = false;
-				Log.v(TAG, "targetCenter[0] < heartAnim.mAnimBitmapWidth/2 "+heartAnim.mAnimBitmapWidth/2);
-				remainTranslateDistance = targetTranslateDistance 
-						-(float)Math.sqrt((targetCenter[0]- targetNewStartPosition[0])*(targetCenter[0]- targetNewStartPosition[0]) 
-								+(targetCenter[1]- targetNewStartPosition[1])*(targetCenter[1]- targetNewStartPosition[1]));
-				targetMoveDirection[0] = -targetMoveDirection[0];
-				double vectorX = remainTranslateDistance*targetMoveDirection[0];
-				double vectorY = remainTranslateDistance*targetMoveDirection[1];	
-				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);	
-				targetNewStartPosition[0] = targetCenter[0];
-				targetNewStartPosition[1] = targetCenter[1];
-//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-//				Log.v(TAG, "vectorX = "+vectorX);
-//				Log.v(TAG, "vectorY = "+vectorY);
+				if (insecuritySpaceLeft == false) {
+					insecuritySpaceLeft = true;
+					Log.v(TAG,
+							"targetCenter[0] < heartAnim.mAnimBitmapWidth/2 "
+									+ heartAnim.mAnimBitmapWidth / 2);
+					remainTranslateDistance = targetTranslateDistance
+							- (float) Math
+									.sqrt((targetCenter[0] - targetNewStartPosition[0])
+											* (targetCenter[0] - targetNewStartPosition[0])
+											+ (targetCenter[1] - targetNewStartPosition[1])
+											* (targetCenter[1] - targetNewStartPosition[1]));
+					targetMoveDirection[0] = -targetMoveDirection[0];
+					double vectorX = remainTranslateDistance
+							* targetMoveDirection[0];
+					double vectorY = remainTranslateDistance
+							* targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
+							* remainTranslateDistance / targetTranslateDistance);
+					targetNewStartPosition[0] = targetCenter[0];
+					targetNewStartPosition[1] = targetCenter[1];
+					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+					// Log.v(TAG,
+					// "remainTranslateDistance = "+remainTranslateDistance);
+					// Log.v(TAG,
+					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
+					// Log.v(TAG,
+					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
+					// Log.v(TAG, "vectorX = "+vectorX);
+					// Log.v(TAG, "vectorY = "+vectorY);
+				}
+				
 			}else if (targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2){
 //				targetIsInScreen = false;
-				Log.v(TAG, "targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2 "+(mWidth-heartAnim.mAnimBitmapWidth/2));
-				remainTranslateDistance = targetTranslateDistance 
-						-(float)Math.sqrt((targetCenter[0]- targetNewStartPosition[0])*(targetCenter[0]- targetNewStartPosition[0]) 
-								+(targetCenter[1]- targetNewStartPosition[1])*(targetCenter[1]- targetNewStartPosition[1]));
-				targetMoveDirection[0] = -targetMoveDirection[0];
-				double vectorX = remainTranslateDistance*targetMoveDirection[0];
-				double vectorY = remainTranslateDistance*targetMoveDirection[1];	
-				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);
-				targetNewStartPosition[0] = targetCenter[0];
-				targetNewStartPosition[1] = targetCenter[1];
-//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-//				Log.v(TAG, "vectorX = "+vectorX);
-//				Log.v(TAG, "vectorY = "+vectorY);
+				if (insecuritySpaceRight == false) {
+					insecuritySpaceRight = true;
+					Log.v(TAG,
+							"targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2 "
+									+ (mWidth - heartAnim.mAnimBitmapWidth / 2));
+					remainTranslateDistance = targetTranslateDistance
+							- (float) Math
+									.sqrt((targetCenter[0] - targetNewStartPosition[0])
+											* (targetCenter[0] - targetNewStartPosition[0])
+											+ (targetCenter[1] - targetNewStartPosition[1])
+											* (targetCenter[1] - targetNewStartPosition[1]));
+					targetMoveDirection[0] = -targetMoveDirection[0];
+					double vectorX = remainTranslateDistance
+							* targetMoveDirection[0];
+					double vectorY = remainTranslateDistance
+							* targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
+							* remainTranslateDistance / targetTranslateDistance);
+					targetNewStartPosition[0] = targetCenter[0];
+					targetNewStartPosition[1] = targetCenter[1];
+					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+					// Log.v(TAG,
+					// "remainTranslateDistance = "+remainTranslateDistance);
+					// Log.v(TAG,
+					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
+					// Log.v(TAG,
+					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
+					// Log.v(TAG, "vectorX = "+vectorX);
+					// Log.v(TAG, "vectorY = "+vectorY);
+				}
 			}else if (targetCenter[1] < heartAnim.mAnimBitmapHeight/2){
 //				targetIsInScreen = false;
-				Log.v(TAG, "targetCenter[1] < heartAnim.mAnimBitmapHeight/2 "+heartAnim.mAnimBitmapHeight/2 );
-				remainTranslateDistance = targetTranslateDistance 
-						-(float)Math.sqrt((targetCenter[0]- targetNewStartPosition[0])*(targetCenter[0]- targetNewStartPosition[0]) 
-								+(targetCenter[1]- targetNewStartPosition[1])*(targetCenter[1]- targetNewStartPosition[1]));
-				targetMoveDirection[1] = -targetMoveDirection[1];
-				double vectorX = remainTranslateDistance*targetMoveDirection[0];
-				double vectorY = remainTranslateDistance*targetMoveDirection[1];	
-				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);
-				targetNewStartPosition[0] = targetCenter[0];
-				targetNewStartPosition[1] = targetCenter[1];
-//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-//				Log.v(TAG, "vectorX = "+vectorX);
-//				Log.v(TAG, "vectorY = "+vectorY);
+				if (insecuritySpaceUp == false) {
+					insecuritySpaceUp = true;
+					Log.v(TAG,
+							"targetCenter[1] < heartAnim.mAnimBitmapHeight/2 "
+									+ heartAnim.mAnimBitmapHeight / 2);
+					remainTranslateDistance = targetTranslateDistance
+							- (float) Math
+									.sqrt((targetCenter[0] - targetNewStartPosition[0])
+											* (targetCenter[0] - targetNewStartPosition[0])
+											+ (targetCenter[1] - targetNewStartPosition[1])
+											* (targetCenter[1] - targetNewStartPosition[1]));
+					targetMoveDirection[1] = -targetMoveDirection[1];
+					double vectorX = remainTranslateDistance
+							* targetMoveDirection[0];
+					double vectorY = remainTranslateDistance
+							* targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
+							* remainTranslateDistance / targetTranslateDistance);
+					targetNewStartPosition[0] = targetCenter[0];
+					targetNewStartPosition[1] = targetCenter[1];
+					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+					// Log.v(TAG,
+					// "remainTranslateDistance = "+remainTranslateDistance);
+					// Log.v(TAG,
+					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
+					// Log.v(TAG,
+					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
+					// Log.v(TAG, "vectorX = "+vectorX);
+					// Log.v(TAG, "vectorY = "+vectorY);
+				}
 			}else if (targetCenter[1] > mHeight-200){
-				Log.v(TAG, "targetCenter[1] > mHeight-200 "+(mHeight-200));
-				remainTranslateDistance = targetTranslateDistance 
-						-(float)Math.sqrt((targetCenter[0]- targetNewStartPosition[0])*(targetCenter[0]- targetNewStartPosition[0]) 
-								+(targetCenter[1]- targetNewStartPosition[1])*(targetCenter[1]- targetNewStartPosition[1]));
-				targetMoveDirection[1] = -targetMoveDirection[1];
-				double vectorX = remainTranslateDistance*targetMoveDirection[0];
-				double vectorY = remainTranslateDistance*targetMoveDirection[1];	
-				girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000*remainTranslateDistance/targetTranslateDistance);
-				targetNewStartPosition[0] = targetCenter[0];
-				targetNewStartPosition[1] = targetCenter[1];
-//				Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-//				Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-//				Log.v(TAG, "remainTranslateDistance = "+remainTranslateDistance);
-//				Log.v(TAG, "targetMoveDirection[0] = "+targetMoveDirection[0]);
-//				Log.v(TAG, "targetMoveDirection[1] = "+targetMoveDirection[1]);
-//				Log.v(TAG, "vectorX = "+vectorX);
-//				Log.v(TAG, "vectorY = "+vectorY);
+				if (insecuritySpaceDown == false) {
+					insecuritySpaceDown = true;
+					Log.v(TAG, "targetCenter[1] > mHeight-200 "
+							+ (mHeight - 200));
+					remainTranslateDistance = targetTranslateDistance
+							- (float) Math
+									.sqrt((targetCenter[0] - targetNewStartPosition[0])
+											* (targetCenter[0] - targetNewStartPosition[0])
+											+ (targetCenter[1] - targetNewStartPosition[1])
+											* (targetCenter[1] - targetNewStartPosition[1]));
+					targetMoveDirection[1] = -targetMoveDirection[1];
+					double vectorX = remainTranslateDistance
+							* targetMoveDirection[0];
+					double vectorY = remainTranslateDistance
+							* targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
+							* remainTranslateDistance / targetTranslateDistance);
+					targetNewStartPosition[0] = targetCenter[0];
+					targetNewStartPosition[1] = targetCenter[1];
+					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
+					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
+					// Log.v(TAG,
+					// "remainTranslateDistance = "+remainTranslateDistance);
+					// Log.v(TAG,
+					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
+					// Log.v(TAG,
+					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
+					// Log.v(TAG, "vectorX = "+vectorX);
+					// Log.v(TAG, "vectorY = "+vectorY);
+				}
 			}
 		}else{
 			if ((targetCenter[0]>heartAnim.mAnimBitmapWidth/2)&&(targetCenter[0]<mWidth-heartAnim.mAnimBitmapWidth/2)
 					&&(targetCenter[1]>heartAnim.mAnimBitmapHeight/2)&&(targetCenter[1]<mHeight-200))
 				targetIsInScreen = true;	
 		}
+		
+		if (targetCenter[0]>heartAnim.mAnimBitmapWidth/2+5)
+			insecuritySpaceLeft = false;	
+		if (targetCenter[0]<mWidth-heartAnim.mAnimBitmapWidth/2-5)
+			insecuritySpaceRight = false;
+		if (targetCenter[1]>heartAnim.mAnimBitmapHeight/2+5)
+			insecuritySpaceUp = false;
+		if (targetCenter[1]<mHeight-200-5)
+			insecuritySpaceDown = false;
 	}
 	private void drawAnimationInstance() {
 		mCanvas.drawBitmap(initBackgroundBm, 0, 0, new Paint());
@@ -725,7 +792,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		backgroundStageHeight = backgroundStage.getHeight();
 		backgroundStagePosition[0] = -(backgroundStageWidth - mWidth) / 2;
 		backgroundStagePosition[1] = mHeight - backgroundStageHeight;
-		
+		bulletTrackBm = Bitmap.createBitmap(mWidth, mHeight, Config.ARGB_8888);
+
 		
 		initGirlBitmaps();
 		initAnimationInstance();
@@ -792,16 +860,17 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	
 	public void againChallenge() {
 		trigger = false;
-		timeCounter = 99000;
 		achievedCounter = -1;
 		gameEnded = false;
 		achieved = false;
+		initBulletCounter();
+		timeCounter = 99000;
 		initGirlBitmaps();
 		initAnimationInstance();
 		initSound();
-		initConflictData();
-		initBulletCounter();
+		initConflictData();		
 		targetLocationStateJudge();
+		timeCounter = 99000;
 		MobclickAgent.onEvent(mContext, "cupidCannonStart");
 	}
  
@@ -832,6 +901,33 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		return newb;
 	}  
 
+	private Bitmap createBulletTrackBitmap(Bitmap src, float x, float y) {
+		String tag = "createBitmap";
+		Log.d(tag, "create a new bitmap");
+		if (src == null) {
+			return null;
+		}
+
+		int w = src.getWidth();
+		int h = src.getHeight();
+
+		// create the new blank bitmap
+		Bitmap newb = Bitmap.createBitmap(w, h, Config.ARGB_8888);// 创建一个新的和SRC长度宽度一样的位图
+		Canvas cv = new Canvas(newb);
+		// draw src into
+		cv.drawBitmap(src, 0, 0, null);// 在 0，0坐标开始画入src
+		// draw str into
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setColor(Color.WHITE);
+		cv.drawCircle(x, y, 10, paint);
+		// save all clip
+		cv.save(Canvas.ALL_SAVE_FLAG);// 保存
+		// store
+		cv.restore();// 存储
+		return newb;
+	} 
+	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 

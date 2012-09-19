@@ -229,7 +229,7 @@ public class GlRenderer implements Renderer {
 			gl.glDisable(GL10.GL_BLEND);
 			gl.glEnable(GL10.GL_CULL_FACE);
 		}
-		sceneState.isLocked[1] = false;
+		sceneState.isLocked[5] = true;
 		sceneState.isLocked[2] = true;
 		sceneState.isLocked[3] = true;
 		sceneState.isLocked[4] = true;
