@@ -393,8 +393,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		if (timerBm[1] != null)
 			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());	
 		
-//		bulletTrackBm = createBulletTrackBitmap(bulletTrackBm, 100, 100);
-//		mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
+		if ((bulletAnim != null)&&(bulletAnim.remainTime != 0)) {
+				float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+						0.0f, 0.0f };
+				bulletAnim.traceMatrix.getValues(array);
+				createBulletTrackBitmap(bulletTrackBm, array[2], array[5]);
+		}
+		if((targetIsMoving == false)&&(bulletTrackBm != null))
+			mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
 	}
 
 	public int achievedCounter = -1;
@@ -806,6 +812,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initBulletCounter();
 		
 		targetLocationStateJudge();
+		bulletTrackBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
 		
 		// Optimize mThread start
 		isRunning = true;
@@ -865,6 +872,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		achieved = false;
 		initBulletCounter();
 		timeCounter = 99000;
+		bulletTrackBm = null;
 		initGirlBitmaps();
 		initAnimationInstance();
 		initSound();
@@ -901,21 +909,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		return newb;
 	}  
 
-	private Bitmap createBulletTrackBitmap(Bitmap src, float x, float y) {
+	private void createBulletTrackBitmap(Bitmap src, float x, float y) {
 		String tag = "createBitmap";
 		Log.d(tag, "create a new bitmap");
 		if (src == null) {
-			return null;
+			return;
 		}
-
-		int w = src.getWidth();
-		int h = src.getHeight();
-
-		// create the new blank bitmap
-		Bitmap newb = Bitmap.createBitmap(w, h, Config.ARGB_8888);// 创建一个新的和SRC长度宽度一样的位图
-		Canvas cv = new Canvas(newb);
-		// draw src into
-		cv.drawBitmap(src, 0, 0, null);// 在 0，0坐标开始画入src
+	
+		Canvas cv = new Canvas(src);
 		// draw str into
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
@@ -925,7 +926,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		cv.save(Canvas.ALL_SAVE_FLAG);// 保存
 		// store
 		cv.restore();// 存储
-		return newb;
 	} 
 	
 	@Override
@@ -1118,6 +1118,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			vector[0] = array2[2] - rotateCenter[0];
 			vector[1] = array2[5] - rotateCenter[1];
 			bulletAnim = new CanvasAnimation();
+			bulletTrackBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
 			bulletAnim.setCallback(new CanvasAnimation.Callback() {
 
 				@Override
