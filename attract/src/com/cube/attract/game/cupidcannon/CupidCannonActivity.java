@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.cube.attract.R;
-import com.cube.attract.entry.EntryActivity;
 import com.cube.common.LocalData;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.api.sns.UMSnsService;

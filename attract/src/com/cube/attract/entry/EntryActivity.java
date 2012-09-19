@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.opengl.GLSurfaceView;
@@ -110,18 +109,15 @@ public class EntryActivity extends Activity {
 
 			startX = event.getX();
 			startY = event.getY();
-//			float normalX = startX*480/sceneState.screenWidth;
-			float normalY = startY * 800/sceneState.screenHeight;
+			// float normalX = startX*480/sceneState.screenWidth;
+			float normalY = startY * 800 / sceneState.screenHeight;
 			Log.d("Point:", "startY:" + startY + "  startX:" + startX);
 			if (normalY > 180) {
 				sceneState.eventType = sceneState.CUB;
 				sceneState.saveRotation();
-				if(normalY > 625){
-					Intent activity = new Intent(Intent.ACTION_MAIN);
-					activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					activity.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
-					context.startActivity(activity);
-					this.finish();
+				if (normalY > 625) {
+					renderer.status = "EnteringGameEntry";
+					renderer.button.addAnimation(renderer.rotateButton);
 				}
 			} else {
 				renderer.logo.addAnimation(renderer.rotateLogo);

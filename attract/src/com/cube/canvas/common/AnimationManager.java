@@ -98,6 +98,8 @@ public class AnimationManager {
 	}
 
 	public class AnimationBitmap {
+		public int width=0;
+		public int height=0;
 		public Bitmap bitmap = null;
 		public Matrix matrix = null;
 		ArrayList<CanvasAnimation2> animationPool = new ArrayList<CanvasAnimation2>();
