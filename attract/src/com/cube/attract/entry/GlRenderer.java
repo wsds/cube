@@ -699,7 +699,7 @@ public class GlRenderer implements Renderer {
 		texture[PROMPT + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.prompt_add_girl);
 		texture[PROMPT + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.prompt_rule_selected);
 		texture[PROMPT + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.prompt_shake);
-		texture[BUTTON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.ccc);
+		texture[BUTTON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.beauty_library);
 		for (int i = 0; i < textureNum; i++) {
 
 			// setup texture 0
