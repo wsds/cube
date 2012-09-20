@@ -411,7 +411,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				bulletAnim.traceMatrix.getValues(array);
 				createBulletTrackBitmap(bulletTrackBm, array[2], array[5]);
 		}
-		if((targetIsMoving == false)&&(bulletTrackBm != null))
+		if((targetIsMoving == false)&&(achievedCounter < 1)&&(bulletTrackBm != null))
 			mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
 	}
 
@@ -803,14 +803,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public void surfaceCreated(SurfaceHolder holder) {
 		mWidth = this.getWidth();
 		mHeight = this.getHeight();
-		powerTubeBaseAdress[0] = 28;
+		backgroundStageWidth = backgroundStage.getWidth();
+		backgroundStageHeight = backgroundStage.getHeight();
+		powerTubeBaseAdress[0] = mWidth/2-212;
 		powerTubeBaseAdress[1] = mHeight - 30;
 		rotateCenter[0] = mWidth / 2 + 3;
 		rotateCenter[1] = mHeight + 3;
 		memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 		mCanvas = new Canvas(memBm);
-		backgroundStageWidth = backgroundStage.getWidth();
-		backgroundStageHeight = backgroundStage.getHeight();
 		backgroundStagePosition[0] = -(backgroundStageWidth - mWidth) / 2;
 		backgroundStagePosition[1] = mHeight - backgroundStageHeight;
 		bulletTrackBm = Bitmap.createBitmap(mWidth, mHeight, Config.ARGB_8888);
