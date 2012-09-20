@@ -233,15 +233,23 @@ public class GlRenderer implements Renderer {
 		sceneState.isLocked[2] = true;
 		sceneState.isLocked[3] = true;
 		sceneState.isLocked[4] = true;
-		drawPolygon(gl, 0, -0.316f, sceneState.isLocked[1], sceneState.isSelected[1]);// 2
-		drawPolygon(gl, -1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[0], sceneState.isSelected[0]);// 1
-		drawPolygon(gl, 1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[2], sceneState.isSelected[2]);// 3
-		drawPolygon(gl, -0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE, sceneState.isLocked[3], sceneState.isSelected[3]);// 4
-		drawPolygon(gl, 0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE, sceneState.isLocked[4], sceneState.isSelected[4]);// 5
-		drawPolygon(gl, 0, -0.316f - 3 * UNIT_SIZE, sceneState.isLocked[5], sceneState.isSelected[5]);// 6
+		sceneState.isLocked[5] = true;
+		
+		
+		
 		animationManager.draw(gl);
 		drawGirlNumber(gl);
 		drawReturnButton(gl);
+		
+		drawPolygon(gl, 0, -0.316f, sceneState.isLocked[1], sceneState.isSelected[1],1);// 2
+		drawPolygon(gl, -1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[0], sceneState.isSelected[0],0);// 1
+		drawPolygon(gl, 1.6f * UNIT_SIZE, -0.31616f, sceneState.isLocked[2], sceneState.isSelected[2],2);// 3
+		drawPolygon(gl, -0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE, sceneState.isLocked[3], sceneState.isSelected[3],3);// 4
+		drawPolygon(gl, 0.8f * UNIT_SIZE, -0.316f - 1.5f * UNIT_SIZE, sceneState.isLocked[4], sceneState.isSelected[4],4);// 5
+		drawPolygon(gl, 0, -0.316f - 3 * UNIT_SIZE, sceneState.isLocked[5], sceneState.isSelected[5],5);// 6
+		
+		
+		
 
 	}
 
@@ -251,6 +259,7 @@ public class GlRenderer implements Renderer {
 		gl.glLoadIdentity();
 		gl.glTranslatef(-0.06f, 1.13f, -4f);
 
+		gl.glEnable(GL10.GL_BLEND);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -291,6 +300,8 @@ public class GlRenderer implements Renderer {
 
 		gl.glLoadIdentity();
 		gl.glColor4f(1f, 1f, 1f, 1f);
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glTranslatef(-1.6f * UNIT_SIZE, 1.43f, -4.5f);
 		
@@ -304,27 +315,27 @@ public class GlRenderer implements Renderer {
 
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glDisable(GL10.GL_TEXTURE_2D);
+		gl.glDisable(GL10.GL_BLEND);
 		
 	}
-	public void drawPolygon(GL10 gl, float xaxis, float yaxis, boolean isLocked, boolean isSelected) {
+	public void drawPolygon(GL10 gl, float xaxis, float yaxis, boolean isLocked, boolean isSelected,int Index) {
 
 		if (isLocked) {
 			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 0));
 		} else {
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + 1));
+			gl.glBindTexture(GL10.GL_TEXTURE_2D, texturesBuffer.get(POLYGON + Index+1));
 		}
 
 		gl.glLoadIdentity();
-		gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
+//		gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
 		if (isSelected) {
-			gl.glBindTexture(GL10.GL_TEXTURE_2D,texturesBuffer.get(POLYGON + 2));
+			gl.glBindTexture(GL10.GL_TEXTURE_2D,texturesBuffer.get(POLYGON + Index+7));
 //			gl.glColor4f(1f, 0.4f, 0.4f, 1f);
 		}/* else {
 			gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
 		}*/
 
-		// gl.glDisable(GL10.GL_BLEND);
+//		 gl.glDisable(GL10.GL_BLEND);
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glTranslatef(xaxis, yaxis, -4.5f);
 
@@ -339,6 +350,7 @@ public class GlRenderer implements Renderer {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_TEXTURE_2D);
+//		gl.glEnable(GL10.GL_BLEND);
 	}
 
 	public long lastMillis = 0;
@@ -374,6 +386,8 @@ public class GlRenderer implements Renderer {
 			float angle = (float) (-sceneState.pictureViewGallary.pictureView[j].radian * 180 / PI) % 360;
 
 			gl.glRotatef(angle, 0, -1, 0);
+//			gl.glDisable(GL10.GL_BLEND);
+			
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -385,6 +399,7 @@ public class GlRenderer implements Renderer {
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 			gl.glDisable(GL10.GL_TEXTURE_2D);
+//			gl.glEnable(GL10.GL_BLEND);
 			gl.glPopMatrix();
 		}
 		long currentMillis = System.currentTimeMillis();
@@ -444,7 +459,7 @@ public class GlRenderer implements Renderer {
 	private IntBuffer texturesBuffer;
 	LocalData localData = LocalData.getInstance();
 	public int POLYGON = 0;
-	public int BACKGROUND = POLYGON + 3;
+	public int BACKGROUND = POLYGON + 13;
 	public int GIRLSINDEX = BACKGROUND + 1;
 	public int GIRLSINDEX_S = GIRLSINDEX + 10;
 	public int RETURNBUTTON = GIRLSINDEX_S+10;
@@ -462,8 +477,20 @@ public class GlRenderer implements Renderer {
 		Bitmap[] texture = new Bitmap[textureNum];
 
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_locked);
-		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_cupid);
-		texture[POLYGON + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_cupid_down);
+		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon1);
+		texture[POLYGON + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
+		texture[POLYGON + 3] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
+		texture[POLYGON + 4] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
+		texture[POLYGON + 5] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
+		texture[POLYGON + 6] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
+		texture[POLYGON + 7] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon1down);		
+		texture[POLYGON + 8] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
+		texture[POLYGON + 9] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
+		texture[POLYGON + 10] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
+		texture[POLYGON + 11] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
+		texture[POLYGON + 12] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);	
+		
+		
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.gameentry_background);
 		texture[GIRLSINDEX + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.number_0);
 		texture[GIRLSINDEX + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.number_1);
