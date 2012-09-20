@@ -4,7 +4,7 @@
     <translate
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:duration="600"
-        android:fromXDelta="600"
+        android:fromXDelta="900"
         android:fromYDelta="0"
         android:toXDelta="-10"
         android:toYDelta="0" />
@@ -16,6 +16,5 @@
         android:startOffset="600"
         android:toXDelta="0"
         android:toYDelta="0" />
-    
-
+ 
 </set>
