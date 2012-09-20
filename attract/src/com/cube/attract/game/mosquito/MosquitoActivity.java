@@ -161,7 +161,7 @@ public class MosquitoActivity extends Activity {
 
 			builder.setMessage("真的要走吗，亲？");
 
-			builder.setPositiveButton("退出", new DialogInterface.OnClickListener() {
+			builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
 
 				public void onClick(DialogInterface dialog, int whichButton) {
 					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
