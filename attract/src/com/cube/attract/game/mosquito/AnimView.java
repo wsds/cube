@@ -157,9 +157,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		ArrayList<AnimationBitmap> covers = new ArrayList<AnimationBitmap>();
 		Random random = null;
 
+		int mosquitoWidth = 0;
+		int mosquitoHeight = 0;
+
 		public void initaize() {
 			Bitmap mosquito1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
-			Bitmap mosquito2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito1);
+			Bitmap mosquito2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_mosquito2);
+			mosquitoWidth = mosquito1.getWidth();
+			mosquitoHeight = mosquito1.getHeight();
 			random = new Random(System.currentTimeMillis());
 			for (int i = 0; i < count; i++) {
 				Mosquito mosquito = new Mosquito();
@@ -175,8 +180,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 				mosquito.y = (int) (random.nextInt(600 * 10) % (mHeight * 0.8 - 150));
 				mosquito.direction = random.nextInt(1000) % 180;
 				// mosquito.direction = 45;
-				mosquito.animationBitmap.matrix.setTranslate(mosquito.x - 64, mosquito.y - 64);
-				mosquito.animationBitmap.matrix.preScale(0.25f, 0.25f);
+				mosquito.animationBitmap.matrix.setTranslate(mosquito.x - mosquitoWidth * 0.18f / 2, mosquito.y - mosquitoHeight * 0.18f / 2);
+				mosquito.animationBitmap.matrix.preScale(0.18f, 0.18f);
 				if (Math.cos(mosquito.direction * Math.PI / 180) < 0) {
 					mosquito.animationBitmap.matrix.preScale(-1, 1);
 				}
@@ -196,11 +201,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 				public void onEnd() {
 					mosquito.x = mosquito.x + mosquito.directionX;
 					mosquito.y = mosquito.y + mosquito.directionY;
-					if (mosquito.x < -50 || mosquito.x > mWidth + 50) {
+
+					if (mosquito.x < -50 && Math.cos(mosquito.direction * Math.PI / 180) < 0) {
 						mosquito.direction = (180 - mosquito.direction) % 360 + (random.nextInt(10) - 5);
 						mosquito.animationBitmap.matrix.preScale(-1, 1);
 					}
-					if (mosquito.y < -150 || mosquito.y > mHeight * 0.8 - 150) {
+					if (mosquito.x > mWidth + 50 && Math.cos(mosquito.direction * Math.PI / 180) >= 0) {
+						mosquito.direction = (180 - mosquito.direction) % 360 + (random.nextInt(10) - 5);
+						mosquito.animationBitmap.matrix.preScale(-1, 1);
+					}
+					if (mosquito.y < -150 && Math.sin(mosquito.direction * Math.PI / 180) < 0) {
+						mosquito.direction = -mosquito.direction + (random.nextInt(10) - 5);
+					}
+					if (mosquito.y > mHeight * 0.9 - 150 && Math.sin(mosquito.direction * Math.PI / 180) >= 0) {
 						mosquito.direction = -mosquito.direction + (random.nextInt(10) - 5);
 					}
 					fly(mosquito);
@@ -216,16 +229,34 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 				float distance = (mosquito.x - currentX) * (mosquito.x - currentX) + (mosquito.y - currentY) * (mosquito.y - currentY);
 				if (distance < 10000) {
 					mosquito.blood--;
+					final AnimationBitmap blood = animationDynamicManager.addAnimationBitmap(bloodBitmap);
+
+					blood.matrix.setRotate((float) angle1, bloodWidth * 0.5f / 2, bloodHeight * 0.5f / 2);
+					blood.matrix.postTranslate(currentX - bloodWidth * 0.5f / 2, currentY - bloodHeight * 0.5f / 2);
+					blood.matrix.preScale(0.5f, 0.5f);
+					blooding(blood);
 					if (mosquito.blood == 0) {
 						mosquito.die(currentX, currentY, angle1);
 					}
 				}
 			}
 		}
+
+		void blooding(final AnimationBitmap blood) {
+			CanvasAnimation2 explodeAnimation = new CanvasAnimation2();
+			explodeAnimation.setScale(2f, bloodWidth / 2, bloodHeight / 2, 1000);
+			blood.addAnimation(explodeAnimation);
+			explodeAnimation.setCallback(new Callback() {
+				@Override
+				public void onEnd() {
+					animationDynamicManager.removeAnimationBitmap(blood);
+				}
+			});
+		}
 	}
 
 	public AnimationBitmap background = null;
-	public AnimationBitmap cannon_based = null;
+	// public AnimationBitmap cannon_based = null;
 	public AnimationBitmap cannon = null;
 	public AnimationBitmap mosquito1 = null;
 	public AnimationBitmap mosquito2 = null;
@@ -273,22 +304,33 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		Log.v(TAG, "sx is " + sx);
 		background.matrix.setScale(sx, sx);
 
+		sx = ((float) mWidth / 480f);
 		AnimationBitmap cover1 = animationManager.addAnimationBitmap(R.drawable.game2_cover1);
+		float cx = ((float) mWidth / cover1.bitmap.getWidth());
+		float cy = ((float) mHeight / cover1.bitmap.getHeight());
+		cover1.matrix.setScale(cx, cy);
 		mosquitosPool.covers.add(cover1);
 		AnimationBitmap cover2 = animationManager.addAnimationBitmap(R.drawable.game2_cover2);
+		cover2.matrix.setScale(cx, cy);
 		mosquitosPool.covers.add(cover2);
 		AnimationBitmap cover3 = animationManager.addAnimationBitmap(R.drawable.game2_cover3);
+		cover3.matrix.setScale(cx, cy);
 		mosquitosPool.covers.add(cover3);
 		AnimationBitmap cover4 = animationManager.addAnimationBitmap(R.drawable.game2_cover4);
+		cover4.matrix.setScale(cx, cy);
 		mosquitosPool.covers.add(cover4);
 		AnimationBitmap cover5 = animationManager.addAnimationBitmap(R.drawable.game2_cover5);
+		cover5.matrix.setScale(cx, cy);
 		mosquitosPool.covers.add(cover5);
 
-		cannon_based = animationManager.addAnimationBitmap(R.drawable.game2_cannon_based);
-		cannon_based.matrix.setTranslate((mWidth - 271) / 2, mHeight - 122);
+		// cannon_based = animationManager.addAnimationBitmap(R.drawable.game2_cannon_based);
+		// cannon_based.matrix.setTranslate((mWidth - 271) / 2, mHeight - 122);
 
-		cannon = animationDynamicManager1.addAnimationBitmap(R.drawable.game2_cannon2);
-		cannon.matrix.setTranslate((mWidth - 149) / 2, mHeight - 142);
+		cannon = animationDynamicManager1.addAnimationBitmap(R.drawable.game2_cannon3);
+		cannon.width = cannon.bitmap.getWidth();
+		cannon.height = cannon.bitmap.getHeight();
+		Log.e(TAG, "cannon width:" + cannon.bitmap.getWidth() + ",cannon height" + cannon.bitmap.getHeight());
+		cannon.matrix.setTranslate((mWidth - cannon.width) / 2, mHeight - 142);
 
 		mosquitosPool.initaize();
 		soundPool.play(startSound, 0.2f, 0.2f, 1, 0, 1f);
@@ -328,11 +370,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		mWidth = this.getWidth();
 		mHeight = this.getHeight();
-
+		Log.e(TAG, "mHeight is " + mHeight + "  mWidth is " + mWidth);
 		memBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
 		mCanvas = new Canvas(memBitmap);
 		shellBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_shell);
-		cloudBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_cloud);
+		shellWidth = shellBitmap.getWidth();
+		cloudBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_cloud3);
+		cloudWidth = cloudBitmap.getWidth();
+		cloudHeight = cloudBitmap.getHeight();
+
+		bloodBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_blood1);
+		bloodWidth = bloodBitmap.getWidth();
+		bloodHeight = bloodBitmap.getHeight();
+
 		initSoundPool();
 		initAnimationInstance();
 
@@ -391,13 +441,20 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		double y = mHeight - 40 - currentY;
 		double theta = Math.atan2(x, y);
 		double angle = theta / Math.PI * 180;
-		cannon.matrix.setRotate((float) angle, 75, 106);
-		cannon.matrix.postTranslate((mWidth - 149) / 2, mHeight - 142);
+		cannon.matrix.setRotate((float) angle, cannon.width / 2, 106);
+		cannon.matrix.postTranslate((mWidth - cannon.width) / 2, mHeight - 142);
 		return (float) angle;
 	}
 
 	Bitmap shellBitmap = null;
+	int shellWidth = 0;
 	Bitmap cloudBitmap = null;
+
+	int cloudWidth = 0;
+	int cloudHeight = 0;
+	Bitmap bloodBitmap = null;
+	int bloodWidth = 0;
+	int bloodHeight = 0;
 
 	void fire(final float currentX, final float currentY, float angle1) {
 		double dx = currentX - mWidth / 2;
@@ -407,8 +464,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		double speed = (dx * dx + dy * dy) / (mWidth * mWidth + mHeight * mHeight) * 500;
 		final AnimationBitmap shell = animationDynamicManager.addAnimationBitmap(shellBitmap);
 
-		shell.matrix.setRotate((float) angle, 23, 66);
-		shell.matrix.postTranslate((mWidth - 23) / 2, mHeight - 92);
+		shell.matrix.setRotate((float) angle, shellWidth * 0.5f / 2, 66);
+		shell.matrix.postTranslate((mWidth - shellWidth * 0.5f) / 2, mHeight - 102);
 		shell.matrix.preScale(0.5f, 0.8f);
 
 		CanvasAnimation2 fireAnimation = new CanvasAnimation2();
@@ -420,8 +477,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 				animationDynamicManager.removeAnimationBitmap(shell);
 				final AnimationBitmap cloud = animationDynamicManager.addAnimationBitmap(cloudBitmap);
 
-				cloud.matrix.setRotate((float) angle, 23, 66);
-				cloud.matrix.postTranslate(currentX - 41, currentY - 48);
+				cloud.matrix.setRotate((float) angle, cloudWidth * 0.5f / 2, cloudHeight * 0.5f / 2);
+				cloud.matrix.postTranslate(currentX - cloudWidth * 0.5f / 2, currentY - cloudHeight * 0.5f / 2);
 				cloud.matrix.preScale(0.5f, 0.5f);
 				explode(cloud);
 				mosquitosPool.hit(currentX, currentY, (float) angle);
@@ -433,7 +490,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 	void explode(final AnimationBitmap cloud) {
 		CanvasAnimation2 explodeAnimation = new CanvasAnimation2();
-		explodeAnimation.setScale(3f, 82, 96, 200);
+		explodeAnimation.setScale(3f, cloudWidth / 2, cloudHeight / 2, 200);
 		cloud.addAnimation(explodeAnimation);
 		explodeAnimation.setCallback(new Callback() {
 			@Override

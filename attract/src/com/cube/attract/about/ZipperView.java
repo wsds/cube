@@ -1,7 +1,5 @@
 package com.cube.attract.about;
 
-import com.cube.attract.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +13,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.cube.attract.R;
 
 public class ZipperView extends View {
 
@@ -34,6 +34,10 @@ public class ZipperView extends View {
 	private int[] newBackgroundByte;
 	Context context = null;
 
+	Bitmap leftBitmap = null;
+	Bitmap rightBitmap = null;
+	Bitmap zipperbitmap = null;
+
 	public ZipperView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
@@ -41,11 +45,13 @@ public class ZipperView extends View {
 	}
 
 	private void init() {
-		mDrawbleBackground = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+		mDrawbleBackground = BitmapFactory.decodeResource(getResources(), R.drawable.welcome);
 		mDrawbleZipperBack = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_back);
 		mZipper = BitmapFactory.decodeResource(getResources(), R.drawable.zipper);
 		mLeft = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_left);
 		mRight = BitmapFactory.decodeResource(getResources(), R.drawable.zipper_right);
+
+		zipperbitmap = Bitmap.createScaledBitmap(mZipper, 50, 100, false);
 	}
 
 	@Override
@@ -70,47 +76,67 @@ public class ZipperView extends View {
 	}
 
 	private void drawLeft(Canvas canvas) {
-		Bitmap left = Bitmap.createScaledBitmap(mLeft, mWidth / 2, mHeight, false);
-		canvas.drawBitmap(left, 0, movedY - left.getHeight(), new Paint());
+		leftBitmap = Bitmap.createScaledBitmap(mLeft, mWidth / 2, mHeight, false);
+		canvas.drawBitmap(leftBitmap, 0, movedY - leftBitmap.getHeight(), new Paint());
 	}
 
 	private void drawRight(Canvas canvas) {
-		Bitmap right = Bitmap.createScaledBitmap(mRight, mWidth / 2, mHeight, false);
-		canvas.drawBitmap(right, right.getWidth(), movedY - right.getHeight(), new Paint());
+		rightBitmap = Bitmap.createScaledBitmap(mRight, mWidth / 2, mHeight, false);
+		canvas.drawBitmap(rightBitmap, rightBitmap.getWidth(), movedY - rightBitmap.getHeight(), new Paint());
 	}
 
-	// private float startX, startY;
 	private float startY;
-	Boolean istartingActivityBoolean = false;
+	private float startMovedY;
+
+	String status = "None";
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_MOVE:
 			Log.d("ZipperView", "ACTION_MOVE");
-			// float dx = event.getX() - startX;
 			float dy = event.getY() - startY;
-			movedY = dy;
-
-			if (movedY > 600) {
-				if (istartingActivityBoolean == false) {
-					istartingActivityBoolean = true;
-					Intent entry = new Intent(Intent.ACTION_MAIN);
-					entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
-					context.startActivity(entry);
-					((Activity) context).finish();
+			if (status == "ZipperPressed" || status == "ZipperOpened") {
+				float moveY = startMovedY + dy;
+				Log.d("ZipperView", "moving");
+				float line = 600f / 800f * (float) mHeight;
+				if (moveY > line) {
+					status = "ZipperOpened";
+				} else {
+					status = "ZipperPressed";
 				}
-			} else {
-				istartingActivityBoolean = false;
+				movedY = moveY;
 				postInvalidate();
-
 			}
+
 			break;
 		case MotionEvent.ACTION_DOWN:
 			Log.d("ZipperView", "ACTION_DOWN");
-			// startX = event.getX();
 			startY = event.getY();
+			startMovedY = movedY;
+			if (status == "None" && (movedY + 22 - startY) * (movedY + 22 - startY) < 1936 * 4) {
+				status = "ZipperPressed";
+				Log.d("ZipperView", "ZipperPressed");
+			}
+			break;
+
+		case MotionEvent.ACTION_UP:
+			if (status == "ZipperPressed") {
+				status = "None";
+			} else if (status == "ZipperOpened") {
+				((AboutActivity) context).soundPool.play(((AboutActivity) context).effect_tick, 0.2f, 0.2f, 1, 0, 1f);
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				Intent entry = new Intent(Intent.ACTION_MAIN);
+				entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+				context.startActivity(entry);
+				((Activity) context).finish();
+			}
 			break;
 		default:
 			break;
@@ -121,13 +147,13 @@ public class ZipperView extends View {
 	}
 
 	private void drawZipper(Canvas canvas) {
-		Bitmap zipperbitmap = Bitmap.createScaledBitmap(mZipper, 50, 100, false);
+
 		canvas.drawBitmap(zipperbitmap, (mWidth - 50) / 2, movedY, new Paint());
 	}
 
 	private int[] getBitmapByte(Bitmap bitmap) {
 		int[] bytes;
-		
+
 		int bitmapWidth = bitmap.getWidth();
 		int bitmapHeight = bitmap.getHeight();
 		float scaleWidth = Float.intBitsToFloat(mWidth) / Float.intBitsToFloat(bitmapWidth);
@@ -140,7 +166,6 @@ public class ZipperView extends View {
 		bmp.getPixels(bytes, 0, mWidth, 0, 0, mWidth, mHeight);
 		return bytes;
 	}
-
 
 	private void drawSlide(Canvas canvas) {
 		int centerX = mWidth / 2;

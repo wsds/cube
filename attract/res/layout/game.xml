@@ -9,8 +9,8 @@
         android:id="@+id/TextView01"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/relatback" />
 
     <ImageView
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/takeplace"
         android:visibility="invisible" />
 
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/takeplace1"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/button_again"
         android:visibility="invisible" />
 
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/againchallenge"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/takeplace"
         android:visibility="invisible" />
 
@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/takeplace2"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/button_share"
         android:visibility="invisible" />
 
@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/sharesina"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/takeplace"
         android:visibility="invisible" />
 
@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/takeplace3"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/button_return"
         android:visibility="invisible" />
 

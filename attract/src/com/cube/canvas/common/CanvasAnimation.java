@@ -185,7 +185,7 @@ public class CanvasAnimation {
 		long lastMillis = 0;
 		long delta = 0;
 		boolean alreadyPaused = false;
-		long remainTime = 0;
+		public long remainTime = 0;
 		long remainRepeatTimes = -9999;
 		public long transformCount = 0;
 		boolean isReset = true;

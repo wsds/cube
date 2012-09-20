@@ -41,9 +41,11 @@ public class CupidCannonActivity extends Activity {
 
 	public final static int WIN = 0;
 	public final static int TIME_OUT = 1;
+	public final static int NO_BULLET_LEFT = 2;
 	public String gameTime = "";
 	public String weibo = "";
 	public int gameState = TIME_OUT;
+	public boolean isShared = false;
 
 	public LocalData localData = LocalData.getInstance();
 	public SceneState sceneState = SceneState.getInstance();
@@ -122,10 +124,13 @@ public class CupidCannonActivity extends Activity {
 			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
+					isShared = true;
 					if (gameState == WIN) {
 						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了" + gameTime + "秒就获得了美女" + weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 						Log.v("SINA", "Share with sina");
 					} else if (gameState == TIME_OUT) {
+						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
+					} else if (gameState == NO_BULLET_LEFT){
 						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
 					}
 				} else if (onClickButton == "button_return") {
@@ -148,7 +153,17 @@ public class CupidCannonActivity extends Activity {
 		super.onResume();
 		MobclickAgent.onResume(this);
 		Log.v(TAG, "Run in onResume");
-		animView.againChallenge();
+		if (isShared == false){
+			animView.againChallenge();
+		}else{
+			isShared = true;
+			Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+			gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+			mContext.startActivity(gameEntry);
+			((Activity) mContext).finish();
+		}
+		
 //		animView.initGirlBitmaps();
 	}
 

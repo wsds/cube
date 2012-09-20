@@ -1,10 +1,5 @@
 ﻿package com.cube.common.test;
 
-import com.cube.attract.R;
-import com.cube.common.LocalData;
-import com.cube.common.Settings;
-import com.cube.common.imageservice.BitmapPool;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +13,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import com.cube.attract.R;
+import com.cube.common.LocalData;
+import com.cube.common.Settings;
+import com.cube.common.imageservice.BitmapPool;
 
 public class TestApp extends Activity {
 	Context mContext = null;

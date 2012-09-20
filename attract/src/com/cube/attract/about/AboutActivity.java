@@ -1,8 +1,5 @@
 package com.cube.attract.about;
 
-import com.cube.attract.R;
-import com.cube.common.Settings;
-
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
@@ -11,6 +8,9 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.cube.attract.R;
+import com.cube.common.Settings;
 
 public class AboutActivity extends Activity implements OnViewChangeListener {
 
@@ -27,9 +27,9 @@ public class AboutActivity extends Activity implements OnViewChangeListener {
 	final Context mContext = this;
 	final Activity mActivity = this;
 
-	private SoundPool soundPool;
+	public SoundPool soundPool;
 
-	private int effect_tick;
+	public int effect_tick;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

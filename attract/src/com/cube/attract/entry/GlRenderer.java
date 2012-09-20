@@ -97,9 +97,9 @@ public class GlRenderer implements Renderer {
 
 	private static final String TAG = "GlRenderer";
 
-	private static float[] quadVertexLogo = new float[] { -1.0f, 0.2354f, 0, -1.0f, -0.2354f, 0, 1.0f, 0.2354f, 0, 1.0f, -0.2354f, 0 };
-	private static float[] quadVertexButton = new float[]{-1.0f, 0.363f, 0, -1.0f, -0.363f, 0, 1.0f, 0.363f, 0, 1.0f, -0.363f, 0};
-	
+	private static float[] quadVertexLogo = new float[] { -1.0f, 0.38f, 0, -1.0f, -0.38f, 0, 1.0f, 0.38f, 0, 1.0f, -0.38f, 0 };
+	private static float[] quadVertexButton = new float[] { -1.0f, 0.363f, 0, -1.0f, -0.363f, 0, 1.0f, 0.363f, 0, 1.0f, -0.363f, 0 };
+
 	private static float[] quadVertexPrompt = new float[] { -1.0f, 0.813f, 0, -1.0f, -0.813f, 0, 1.0f, 0.813f, 0, 1.0f, -0.813f, 0 };
 
 	private static float[] quadTextureLogo = new float[] { 0, 1, 0, 0, 1, 1, 1, 0 };
@@ -139,7 +139,7 @@ public class GlRenderer implements Renderer {
 		quadTextureBufferLogo = BufferUtil.floatToBuffer(quadTextureLogo);
 
 		quadTextureBufferPrompt = BufferUtil.floatToBuffer(quadVertexPrompt);
-		
+
 		quadVertexBufferButton = BufferUtil.floatToBuffer(quadVertexButton);
 
 		quadVertexBufferBackground = BufferUtil.floatToBuffer(quadVertexBackground);
@@ -217,11 +217,11 @@ public class GlRenderer implements Renderer {
 
 		rotate2Animation.setRotate(1440f, 0, 1f, 0f, 5000f);
 
-		promptAnimation1.setTranslate(2.5f, 4.2f, 10, 700);
+		promptAnimation1.setTranslate(2.5f, 3.6f, 8, 700);
 		promptAnimation1.addNextAnimation(promptAnimationShow);
-		promptAnimationShow.setTranslate(0, 0.2f, 0.4f, 2000);
+		promptAnimationShow.setTranslate(0, 0.2f, 0.4f, 1000);
 		promptAnimationShow.addNextAnimation(promptAnimation3);
-		promptAnimation3.setTranslate(2.5f, -4.4f, -10.4f, 700);
+		promptAnimation3.setTranslate(2.5f, -3.8f, -8.4f, 700);
 
 		promptAnimation3.setCallback(new GLAnimation.Callback() {
 			public void onEnd() {
@@ -265,7 +265,11 @@ public class GlRenderer implements Renderer {
 
 	AnimationManager animationManager = new AnimationManager();
 	GLAnimation2 rotateLogo = null;
+	GLAnimation2 rotateButton = null;
 	AnimationGl logo = null;
+	AnimationGl button = null;
+
+	String status = "None";
 
 	void initAnimations() {
 		animationManager.animationGls.clear();
@@ -285,6 +289,34 @@ public class GlRenderer implements Renderer {
 			@Override
 			public void onEnd() {
 				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
+			}
+		});
+
+		button = animationManager.addAnimationGl(new Callback() {
+			@Override
+			public void ondraw(GL10 gl) {
+				drawButton(gl);
+			}
+		});
+		button.matrix.translate(-1.08f, -3.2f, -9.0f);
+
+		rotateButton = new GLAnimation2();
+		// testAnimation.setTranslate(0.5f, 0.5f, 0.5f, 1000);
+		rotateButton.setRotate(360, 0, 1, 0, 500);
+		button.addAnimation(rotateButton);
+		rotateButton.setCallback(new GLAnimation2.Callback() {
+			@Override
+			public void onEnd() {
+				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
+				if(status=="EnteringGameEntry"){
+					status = "None";
+					Intent activity = new Intent(Intent.ACTION_MAIN);
+					activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					activity.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					context.startActivity(activity);
+					mActivity.finish();
+				}
+			
 			}
 		});
 
@@ -312,10 +344,10 @@ public class GlRenderer implements Renderer {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		
+
 		drawBackground(gl);
 		drawCube(gl);
-		
+
 		gl.glPushMatrix();
 		{
 			drawPickedTriangle(gl);
@@ -324,7 +356,7 @@ public class GlRenderer implements Renderer {
 		drawHighLight(gl);
 		// drawLogo(gl);
 		drawPrompt(gl);
-		drawButton(gl);
+		// drawButton(gl);
 		animationManager.draw(gl);
 
 		long currentMillis = System.currentTimeMillis();
@@ -461,15 +493,16 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 
 	}
+
 	public void drawButton(GL10 gl) {
 
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(BUTTON+0));
-		gl.glLoadIdentity();
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(BUTTON + 0));
+		// gl.glLoadIdentity();
 
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glDisable(GL10.GL_DEPTH_TEST);
-		gl.glTranslatef(0, -1.6f, -5f);
-
+		gl.glDisable(GL10.GL_CULL_FACE);
+		// gl.glTranslatef(0, -1.6f, -5f);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -486,7 +519,7 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 
 	}
-	
+
 	public void drawLogo(GL10 gl) {
 
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, UITexturesBuffer.get(LOGO + 0));
@@ -643,12 +676,12 @@ public class GlRenderer implements Renderer {
 
 	private IntBuffer UITexturesBuffer;
 	public int LOGO = 0;
-	public int BACKGROUND = LOGO+2;
-	public int HIGHLIGHT = BACKGROUND+1;
-	public int PROMPT = HIGHLIGHT+1;
-	public int BUTTON = PROMPT +3;
+	public int BACKGROUND = LOGO + 2;
+	public int HIGHLIGHT = BACKGROUND + 1;
+	public int PROMPT = HIGHLIGHT + 1;
+	public int BUTTON = PROMPT + 3;
 
-	public int textureNum = BUTTON+1;
+	public int textureNum = BUTTON + 1;
 
 	private void loadTexture(GL10 gl) {
 		// create textures
@@ -659,8 +692,7 @@ public class GlRenderer implements Renderer {
 		// load bitmap
 		Bitmap[] texture = new Bitmap[textureNum];
 
-		
-		texture[LOGO + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title1);
+		texture[LOGO + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title3);
 		texture[LOGO + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.welcome_title2);
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.entry_background);
 		texture[HIGHLIGHT + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.highlight);
