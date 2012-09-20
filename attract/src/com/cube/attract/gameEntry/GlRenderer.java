@@ -335,8 +335,8 @@ public class GlRenderer implements Renderer {
 			gl.glColor4f(0.6f, 0.6f, 0.6f, 1f);
 		}*/
 
-//		 gl.glDisable(GL10.GL_BLEND);
-		gl.glEnable(GL10.GL_BLEND);
+		 gl.glDisable(GL10.GL_BLEND);
+//		gl.glEnable(GL10.GL_BLEND);
 		gl.glTranslatef(xaxis, yaxis, -4.5f);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -477,18 +477,18 @@ public class GlRenderer implements Renderer {
 		Bitmap[] texture = new Bitmap[textureNum];
 
 		texture[POLYGON + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon_locked);
-		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon1);
-		texture[POLYGON + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
-		texture[POLYGON + 3] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
-		texture[POLYGON + 4] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
-		texture[POLYGON + 5] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
-		texture[POLYGON + 6] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2);
-		texture[POLYGON + 7] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon1down);		
-		texture[POLYGON + 8] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
-		texture[POLYGON + 9] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
-		texture[POLYGON + 10] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
-		texture[POLYGON + 11] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);
-		texture[POLYGON + 12] = Utils.getTextureFromBitmapResource(context, R.drawable.ploygon2down);	
+		texture[POLYGON + 1] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon1);
+		texture[POLYGON + 2] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2);
+		texture[POLYGON + 3] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2);
+		texture[POLYGON + 4] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2);
+		texture[POLYGON + 5] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2);
+		texture[POLYGON + 6] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2);
+		texture[POLYGON + 7] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon1down);		
+		texture[POLYGON + 8] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2down);
+		texture[POLYGON + 9] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2down);
+		texture[POLYGON + 10] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2down);
+		texture[POLYGON + 11] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2down);
+		texture[POLYGON + 12] = Utils.getTextureFromBitmapResource(context, R.drawable.polygon2down);	
 		
 		
 		texture[BACKGROUND + 0] = Utils.getTextureFromBitmapResource(context, R.drawable.gameentry_background);
