@@ -300,7 +300,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 		background = animationManager.addAnimationBitmap(girlBitmaps.get(0));
 		id = (id + 1) % 6;
-		float sx = ((float) mWidth / 720f);
+		float sx = ((float) mWidth / 480f);
 		Log.v(TAG, "sx is " + sx);
 		background.matrix.setScale(sx, sx);
 
