@@ -115,6 +115,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		mHolder = this.getHolder();
 		mHolder.addCallback(this);
 		mContext = context;
+		mWidth = this.getWidth();
+		mHeight = this.getHeight();
 		cupidCannonActivity = (CupidCannonActivity) context;
 
 		initBackgroundBm = BitmapFactory.decodeResource(getResources(), R.drawable.welcome_background);
