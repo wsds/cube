@@ -112,7 +112,7 @@ public class GameEntryActivity extends Activity {
 
 			if ((normalY < 440)||(normalY>2.09*normalX+369)||(1258.7-1.77*normalX<normalY)) {
 				sceneState.eventType = sceneState.GIRL;
-				if (sceneState.state == "None" || sceneState.state == "Moving") {
+				if (sceneState.state == "None") {
 					sceneState.state = "TouchDown_Girl";
 				}
 
