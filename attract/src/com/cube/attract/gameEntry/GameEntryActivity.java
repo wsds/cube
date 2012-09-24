@@ -252,30 +252,6 @@ public class GameEntryActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("真的要走吗，亲！").setNegativeButton("返回", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
 
-					Intent entry = new Intent(Intent.ACTION_MAIN);
-					entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
-					mContext.startActivity(entry);
-					finish();
-
-				}
-			}).setPositiveButton("完全退出", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					finish();
-				}
-			}).show();
-
-			return true;
-		} else {
-			return super.onKeyDown(keyCode, event);
-		}
-	}
 
 }

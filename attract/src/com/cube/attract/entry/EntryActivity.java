@@ -72,9 +72,7 @@ public class EntryActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-<<<<<<< HEAD
-//		add3ActiveGirls();
-=======
+
 		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
 		localData.nativePhoneNumber = telephonyManager.getLine1Number();
@@ -90,7 +88,7 @@ public class EntryActivity extends Activity {
 		startServices();
 		
 		add3ActiveGirls();
->>>>>>> 894a4bcc13ece502e4a30177dfd6fce6146378cb
+
 
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 

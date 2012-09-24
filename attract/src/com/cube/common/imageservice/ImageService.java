@@ -54,7 +54,10 @@ public class ImageService extends IntentService {
 	public void initializeImage() {
 		WebImage.initializeWebData(this);
 		localData.game.loadedGirls.clear();
-		for (ServerData.Girl girl : serverData.girls) {
+		for(int i=0;i<serverData.girls.size();i++){
+			ServerData.Girl girl = serverData.girls.get(i);
+		
+//		for (ServerData.Girl girl : serverData.girls) {
 			boolean isGirlLoaded = true;
 			for (ServerData.Girl.Picture picture : girl.pictures) {
 				String url = picture.url;

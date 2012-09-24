@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 		Log.d(TAG, "nativePhoneNumber is " + localData.nativePhoneNumber + " and IMSI is " + localData.IMSI);
 		startServices();
 		try {
-			Thread.sleep(1500);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
