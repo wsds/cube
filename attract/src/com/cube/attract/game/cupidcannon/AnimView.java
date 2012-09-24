@@ -86,24 +86,24 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public float[] lastTargetCenter = { 0.0f, 0.0f };
 	public float[] boomCenter = { 0.0f, 0.0f };
 	public int[] backgroundStagePosition = { 0, 0 };
-	
+
 	public float targetTranslateDistance = 0.0f;
 	public float remainTranslateDistance = 0.0f;
-	public float[] targetNewStartPosition = {0.0f, 0.0f};	
+	public float[] targetNewStartPosition = { 0.0f, 0.0f };
 	public boolean targetIsInScreen = false;
 	public boolean targetIsMoving = false;
-	public double[] targetMoveDirection = {0.0f, 0.0f};
+	public double[] targetMoveDirection = { 0.0f, 0.0f };
 	public boolean insecuritySpaceUp = false;
 	public boolean insecuritySpaceDown = false;
 	public boolean insecuritySpaceLeft = false;
 	public boolean insecuritySpaceRight = false;
-	
+
 	private static final int LEFTUP = 0;
 	private static final int LEFTDOWN = 1;
 	private static final int RIGHTUP = 2;
 	private static final int RIGHTDOWN = 3;
 	private int targetLocationState = 0;
-	
+
 	public Bitmap backgroundStage = null;
 	public int backgroundStageWidth = 0;
 	public int backgroundStageHeight = 0;
@@ -125,9 +125,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		hintLeftDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_left_down);
 		hintRightUpBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_up);
 		hintRightDownBm = BitmapFactory.decodeResource(getResources(), R.drawable.hint_right_down);
-		
+
 		handBm = BitmapFactory.decodeResource(getResources(), R.drawable.hand);
-		
+
 		powerTube1 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part1);
 		powerTube2 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part2);
 		powerTube3 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part3);
@@ -135,7 +135,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		bulletBm = BitmapFactory.decodeResource(getResources(), R.drawable.bullet);
 		boomBm = BitmapFactory.decodeResource(getResources(), R.drawable.blast_f09);
 		popMaskBm = BitmapFactory.decodeResource(getResources(), R.drawable.popmask);
-		
+
 		numbersBm[0] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_0);
 		numbersBm[1] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_1);
 		numbersBm[2] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_2);
@@ -170,17 +170,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			String url = pictures.url;
 			String filename = url.substring(url.lastIndexOf("/") + 1);
 			Bitmap bitmap = null;
+			Bitmap bitmapScaled = null;
 
 			if (!localData.game.loadedPictures.contains(filename)) {
 
 			} else {
 				bitmap = bitmapPool.get(filename);
+				bitmapScaled = Bitmap.createScaledBitmap(bitmap, (int) (mWidth * 1.5f), (int) (mHeight * 1.5f), false);
 				Log.v(TAG, "texture is loaded: " + filename);
 			}
 			if (bitmap == null) {
-				bitmap = Utils.getTextureFromBitmapResource(mContext, R.drawable.heart_1_s);
+				bitmapScaled = Utils.getTextureFromBitmapResource(mContext, R.drawable.heart_1_s);
 			}
-			girlBitmaps.add(bitmap);
+			girlBitmaps.add(bitmapScaled);
 		}
 
 		Picture picture = activegirl.girl.pictures.get(1);
@@ -198,20 +200,20 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		handAnim = new CanvasAnimation();
 		handAnim.setElements(handBm, new Paint());
-		initMatrix.setTranslate(mWidth/2, mHeight/3);
+		initMatrix.setTranslate(mWidth / 2, mHeight / 3);
 		handAnim.setStartMatrix(initMatrix);
-		handAnim.setTranslate(0, mHeight/3, 2000);
+		handAnim.setTranslate(0, mHeight / 3, 2000);
 		handAnim.setRepeatTimes(handAnim.INFINITE);
 		handAnim.start(true);
-		
+
 		girlAnim = new CanvasAnimation();
 		girlAnim.setElements(girlBitmaps.get(0), new Paint());
 		initMatrix.setTranslate(0, 0);
 		girlAnim.setStartMatrix(initMatrix);
 		girlAnim.setTranslate(0, 0, 0);
 		girlAnim.setRepeatTimes(1);
-//		initMatrix.setTranslate(sceneState.x2, sceneState.y2);
-//		girlAnim.setTraceMatrix(initMatrix);
+		// initMatrix.setTranslate(sceneState.x2, sceneState.y2);
+		// girlAnim.setTraceMatrix(initMatrix);
 		girlAnim.start(true);
 
 		heartAnim = new CanvasAnimation();
@@ -290,7 +292,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimOdd.setStartMatrix(initMatrix);
 		// configure the battery odd trace matrix
-		initMatrix.setTranslate(rotateCenter[0], rotateCenter[1]-133);
+		initMatrix.setTranslate(rotateCenter[0], rotateCenter[1] - 133);
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimOdd.setTraceMatrix(initMatrix);
 
@@ -313,7 +315,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimEven.setStartMatrix(initMatrix);
 		// configure the battery even trace matrix
-		initMatrix.setTranslate(rotateCenter[0], rotateCenter[1]-133);
+		initMatrix.setTranslate(rotateCenter[0], rotateCenter[1] - 133);
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimEven.setTraceMatrix(initMatrix);
 
@@ -331,44 +333,44 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		bombSound = soundPool.load(mContext, R.raw.bomb, 1);
 	}
 
-	private void initConflictData(){
+	private void initConflictData() {
 		targetTranslateDistance = 5 * mWidth / 2;
 		remainTranslateDistance = targetTranslateDistance;
-		if ((sceneState.x2>= heartAnim.mAnimBitmapWidth/2+5)&&(sceneState.x2<=mWidth-heartAnim.mAnimBitmapWidth/2-5)
-				&&(sceneState.y2<=mHeight-200-5)&&(sceneState.x2>= heartAnim.mAnimBitmapHeight/2+5))
+		if ((sceneState.x2 >= heartAnim.mAnimBitmapWidth / 2 + 5) && (sceneState.x2 <= mWidth - heartAnim.mAnimBitmapWidth / 2 - 5) && (sceneState.y2 <= mHeight - 200 - 5) && (sceneState.x2 >= heartAnim.mAnimBitmapHeight / 2 + 5))
 			targetIsInScreen = true;
 		else
 			targetIsInScreen = false;
 		targetNewStartPosition[0] = sceneState.x2;
-		targetNewStartPosition[1] = sceneState.y2;	
-		
+		targetNewStartPosition[1] = sceneState.y2;
+
 		insecuritySpaceUp = false;
 		insecuritySpaceDown = false;
 		insecuritySpaceLeft = false;
 		insecuritySpaceRight = false;
 	}
-	
-	private void initBulletCounter(){
+
+	private void initBulletCounter() {
 		bulletCounter = 50;
 		bulletCounterBm[0] = numbersBm[5];
 		bulletCounterBm[1] = numbersBm[0];
 	}
-	
-	private void targetLocationStateJudge(){
-		if (targetCenter[0] < mWidth/2){
-			if (targetCenter[1] < mHeight/2){
+
+	private void targetLocationStateJudge() {
+		if (targetCenter[0] < mWidth / 2) {
+			if (targetCenter[1] < mHeight / 2) {
 				targetLocationState = LEFTUP;
-			}else {
+			} else {
 				targetLocationState = LEFTDOWN;
 			}
-		}else {
-			if (targetCenter[1] < mHeight/2){
+		} else {
+			if (targetCenter[1] < mHeight / 2) {
 				targetLocationState = RIGHTUP;
-			}else {
+			} else {
 				targetLocationState = RIGHTDOWN;
 			}
 		}
 	}
+
 	private void drawBackground() {
 		Matrix testMatrix = new Matrix();
 		testMatrix.setTranslate(backgroundStagePosition[0], backgroundStagePosition[1]);
@@ -386,16 +388,16 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - tubeLength * 7 - 14);
 			mCanvas.drawBitmap(powerTube3, testMatrix, new Paint());
 		}
-		
-		//Draw bulletCounter
+
+		// Draw bulletCounter
 		testMatrix.setScale(1.0f, 1.0f);
-		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.22 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));				
+		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.22 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));
 		if (bulletCounterBm[0] != null)
 			mCanvas.drawBitmap(bulletCounterBm[0], testMatrix, new Paint());
 		testMatrix.postTranslate(10, 0);
 		if (bulletCounterBm[1] != null)
 			mCanvas.drawBitmap(bulletCounterBm[1], testMatrix, new Paint());
-		
+
 		// Draw timer
 		testMatrix.setScale(1.0f, 1.0f);
 		testMatrix.postTranslate((float) (backgroundStagePosition[0] + 0.85 * backgroundStageWidth), (float) (backgroundStagePosition[1] + 0.9 * backgroundStageHeight));
@@ -403,15 +405,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			mCanvas.drawBitmap(timerBm[0], testMatrix, new Paint());
 		testMatrix.postTranslate(20, 0);
 		if (timerBm[1] != null)
-			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());	
-		
-		if ((bulletAnim != null)&&(bulletAnim.remainTime != 0)) {
-				float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-						0.0f, 0.0f };
-				bulletAnim.traceMatrix.getValues(array);
-				createBulletTrackBitmap(bulletTrackBm, array[2], array[5]);
+			mCanvas.drawBitmap(timerBm[1], testMatrix, new Paint());
+
+		if ((bulletAnim != null) && (bulletAnim.remainTime != 0)) {
+			float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+			bulletAnim.traceMatrix.getValues(array);
+			createBulletTrackBitmap(bulletTrackBm, array[2], array[5]);
 		}
-		if((targetIsMoving == false)&&(achievedCounter < 1)&&(bulletTrackBm != null))
+		if ((targetIsMoving == false) && (achievedCounter < 1) && (bulletTrackBm != null))
 			mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
 	}
 
@@ -419,7 +420,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public Matrix reconfigureMatrix = new Matrix();
 
 	private int reconfigureAnimationInstance() {
-		
+
 		if (achieved == false)
 			return 0;
 		achievedCounter++;
@@ -448,24 +449,23 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					girlAnim.transformMatrix.getValues(array);
 					reconfigureMatrix.setValues(array);
 					girlAnim.setStartMatrix(reconfigureMatrix);
-					
-					double vectorLength = Math.sqrt((0.5f*mWidth-sceneState.x2)*(0.5f*mWidth-sceneState.x2)
-							+ (0.5f*(mHeight-200)-sceneState.y2)*(0.5f*(mHeight-200)-sceneState.y2));
-					targetMoveDirection[0] = (0.5f*mWidth-sceneState.x2)/vectorLength;
-					targetMoveDirection[1] = (0.5f*(mHeight-200)-sceneState.y2)/vectorLength;
-					double vectorX = targetTranslateDistance*targetMoveDirection[0];
-					double vectorY = targetTranslateDistance*targetMoveDirection[1];	
-					girlAnim.setTranslate((int)vectorX, (int)vectorY, 1000);
-					
+
+					double vectorLength = Math.sqrt((0.5f * mWidth - sceneState.x2) * (0.5f * mWidth - sceneState.x2) + (0.5f * (mHeight - 200) - sceneState.y2) * (0.5f * (mHeight - 200) - sceneState.y2));
+					targetMoveDirection[0] = (0.5f * mWidth - sceneState.x2) / vectorLength;
+					targetMoveDirection[1] = (0.5f * (mHeight - 200) - sceneState.y2) / vectorLength;
+					double vectorX = targetTranslateDistance * targetMoveDirection[0];
+					double vectorY = targetTranslateDistance * targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000);
+
 					girlAnim.setRepeatTimes(1);
 					girlAnim.start(true);
 					girlAnim.setCallback(new CanvasAnimation.Callback() {
 
 						@Override
 						public void onEnd() {
-							targetIsMoving = false;							
-//							targetCenter[0] = sceneState.x2-200;
-//							targetCenter[1] = sceneState.y2-400;
+							targetIsMoving = false;
+							// targetCenter[0] = sceneState.x2-200;
+							// targetCenter[1] = sceneState.y2-400;
 							girlAnim.setCallback(null);
 						}
 					});
@@ -616,36 +616,26 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		return 0;
 	}
 
-	private void targetBorderConflictProbe(){
+	private void targetBorderConflictProbe() {
 		if (targetIsMoving == false)
 			return;
 		float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 		girlAnim.traceMatrix.getValues(array);
-		targetCenter[0] = array[2]; 
-		targetCenter[1] = array[5]; 
-		Log.v(TAG, "The target center is moving"+array[2]);
-		
-		if (targetIsInScreen == true){
-			if (targetCenter[0] < heartAnim.mAnimBitmapWidth/2){
-//				targetIsInScreen = false;
+		targetCenter[0] = array[2];
+		targetCenter[1] = array[5];
+		Log.v(TAG, "The target center is moving" + array[2]);
+
+		if (targetIsInScreen == true) {
+			if (targetCenter[0] < heartAnim.mAnimBitmapWidth / 2) {
+				// targetIsInScreen = false;
 				if (insecuritySpaceLeft == false) {
 					insecuritySpaceLeft = true;
-					Log.v(TAG,
-							"targetCenter[0] < heartAnim.mAnimBitmapWidth/2 "
-									+ heartAnim.mAnimBitmapWidth / 2);
-					remainTranslateDistance = targetTranslateDistance
-							- (float) Math
-									.sqrt((targetCenter[0] - targetNewStartPosition[0])
-											* (targetCenter[0] - targetNewStartPosition[0])
-											+ (targetCenter[1] - targetNewStartPosition[1])
-											* (targetCenter[1] - targetNewStartPosition[1]));
+					Log.v(TAG, "targetCenter[0] < heartAnim.mAnimBitmapWidth/2 " + heartAnim.mAnimBitmapWidth / 2);
+					remainTranslateDistance = targetTranslateDistance - (float) Math.sqrt((targetCenter[0] - targetNewStartPosition[0]) * (targetCenter[0] - targetNewStartPosition[0]) + (targetCenter[1] - targetNewStartPosition[1]) * (targetCenter[1] - targetNewStartPosition[1]));
 					targetMoveDirection[0] = -targetMoveDirection[0];
-					double vectorX = remainTranslateDistance
-							* targetMoveDirection[0];
-					double vectorY = remainTranslateDistance
-							* targetMoveDirection[1];
-					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
-							* remainTranslateDistance / targetTranslateDistance);
+					double vectorX = remainTranslateDistance * targetMoveDirection[0];
+					double vectorY = remainTranslateDistance * targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
 					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
@@ -659,27 +649,17 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					// Log.v(TAG, "vectorX = "+vectorX);
 					// Log.v(TAG, "vectorY = "+vectorY);
 				}
-				
-			}else if (targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2){
-//				targetIsInScreen = false;
+
+			} else if (targetCenter[0] > mWidth - heartAnim.mAnimBitmapWidth / 2) {
+				// targetIsInScreen = false;
 				if (insecuritySpaceRight == false) {
 					insecuritySpaceRight = true;
-					Log.v(TAG,
-							"targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2 "
-									+ (mWidth - heartAnim.mAnimBitmapWidth / 2));
-					remainTranslateDistance = targetTranslateDistance
-							- (float) Math
-									.sqrt((targetCenter[0] - targetNewStartPosition[0])
-											* (targetCenter[0] - targetNewStartPosition[0])
-											+ (targetCenter[1] - targetNewStartPosition[1])
-											* (targetCenter[1] - targetNewStartPosition[1]));
+					Log.v(TAG, "targetCenter[0] > mWidth-heartAnim.mAnimBitmapWidth/2 " + (mWidth - heartAnim.mAnimBitmapWidth / 2));
+					remainTranslateDistance = targetTranslateDistance - (float) Math.sqrt((targetCenter[0] - targetNewStartPosition[0]) * (targetCenter[0] - targetNewStartPosition[0]) + (targetCenter[1] - targetNewStartPosition[1]) * (targetCenter[1] - targetNewStartPosition[1]));
 					targetMoveDirection[0] = -targetMoveDirection[0];
-					double vectorX = remainTranslateDistance
-							* targetMoveDirection[0];
-					double vectorY = remainTranslateDistance
-							* targetMoveDirection[1];
-					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
-							* remainTranslateDistance / targetTranslateDistance);
+					double vectorX = remainTranslateDistance * targetMoveDirection[0];
+					double vectorY = remainTranslateDistance * targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
 					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
@@ -693,26 +673,16 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					// Log.v(TAG, "vectorX = "+vectorX);
 					// Log.v(TAG, "vectorY = "+vectorY);
 				}
-			}else if (targetCenter[1] < heartAnim.mAnimBitmapHeight/2){
-//				targetIsInScreen = false;
+			} else if (targetCenter[1] < heartAnim.mAnimBitmapHeight / 2) {
+				// targetIsInScreen = false;
 				if (insecuritySpaceUp == false) {
 					insecuritySpaceUp = true;
-					Log.v(TAG,
-							"targetCenter[1] < heartAnim.mAnimBitmapHeight/2 "
-									+ heartAnim.mAnimBitmapHeight / 2);
-					remainTranslateDistance = targetTranslateDistance
-							- (float) Math
-									.sqrt((targetCenter[0] - targetNewStartPosition[0])
-											* (targetCenter[0] - targetNewStartPosition[0])
-											+ (targetCenter[1] - targetNewStartPosition[1])
-											* (targetCenter[1] - targetNewStartPosition[1]));
+					Log.v(TAG, "targetCenter[1] < heartAnim.mAnimBitmapHeight/2 " + heartAnim.mAnimBitmapHeight / 2);
+					remainTranslateDistance = targetTranslateDistance - (float) Math.sqrt((targetCenter[0] - targetNewStartPosition[0]) * (targetCenter[0] - targetNewStartPosition[0]) + (targetCenter[1] - targetNewStartPosition[1]) * (targetCenter[1] - targetNewStartPosition[1]));
 					targetMoveDirection[1] = -targetMoveDirection[1];
-					double vectorX = remainTranslateDistance
-							* targetMoveDirection[0];
-					double vectorY = remainTranslateDistance
-							* targetMoveDirection[1];
-					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
-							* remainTranslateDistance / targetTranslateDistance);
+					double vectorX = remainTranslateDistance * targetMoveDirection[0];
+					double vectorY = remainTranslateDistance * targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
 					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
@@ -726,24 +696,15 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					// Log.v(TAG, "vectorX = "+vectorX);
 					// Log.v(TAG, "vectorY = "+vectorY);
 				}
-			}else if (targetCenter[1] > mHeight-200){
+			} else if (targetCenter[1] > mHeight - 200) {
 				if (insecuritySpaceDown == false) {
 					insecuritySpaceDown = true;
-					Log.v(TAG, "targetCenter[1] > mHeight-200 "
-							+ (mHeight - 200));
-					remainTranslateDistance = targetTranslateDistance
-							- (float) Math
-									.sqrt((targetCenter[0] - targetNewStartPosition[0])
-											* (targetCenter[0] - targetNewStartPosition[0])
-											+ (targetCenter[1] - targetNewStartPosition[1])
-											* (targetCenter[1] - targetNewStartPosition[1]));
+					Log.v(TAG, "targetCenter[1] > mHeight-200 " + (mHeight - 200));
+					remainTranslateDistance = targetTranslateDistance - (float) Math.sqrt((targetCenter[0] - targetNewStartPosition[0]) * (targetCenter[0] - targetNewStartPosition[0]) + (targetCenter[1] - targetNewStartPosition[1]) * (targetCenter[1] - targetNewStartPosition[1]));
 					targetMoveDirection[1] = -targetMoveDirection[1];
-					double vectorX = remainTranslateDistance
-							* targetMoveDirection[0];
-					double vectorY = remainTranslateDistance
-							* targetMoveDirection[1];
-					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000
-							* remainTranslateDistance / targetTranslateDistance);
+					double vectorX = remainTranslateDistance * targetMoveDirection[0];
+					double vectorY = remainTranslateDistance * targetMoveDirection[1];
+					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
 					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
@@ -758,21 +719,21 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					// Log.v(TAG, "vectorY = "+vectorY);
 				}
 			}
-		}else{
-			if ((targetCenter[0]>heartAnim.mAnimBitmapWidth/2)&&(targetCenter[0]<mWidth-heartAnim.mAnimBitmapWidth/2)
-					&&(targetCenter[1]>heartAnim.mAnimBitmapHeight/2)&&(targetCenter[1]<mHeight-200))
-				targetIsInScreen = true;	
+		} else {
+			if ((targetCenter[0] > heartAnim.mAnimBitmapWidth / 2) && (targetCenter[0] < mWidth - heartAnim.mAnimBitmapWidth / 2) && (targetCenter[1] > heartAnim.mAnimBitmapHeight / 2) && (targetCenter[1] < mHeight - 200))
+				targetIsInScreen = true;
 		}
-		
-		if (targetCenter[0]>heartAnim.mAnimBitmapWidth/2+5)
-			insecuritySpaceLeft = false;	
-		if (targetCenter[0]<mWidth-heartAnim.mAnimBitmapWidth/2-5)
+
+		if (targetCenter[0] > heartAnim.mAnimBitmapWidth / 2 + 5)
+			insecuritySpaceLeft = false;
+		if (targetCenter[0] < mWidth - heartAnim.mAnimBitmapWidth / 2 - 5)
 			insecuritySpaceRight = false;
-		if (targetCenter[1]>heartAnim.mAnimBitmapHeight/2+5)
+		if (targetCenter[1] > heartAnim.mAnimBitmapHeight / 2 + 5)
 			insecuritySpaceUp = false;
-		if (targetCenter[1]<mHeight-200-5)
+		if (targetCenter[1] < mHeight - 200 - 5)
 			insecuritySpaceDown = false;
 	}
+
 	private void drawAnimationInstance() {
 		mCanvas.drawBitmap(initBackgroundBm, 0, 0, new Paint());
 		girlAnim.transformModel(mCanvas);
@@ -780,7 +741,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		drawBackground();
 		reconfigureAnimationInstance();
 		targetBorderConflictProbe();
-		
+
 		if (handAnim != null)
 			handAnim.transformModel(mCanvas);
 		if (hintAnim != null)
@@ -805,7 +766,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		mHeight = this.getHeight();
 		backgroundStageWidth = backgroundStage.getWidth();
 		backgroundStageHeight = backgroundStage.getHeight();
-		powerTubeBaseAdress[0] = mWidth/2-212;
+		powerTubeBaseAdress[0] = mWidth / 2 - 212;
 		powerTubeBaseAdress[1] = mHeight - 30;
 		rotateCenter[0] = mWidth / 2 + 3;
 		rotateCenter[1] = mHeight + 3;
@@ -815,20 +776,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		backgroundStagePosition[1] = mHeight - backgroundStageHeight;
 		bulletTrackBm = Bitmap.createBitmap(mWidth, mHeight, Config.ARGB_8888);
 
-		
 		initGirlBitmaps();
 		initAnimationInstance();
 		initSound();
-		
-		//Initialize some data about target moving.
+
+		// Initialize some data about target moving.
 		initConflictData();
-		
-		//Initialize bulletCounter
+
+		// Initialize bulletCounter
 		initBulletCounter();
-		
+
 		targetLocationStateJudge();
 		bulletTrackBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
-		
+
 		// Optimize mThread start
 		isRunning = true;
 		mThread = new Thread(this);// 创建一个绘图线程
@@ -844,7 +804,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public Bitmap[] timerBm = { numbersBm[9], numbersBm[9] };
 
 	public void timer() {
-//		Log.i(TAG, "Run into timer()");
+		// Log.i(TAG, "Run into timer()");
 		int counter = 0;
 		int counterReminder = 0;
 		long currentTime = 0;
@@ -857,16 +817,16 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 		if (timeCounter >= 0) {
 			counter = (int) (timeCounter / 1000);
-			counterReminder = (int)(timeCounter % 1000);
-			if(counter>10){
+			counterReminder = (int) (timeCounter % 1000);
+			if (counter > 10) {
 				timerBm[0] = numbersBm[counter / 10];
-				timerBm[1] = numbersBm[counter % 10];	
-			}else{
-				//timer shining
-				if (counterReminder>500){
+				timerBm[1] = numbersBm[counter % 10];
+			} else {
+				// timer shining
+				if (counterReminder > 500) {
 					timerBm[0] = numbersBm[counter / 10];
 					timerBm[1] = numbersBm[counter % 10];
-				}else{
+				} else {
 					timerBm[0] = redNumbersBm[counter / 10];
 					timerBm[1] = redNumbersBm[counter % 10];
 				}
@@ -878,8 +838,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	}
 
 	public long bulletCounter = 50;
-	public Bitmap[] bulletCounterBm = {numbersBm[5], numbersBm[0] };
-	
+	public Bitmap[] bulletCounterBm = { numbersBm[5], numbersBm[0] };
+
 	public void againChallenge() {
 		trigger = false;
 		achievedCounter = -1;
@@ -891,12 +851,12 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initGirlBitmaps();
 		initAnimationInstance();
 		initSound();
-		initConflictData();		
+		initConflictData();
 		targetLocationStateJudge();
 		timeCounter = 99000;
 		MobclickAgent.onEvent(mContext, "cupidCannonStart");
 	}
- 
+
 	private Bitmap createHintBitmap(Bitmap src, String str) {
 		String tag = "createBitmap";
 		Log.d(tag, "create a new bitmap");
@@ -916,13 +876,13 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		Paint paint = new Paint();
 		paint.setTextSize(30);
 		paint.setColor(Color.GREEN);
-		cv.drawText(str, w / 7, 4*h / 7, paint);		
+		cv.drawText(str, w / 7, 4 * h / 7, paint);
 		// save all clip
 		cv.save(Canvas.ALL_SAVE_FLAG);// 保存
 		// store
 		cv.restore();// 存储
 		return newb;
-	}  
+	}
 
 	private void createBulletTrackBitmap(Bitmap src, float x, float y) {
 		String tag = "createBitmap";
@@ -930,7 +890,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		if (src == null) {
 			return;
 		}
-	
+
 		Canvas cv = new Canvas(src);
 		// draw str into
 		Paint paint = new Paint();
@@ -941,8 +901,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		cv.save(Canvas.ALL_SAVE_FLAG);// 保存
 		// store
 		cv.restore();// 存储
-	} 
-	
+	}
+
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
@@ -989,9 +949,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 			if (achievedCounter < 1)
 				timer();
-			if (!gameEnded && (timeCounter >= 0)&&(bulletCounter>=0)) {
+			if (!gameEnded && (timeCounter >= 0) && (bulletCounter >= 0)) {
 				drawAnimationInstance();
-			} else {				
+			} else {
 				Message msg = new Message();
 				if (bulletCounter < 0) {
 					if (trigger == false) {
@@ -1000,20 +960,20 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						bundle.putInt("gameState", NO_BULLET_LEFT);
 						handler.sendMessage(msg);
 						MobclickAgent.onEvent(mContext, "cupidGameFailed");
-						//Mask
+						// Mask
 						Paint mPaint = new Paint();
 						mPaint.setAlpha(0xaa);
 						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
-					}	
-				}else if (timeCounter < 0) {
+					}
+				} else if (timeCounter < 0) {
 					if (trigger == false) {
 						msg.what = TIME_OUT;
 						Bundle bundle = new Bundle();
 						bundle.putInt("gameState", TIME_OUT);
 						handler.sendMessage(msg);
 						MobclickAgent.onEvent(mContext, "cupidGameFailed");
-						//Mask
+						// Mask
 						Paint mPaint = new Paint();
 						mPaint.setAlpha(0xaa);
 						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
@@ -1031,14 +991,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						msg.setData(bundle);
 						handler.sendMessage(msg);
 						MobclickAgent.onEvent(mContext, "cupidGameWin", String.valueOf(achievedTime));
-						//Mask
+						// Mask
 						Paint mPaint = new Paint();
 						mPaint.setAlpha(0xaa);
 						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
 					}
 				}
-//				Log.i(TAG, "msg.what is" + msg.what);
+				// Log.i(TAG, "msg.what is" + msg.what);
 			}
 
 			try {
@@ -1109,10 +1069,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		if (bulletEnable == true) {
 			bulletCounter--;
-			if (bulletCounter >=0){
-				bulletCounterBm[0] = numbersBm[(int)(bulletCounter/10)];
-				bulletCounterBm[1] = numbersBm[(int)(bulletCounter%10)];	
-			}else{
+			if (bulletCounter >= 0) {
+				bulletCounterBm[0] = numbersBm[(int) (bulletCounter / 10)];
+				bulletCounterBm[1] = numbersBm[(int) (bulletCounter % 10)];
+			} else {
 				bulletCounter = -1;
 				bulletCounterBm[0] = numbersBm[0];
 				bulletCounterBm[1] = numbersBm[0];
@@ -1154,7 +1114,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 							if (boomCenter2TargetCenter < RADIUS) {
 								achieved = true;
 								Matrix matrix = new Matrix();
-								switch(targetLocationState){
+								switch (targetLocationState) {
 								case LEFTUP:
 									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "Hit!!!"), new Paint());
 									matrix.setTranslate(targetCenter[0], targetCenter[1]);
@@ -1163,28 +1123,28 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 									break;
 								case LEFTDOWN:
 									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "Hit!!!"), new Paint());
-									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0], targetCenter[1] - hintLeftDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTUP:
 									hintAnim.setElements(createHintBitmap(hintRightUpBm, "Hit!!!"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									matrix.setTranslate(targetCenter[0] - hintRightUpBm.getWidth(), targetCenter[1]);
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTDOWN:
 									hintAnim.setElements(createHintBitmap(hintRightDownBm, "Hit!!!"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0] - hintRightDownBm.getWidth(), targetCenter[1] - hintRightDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								}
-								
+
 							} else if (boomCenter2RotateCenter < targetCenter2RotateCenter - RADIUS) {
 								achieved = false;
 								Matrix matrix = new Matrix();
-								switch(targetLocationState){
+								switch (targetLocationState) {
 								case LEFTUP:
 									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "浮云。。。"), new Paint());
 									matrix.setTranslate(targetCenter[0], targetCenter[1]);
@@ -1193,19 +1153,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 									break;
 								case LEFTDOWN:
 									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "浮云。。。"), new Paint());
-									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0], targetCenter[1] - hintLeftDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTUP:
 									hintAnim.setElements(createHintBitmap(hintRightUpBm, "浮云。。。"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									matrix.setTranslate(targetCenter[0] - hintRightUpBm.getWidth(), targetCenter[1]);
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTDOWN:
 									hintAnim.setElements(createHintBitmap(hintRightDownBm, "浮云。。。"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0] - hintRightDownBm.getWidth(), targetCenter[1] - hintRightDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
@@ -1213,7 +1173,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 							} else if ((targetCenter2RotateCenter - RADIUS <= boomCenter2RotateCenter) && (boomCenter2RotateCenter <= targetCenter2RotateCenter + RADIUS)) {
 								achieved = false;
 								Matrix matrix = new Matrix();
-								switch(targetLocationState){
+								switch (targetLocationState) {
 								case LEFTUP:
 									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "打偏了"), new Paint());
 									matrix.setTranslate(targetCenter[0], targetCenter[1]);
@@ -1222,19 +1182,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 									break;
 								case LEFTDOWN:
 									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "打偏了"), new Paint());
-									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0], targetCenter[1] - hintLeftDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTUP:
 									hintAnim.setElements(createHintBitmap(hintRightUpBm, "打偏了"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									matrix.setTranslate(targetCenter[0] - hintRightUpBm.getWidth(), targetCenter[1]);
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTDOWN:
 									hintAnim.setElements(createHintBitmap(hintRightDownBm, "打偏了"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0] - hintRightDownBm.getWidth(), targetCenter[1] - hintRightDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
@@ -1242,7 +1202,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 							} else if (boomCenter2RotateCenter > targetCenter2RotateCenter + RADIUS) {
 								achieved = false;
 								Matrix matrix = new Matrix();
-								switch(targetLocationState){
+								switch (targetLocationState) {
 								case LEFTUP:
 									hintAnim.setElements(createHintBitmap(hintLeftUpBm, "太用力了"), new Paint());
 									matrix.setTranslate(targetCenter[0], targetCenter[1]);
@@ -1251,19 +1211,19 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 									break;
 								case LEFTDOWN:
 									hintAnim.setElements(createHintBitmap(hintLeftDownBm, "太用力了"), new Paint());
-									matrix.setTranslate(targetCenter[0], targetCenter[1]-hintLeftDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0], targetCenter[1] - hintLeftDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTUP:
 									hintAnim.setElements(createHintBitmap(hintRightUpBm, "太用力了"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightUpBm.getWidth(), targetCenter[1]);
+									matrix.setTranslate(targetCenter[0] - hintRightUpBm.getWidth(), targetCenter[1]);
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;
 								case RIGHTDOWN:
 									hintAnim.setElements(createHintBitmap(hintRightDownBm, "太用力了"), new Paint());
-									matrix.setTranslate(targetCenter[0]-hintRightDownBm.getWidth(), targetCenter[1]-hintRightDownBm.getHeight());
+									matrix.setTranslate(targetCenter[0] - hintRightDownBm.getWidth(), targetCenter[1] - hintRightDownBm.getHeight());
 									hintAnim.setStartMatrix(matrix);
 									hintAnim.setTranslate(0, 0, 1000);
 									break;

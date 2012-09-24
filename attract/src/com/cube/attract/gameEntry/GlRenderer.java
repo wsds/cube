@@ -431,7 +431,7 @@ public class GlRenderer implements Renderer {
 		int i = 0;
 		for (ActiveGirl activegirl : localData.game.activeGirls) {
 			Bitmap texture = null;
-			String url = activegirl.girl.pictures.get(1).url;
+			String url = activegirl.girl.pictures.get(2).url;
 			String filename = url.substring(url.lastIndexOf("/") + 1);
 			if (!localData.game.loadedPictures.contains(filename)) {
 				texture = Utils.getTextureFromBitmapResource(context, R.drawable.heart_1_s);
