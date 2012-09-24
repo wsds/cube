@@ -59,13 +59,13 @@ public class MainActivity extends Activity {
 
 		mContext = this;
 		mActivity = this;
-		setContentView(R.layout.activity_main);
+//		setContentView(R.layout.activity_main);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-		ImageView mImageView2 = (ImageView) findViewById(R.id.imageView2);
-		Animation translate_title2Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_title2);
-		mImageView2.setAnimation(translate_title2Animation);
+//		ImageView mImageView2 = (ImageView) findViewById(R.id.imageView2);
+//		Animation translate_title2Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.translate_title2);
+//		mImageView2.setAnimation(translate_title2Animation);
 
 		TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -80,35 +80,20 @@ public class MainActivity extends Activity {
 
 		Log.d(TAG, "nativePhoneNumber is " + localData.nativePhoneNumber + " and IMSI is " + localData.IMSI);
 		startServices();
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-		translate_title2Animation.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
+			Intent entry = new Intent(Intent.ACTION_MAIN);
+			entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			entry.setClassName("com.cube.attract", "com.cube.attract.entry.EntryActivity");
+			mContext.startActivity(entry);
+			((Activity) mContext).finish();
+			
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				if (settings.isLogoin == "false") {
-					Intent about = new Intent(Intent.ACTION_MAIN);
-					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract", "com.cube.attract.about.AboutActivity");
-					mContext.startActivity(about);
-					mActivity.finish();
-				} else if (settings.isLogoin == "") {
-
-				}
-
-			}
-		});
 
 	}
 

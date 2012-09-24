@@ -36,7 +36,7 @@ public class EntryActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		context = this;
 
-		add3ActiveGirls();
+//		add3ActiveGirls();
 
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
@@ -47,6 +47,7 @@ public class EntryActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+		add3ActiveGirls();
 		final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
 		final int loadId1 = soundPool.load(this, R.raw.shake, 1);
 
@@ -66,6 +67,7 @@ public class EntryActivity extends Activity {
 
 	void add3ActiveGirls() {
 		int i = 0;
+		Log.d(TAG, "============"+localData.game.loadedGirls.size());
 		for (ActiveGirl girl : localData.game.loadedGirls) {
 			for (ActiveGirl activeGirl : localData.game.activeGirls) {
 				if (activeGirl.id == girl.id) {
