@@ -114,7 +114,7 @@ public class MosquitoActivity extends Activity {
 			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
-					UMSnsService.shareToSina(MosquitoActivity.this, "我在玩‘魔方石de诱惑’，使用激光大炮，只用了13秒就获得了美女" + sceneState.weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
+					UMSnsService.shareToSina(MosquitoActivity.this, "我在玩@魔方石诱惑 ，使用激光大炮，获得了美女" + sceneState.weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 				} else if (onClickButton == "button_return") {
 					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -131,16 +131,16 @@ public class CupidCannonActivity extends Activity {
 					isShared = "true";
 					if (gameState == WIN) {
 						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩‘魔方石de诱惑’，使用丘比特之炮，只用了" + gameTime
+								"我在玩@魔方石诱惑 ，使用丘比特之炮，只用了" + gameTime
 										+ "秒就获得了美女" + weibo
 										+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。", null);
 						Log.v("SINA", "Share with sina");
 					} else if (gameState == TIME_OUT) {
 						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
+								"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
 					} else if (gameState == NO_BULLET_LEFT) {
 						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩‘魔方石de诱惑’，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
+								"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。", null);
 					}
 				} else if (onClickButton == "button_return") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
