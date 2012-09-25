@@ -329,10 +329,12 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 	SoundPool soundPool = null;
 	int bombSound = 0;
+	int ouchSound = 0;
 
 	private void initSound() {
-		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
+		soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 100);
 		bombSound = soundPool.load(mContext, R.raw.bomb, 1);
+		ouchSound = soundPool.load(mContext, R.raw.ouch, 2);
 	}
 
 	private void initConflictData() {
@@ -1249,6 +1251,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					boomAnim.start(true);
 
 					soundPool.play(bombSound, 1.0f, 1.0f, 1, 0, 1f);
+					soundPool.play(ouchSound, 1.0f, 1.0f, 1, 0, 1f);
 					bulletAnim.start(false);
 
 				}
