@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
@@ -60,6 +61,7 @@ public class CupidCannonActivity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		Intent intent = getIntent();
+		sceneState.girlsSize = localData.game.activeGirls.size();
 		sceneState.weibo = intent.getStringExtra("weibo");
 		sceneState.girlNumber = intent.getIntExtra("girlNumber", -1);
 		sceneState.girlID = intent.getLongExtra("girlID", -1);
@@ -219,34 +221,96 @@ public class CupidCannonActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this)
-					.setIcon(R.drawable.cupid)
-					.setTitle(R.string.app_name)
-					.setMessage("真的要走吗，亲！")
-					.setNegativeButton("取消",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							})
-					.setPositiveButton("确定",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									Intent gameEntry = new Intent(
-											Intent.ACTION_MAIN);
-									gameEntry
-											.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-									gameEntry
-											.setClassName("com.cube.attract",
-													"com.cube.attract.gameEntry.GameEntryActivity");
-									mContext.startActivity(gameEntry);
-									finish();
-								}
-							}).show();
+			if(animView.gameEnded==true){
+				Intent gameEntry = new Intent(
+						Intent.ACTION_MAIN);
+				gameEntry
+						.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				gameEntry
+						.setClassName("com.cube.attract",
+								"com.cube.attract.gameEntry.GameEntryActivity");
+				mContext.startActivity(gameEntry);
+				finish();
+				return true;
+			}
+			else{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				
+				builder.setIcon(R.drawable.cupid);
+	
+				builder.setTitle("再点击一次退出");
+	
+				builder.setMessage("真的要走吗，亲？");
+	
+				builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
+	
+					public void onClick(DialogInterface dialog, int whichButton) {
+						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+						gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+						mContext.startActivity(gameEntry);
+						finish();
+					}
+				});
+	
+				builder.setNeutralButton("继续", new DialogInterface.OnClickListener() {
+	
+					public void onClick(DialogInterface dialog, int whichButton) {
+					}
+				});
+	
+				builder.setNegativeButton("重试", new DialogInterface.OnClickListener() {
+	
+					public void onClick(DialogInterface dialog, int whichButton) {
+						animView.againChallenge();
+					}
+	
+				});
+			
+				builder.setOnCancelListener(new OnCancelListener(){
+	
+					@Override
+					public void onCancel(DialogInterface arg0) {
+						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+						gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+						mContext.startActivity(gameEntry);
+						finish();
+					}
+					
+				});
+				builder.create().show();
+				return true;
+/*				new AlertDialog.Builder(this)
+						.setIcon(R.drawable.cupid)
+						.setTitle(R.string.app_name)
+						.setMessage("真的要走吗，亲！")
+						.setNegativeButton("取消",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								})
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										Intent gameEntry = new Intent(
+												Intent.ACTION_MAIN);
+										gameEntry
+												.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+										gameEntry
+												.setClassName("com.cube.attract",
+														"com.cube.attract.gameEntry.GameEntryActivity");
+										mContext.startActivity(gameEntry);
+										finish();
+									}
+								}).show();
+	
+				return true;*/				
+			}
 
-			return true;
 		} else {
 			return super.onKeyDown(keyCode, event);
 		}

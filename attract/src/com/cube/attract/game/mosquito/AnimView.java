@@ -39,6 +39,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 	MosquitoActivity mosquitoActivity = null;
 	public Bitmap memBitmap;
 
+	boolean gameEnded = false;
 	private int mWidth = 0;
 	private int mHeight = 0;
 	private SurfaceHolder mHolder = null;
@@ -540,6 +541,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 	void winGame() {
 		Log.v(TAG, "game is win!");
+		gameEnded = true;
 		soundPool.play(passSound, 0.2f, 0.2f, 1, 0, 1f);
 		final AnimationBitmap win = animationDynamicManager.addAnimationBitmap(R.drawable.game2_pass);
 

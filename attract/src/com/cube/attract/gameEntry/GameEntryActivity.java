@@ -49,6 +49,7 @@ public class GameEntryActivity extends Activity {
 
 	@Override
 	protected void onPause() {
+//		sceneState.isSelected = new boolean[]{false,false,false,false,false,false};
 		super.onPause();
 		surface.onPause();
 	}
@@ -56,6 +57,7 @@ public class GameEntryActivity extends Activity {
 	@Override
 	protected void onResume() {
 		sceneState.notJustComeIn = false;
+//		sceneState.isSelected = new boolean[]{false,false,false,false,false,false};
 		super.onResume();
 		surface.onResume();
 	}
@@ -185,7 +187,7 @@ public class GameEntryActivity extends Activity {
 
 					game1.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
 					mContext.startActivity(game1);
-					mActivity.finish();
+//					mActivity.finish();
 					break;
 				case 2:
 					sceneState.isSelected[1] = false;
@@ -200,7 +202,7 @@ public class GameEntryActivity extends Activity {
 					game2.putExtra("weibo", weibo2);
 					game2.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(game2);
-					mActivity.finish();
+//					mActivity.finish();
 
 					break;
 				case 3:
