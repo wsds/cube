@@ -122,6 +122,7 @@ public class MosquitoActivity extends Activity {
 					mContext.startActivity(gameEntry);
 					mActivity.finish();
 				} else if (onClickButton == "againChallenge") {
+					animView.gameEnded = false;
 					animView.next();
 				}
 
@@ -152,54 +153,66 @@ public class MosquitoActivity extends Activity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			if(animView.gameEnded ==true){
+				Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+				gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+				mContext.startActivity(gameEntry);
+				finish();
+				return true;
+			}
+			else{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	
+				builder.setIcon(R.drawable.cupid);
+	
+				builder.setTitle("再点击一次退出");
+	
+				builder.setMessage("真的要走吗，亲？");
+	
+				builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
+	
+					public void onClick(DialogInterface dialog, int whichButton) {
+						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+						gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+						mContext.startActivity(gameEntry);
+						finish();
+					}
+				});
+	
+				builder.setNeutralButton("继续", new DialogInterface.OnClickListener() {
+	
+					public void onClick(DialogInterface dialog, int whichButton) {
+					}
+				});
+	
+				builder.setNegativeButton("重试", new DialogInterface.OnClickListener() {
+	
+					public void onClick(DialogInterface dialog, int whichButton) {
+						animView.next();
+					}
+	
+				});
+			
+				builder.setOnCancelListener(new OnCancelListener(){
+	
+					@Override
+					public void onCancel(DialogInterface arg0) {
+						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+						gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+						mContext.startActivity(gameEntry);
+						finish();
+					}
+					
+				});
+				builder.create().show();
+				return true;				
+			}
 
-			builder.setIcon(R.drawable.cupid);
-
-			builder.setTitle("再点击一次退出");
-
-			builder.setMessage("真的要走吗，亲？");
-
-			builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
-
-				public void onClick(DialogInterface dialog, int whichButton) {
-					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
-					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
-					mContext.startActivity(gameEntry);
-					finish();
-				}
-			});
-
-			builder.setNeutralButton("继续", new DialogInterface.OnClickListener() {
-
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
-			});
-
-			builder.setNegativeButton("重试", new DialogInterface.OnClickListener() {
-
-				public void onClick(DialogInterface dialog, int whichButton) {
-					animView.next();
-				}
-
-			});
-		
-			builder.setOnCancelListener(new OnCancelListener(){
-
-				@Override
-				public void onCancel(DialogInterface arg0) {
-					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
-					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
-					mContext.startActivity(gameEntry);
-					finish();
-				}
-				
-			});
-			builder.create().show();
-			return true;
 		} else {
 			return super.onKeyDown(keyCode, event);
 		}

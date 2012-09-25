@@ -216,34 +216,49 @@ public class CupidCannonActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			new AlertDialog.Builder(this)
-					.setIcon(R.drawable.cupid)
-					.setTitle(R.string.app_name)
-					.setMessage("真的要走吗，亲！")
-					.setNegativeButton("取消",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-								}
-							})
-					.setPositiveButton("确定",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									Intent gameEntry = new Intent(
-											Intent.ACTION_MAIN);
-									gameEntry
-											.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-									gameEntry
-											.setClassName("com.cube.attract",
-													"com.cube.attract.gameEntry.GameEntryActivity");
-									mContext.startActivity(gameEntry);
-									finish();
-								}
-							}).show();
+			if(animView.gameEnded==true){
+				Intent gameEntry = new Intent(
+						Intent.ACTION_MAIN);
+				gameEntry
+						.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				gameEntry
+						.setClassName("com.cube.attract",
+								"com.cube.attract.gameEntry.GameEntryActivity");
+				mContext.startActivity(gameEntry);
+				finish();
+				return true;
+			}
+			else{
+				new AlertDialog.Builder(this)
+						.setIcon(R.drawable.cupid)
+						.setTitle(R.string.app_name)
+						.setMessage("真的要走吗，亲！")
+						.setNegativeButton("取消",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								})
+						.setPositiveButton("确定",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										Intent gameEntry = new Intent(
+												Intent.ACTION_MAIN);
+										gameEntry
+												.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+										gameEntry
+												.setClassName("com.cube.attract",
+														"com.cube.attract.gameEntry.GameEntryActivity");
+										mContext.startActivity(gameEntry);
+										finish();
+									}
+								}).show();
+	
+				return true;				
+			}
 
-			return true;
 		} else {
 			return super.onKeyDown(keyCode, event);
 		}
