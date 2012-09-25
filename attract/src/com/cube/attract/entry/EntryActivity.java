@@ -1,14 +1,18 @@
 package com.cube.attract.entry;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Looper;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -19,12 +23,20 @@ import com.cube.attract.R;
 import com.cube.attract.entry.ShakeListener.OnShakeListener;
 import com.cube.common.LocalData;
 import com.cube.common.LocalData.Game.ActiveGirl;
+import com.cube.common.Settings;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
 
 public class EntryActivity extends Activity {
 	String TAG = "EntryActivity";
 	private GLSurfaceView surface;
 	private GlRenderer renderer;
 	Context context;
+	Settings settings = Settings.getInstance();
+	LocalData localData = LocalData.getInstance();
+//	Context mContext = null;
+	Activity mActivity = null;
 
 	private GestureDetector gestureDetector;
 	public SceneState sceneState = SceneState.getInstance();
@@ -32,11 +44,51 @@ public class EntryActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		
+		UmengUpdateAgent.update(this);
+		UmengUpdateAgent.setUpdateAutoPopup(false);
+		UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+			@Override
+			public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
+				switch (updateStatus) {
+				case 0:
+					Log.d(TAG, "Umeng Update");
+					UmengUpdateAgent.showUpdateDialog(context, updateInfo);
+					break;
+				case 1:
+					Log.d(TAG, "no update in Umeng server");
+					break;
+				case 2:
+					Log.d(TAG, "none wifi for update");
+					break;
+				case 3:
+					Log.d(TAG, "time out");
+					break;
+				}
+			}
+		});
 		context = this;
+		mActivity = this;
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+
+		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+		localData.nativePhoneNumber = telephonyManager.getLine1Number();
+		localData.IMSI = telephonyManager.getSubscriberId();
+
+		Date now = new Date(System.currentTimeMillis());
+		int data = now.getDate();
+		if (localData.game.lastGameDate != data) {
+			localData.game.choice = 3;
+		}
+
+		Log.d(TAG, "nativePhoneNumber is " + localData.nativePhoneNumber + " and IMSI is " + localData.IMSI);
+		startServices();
+		
 		add3ActiveGirls();
+
 
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
@@ -47,6 +99,7 @@ public class EntryActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+		add3ActiveGirls();
 		final SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 100);
 		final int loadId1 = soundPool.load(this, R.raw.shake, 1);
 
@@ -66,6 +119,7 @@ public class EntryActivity extends Activity {
 
 	void add3ActiveGirls() {
 		int i = 0;
+		Log.d(TAG, "============"+localData.game.loadedGirls.size());
 		for (ActiveGirl girl : localData.game.loadedGirls) {
 			for (ActiveGirl activeGirl : localData.game.activeGirls) {
 				if (activeGirl.id == girl.id) {
@@ -177,7 +231,21 @@ public class EntryActivity extends Activity {
 			return super.onKeyDown(keyCode, event);
 		}
 	}
+	public void startServices() {
+		Intent dataService = new Intent();
+		dataService.setClassName("com.cube.attract", "com.cube.common.dataservice.DataService");
+		Log.d(TAG, "dataService is Starting");
+		context.startService(dataService);
+		Log.d(TAG, "dataService Started");
 
+		Intent imageService = new Intent();
+		imageService.setClassName("com.cube.attract", "com.cube.common.imageservice.ImageService");
+		imageService.putExtra("time", System.currentTimeMillis());
+		imageService.putExtra("message", "The time now is ");
+		Log.d(TAG, "imageService is Starting");
+		context.startService(imageService);
+		Log.d(TAG, "imageService Started");
+	}
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -192,7 +260,7 @@ public class EntryActivity extends Activity {
 		}
 	}
 
-	public LocalData localData = LocalData.getInstance();
+//	public LocalData localData = LocalData.getInstance();
 
 	public class startActivity extends Thread {
 

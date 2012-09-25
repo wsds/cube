@@ -41,6 +41,19 @@ public class AnimationManager {
 		return animationBitmap;
 	}
 
+	public AnimationBitmap addAnimationBitmaps(ArrayList<Bitmap> bitmaps) {
+		AnimationBitmap animationBitmap = new AnimationBitmap();
+		for (Bitmap bitmap : bitmaps) {
+			animationBitmap.addBitmap(bitmap);
+		}
+		// animationBitmap.bitmaps = bitmaps;
+		animationBitmap.matrix = new Matrix();
+		animationBitmaps.add(animationBitmap);
+
+		needRefreshMemory = true;
+		return animationBitmap;
+	}
+
 	public AnimationBitmap addAnimationBitmap(int id) {
 		AnimationBitmap animationBitmap = new AnimationBitmap();
 		animationBitmap.bitmap = BitmapFactory.decodeResource(context.getResources(), id);
@@ -60,7 +73,12 @@ public class AnimationManager {
 		@SuppressWarnings("unchecked")
 		ArrayList<AnimationBitmap> animationBitmaps = (ArrayList<AnimationBitmap>) this.animationBitmaps.clone();
 		for (AnimationBitmap animationBitmap : animationBitmaps) {
-			mCanvas.drawBitmap(animationBitmap.bitmap, animationBitmap.matrix, paint);
+			if (animationBitmap.frameNum > 0) {
+				animationBitmap.frameFunction();
+				mCanvas.drawBitmap(animationBitmap.bitmaps.get(animationBitmap.frameID), animationBitmap.matrix, paint);
+			} else {
+				mCanvas.drawBitmap(animationBitmap.bitmap, animationBitmap.matrix, paint);
+			}
 			@SuppressWarnings("unchecked")
 			ArrayList<CanvasAnimation2> animationPool = (ArrayList<CanvasAnimation2>) animationBitmap.animationPool.clone();
 			// Double-buffering here to resolve the ConcurrentModificationException, which to caused by multiple thread accessing.
@@ -98,11 +116,32 @@ public class AnimationManager {
 	}
 
 	public class AnimationBitmap {
-		public int width=0;
-		public int height=0;
+		public int width = 0;
+		public int height = 0;
 		public Bitmap bitmap = null;
+
 		public Matrix matrix = null;
 		ArrayList<CanvasAnimation2> animationPool = new ArrayList<CanvasAnimation2>();
+
+		public ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
+		int frameID = -1;
+		int frameNum = 0;
+
+		int flag = 0;
+
+		void frameFunction() {
+			if (flag == 1) {
+				frameID = (frameID + 1) % frameNum;
+				flag = 0;
+			}
+			flag++;
+		}
+
+		public void addBitmap(Bitmap bitmap) {
+			bitmaps.add(bitmap);
+			frameNum++;
+			frameID = 0;
+		}
 
 		public void addAnimation(CanvasAnimation2 animation) {
 			animationPool.add(animation);
