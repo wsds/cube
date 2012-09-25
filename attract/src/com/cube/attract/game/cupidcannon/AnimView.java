@@ -162,6 +162,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	}
 
 	void initGirlBitmaps() {
+		
 		ActiveGirl activegirl = localData.game.activeGirls.get(sceneState.girlNumber);
 		for (Bitmap bitmap : girlBitmaps) {
 			bitmap.recycle();
@@ -831,6 +832,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initBulletCounter();
 		timeCounter = 99000;
 		bulletTrackBm = null;
+		sceneState.girlNumber = (sceneState.girlNumber + 1) % sceneState.girlsSize;
 		initGirlBitmaps();
 		initAnimationInstance();
 		initSound();
