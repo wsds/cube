@@ -11,8 +11,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
