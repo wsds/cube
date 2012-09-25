@@ -434,6 +434,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		case 0:
 			targetIsMoving = true;
 			girlAnim.setElements(girlBitmaps.get(1), new Paint());
+			soundPool.play(ouchSound, 1.0f, 1.0f, 1, 0, 1f);
 			reconfigureMatrix.setTranslate(0, 0);
 			girlAnim.setStartMatrix(reconfigureMatrix);
 			girlAnim.setTranslate(0, 0, 1000);
@@ -511,6 +512,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			break;
 		case 1:
 			girlAnim.setElements(girlBitmaps.get(2), new Paint());
+			soundPool.play(ouchSound, 1.0f, 1.0f, 1, 0, 1f);
 			float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 			girlAnim.transformMatrix.getValues(array);
 			reconfigureMatrix.setValues(array);
@@ -1253,7 +1255,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					boomAnim.start(true);
 
 					soundPool.play(bombSound, 1.0f, 1.0f, 1, 0, 1f);
-					soundPool.play(ouchSound, 1.0f, 1.0f, 1, 0, 1f);
+					
 					bulletAnim.start(false);
 
 				}
