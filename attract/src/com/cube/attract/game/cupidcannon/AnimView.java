@@ -178,7 +178,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 			} else {
 				bitmap = bitmapPool.get(filename);
-				bitmapScaled = Bitmap.createScaledBitmap(bitmap, (int) (mWidth * 1.5f), (int) (mHeight * 1.5f), false);
+				bitmapScaled = Bitmap.createScaledBitmap(bitmap, (int) (mWidth * 1.0f), (int) (mHeight * 1.0f), false);
 				Log.v(TAG, "texture is loaded: " + filename);
 			}
 			if (bitmap == null) {
@@ -252,7 +252,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		artilleryAnimOdd.setTraceMatrix(initMatrix);
 
-		artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 2000);
+		artilleryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 3000);
 		artilleryAnimOdd.setRepeatTimes(artilleryAnimOdd.INFINITE);
 		artilleryAnimOdd.start(true);
 
@@ -275,7 +275,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		artilleryAnimEven.setTraceMatrix(initMatrix);
 
-		artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 2000);
+		artilleryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 3000);
 		artilleryAnimEven.setRepeatTimes(artilleryAnimEven.INFINITE);
 		artilleryAnimEven.start(false);
 
@@ -298,7 +298,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimOdd.setTraceMatrix(initMatrix);
 
-		batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 2000);
+		batteryAnimOdd.setRotate(180, rotateCenter[0], rotateCenter[1], 3000);
 		batteryAnimOdd.setRepeatTimes(batteryAnimOdd.INFINITE);
 		batteryAnimOdd.start(true);
 
@@ -321,7 +321,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		batteryAnimEven.setTraceMatrix(initMatrix);
 
-		batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 2000);
+		batteryAnimEven.setRotate(-180, rotateCenter[0], rotateCenter[1], 3000);
 		batteryAnimEven.setRepeatTimes(batteryAnimEven.INFINITE);
 		batteryAnimEven.start(false);
 
@@ -414,7 +414,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			bulletAnim.traceMatrix.getValues(array);
 			createBulletTrackBitmap(bulletTrackBm, array[2], array[5]);
 		}
-		if ((targetIsMoving == false) && (achievedCounter < 1) && (bulletTrackBm != null))
+		if ((isRecyclingPicture == false)&&(targetIsMoving == false) && (achievedCounter < 1) && (bulletTrackBm != null))
 			mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
 	}
 
@@ -429,6 +429,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		int flag = achievedCounter % 2;
 		switch (flag) {
 		case 0:
+			targetIsMoving = true;
 			girlAnim.setElements(girlBitmaps.get(1), new Paint());
 			reconfigureMatrix.setTranslate(0, 0);
 			girlAnim.setStartMatrix(reconfigureMatrix);
@@ -441,36 +442,40 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 				@Override
 				public void onEnd() {
-					targetIsMoving = true;
+					girlAnim.setCallback(null);
+					targetIsMoving = false;
+					
+//					targetIsMoving = true;
 					lastTargetCenter[0] = targetCenter[0];
 					lastTargetCenter[1] = targetCenter[1];
 					targetCenter[0] = sceneState.x2;
 					targetCenter[1] = sceneState.y2;
-					girlAnim.setElements(girlBitmaps.get(1), new Paint());
-					float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-					girlAnim.transformMatrix.getValues(array);
-					reconfigureMatrix.setValues(array);
-					girlAnim.setStartMatrix(reconfigureMatrix);
-
-					double vectorLength = Math.sqrt((0.5f * mWidth - sceneState.x2) * (0.5f * mWidth - sceneState.x2) + (0.5f * (mHeight - 200) - sceneState.y2) * (0.5f * (mHeight - 200) - sceneState.y2));
-					targetMoveDirection[0] = (0.5f * mWidth - sceneState.x2) / vectorLength;
-					targetMoveDirection[1] = (0.5f * (mHeight - 200) - sceneState.y2) / vectorLength;
-					double vectorX = targetTranslateDistance * targetMoveDirection[0];
-					double vectorY = targetTranslateDistance * targetMoveDirection[1];
-					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000);
-
-					girlAnim.setRepeatTimes(1);
-					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd() {
-							targetIsMoving = false;
-							// targetCenter[0] = sceneState.x2-200;
-							// targetCenter[1] = sceneState.y2-400;
-							girlAnim.setCallback(null);
-						}
-					});
+					
+//					girlAnim.setElements(girlBitmaps.get(1), new Paint());
+//					float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+//					girlAnim.transformMatrix.getValues(array);
+//					reconfigureMatrix.setValues(array);
+//					girlAnim.setStartMatrix(reconfigureMatrix);
+//
+//					double vectorLength = Math.sqrt((0.5f * mWidth - sceneState.x2) * (0.5f * mWidth - sceneState.x2) + (0.5f * (mHeight - 200) - sceneState.y2) * (0.5f * (mHeight - 200) - sceneState.y2));
+//					targetMoveDirection[0] = (0.5f * mWidth - sceneState.x2) / vectorLength;
+//					targetMoveDirection[1] = (0.5f * (mHeight - 200) - sceneState.y2) / vectorLength;
+//					double vectorX = targetTranslateDistance * targetMoveDirection[0];
+//					double vectorY = targetTranslateDistance * targetMoveDirection[1];
+//					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000);
+//
+//					girlAnim.setRepeatTimes(1);
+//					girlAnim.start(true);
+//					girlAnim.setCallback(new CanvasAnimation.Callback() {
+//
+//						@Override
+//						public void onEnd() {
+//							targetIsMoving = false;
+//							// targetCenter[0] = sceneState.x2-200;
+//							// targetCenter[1] = sceneState.y2-400;
+//							girlAnim.setCallback(null);
+//						}
+//					});
 				}
 			});
 			Paint paint = new Paint();
@@ -480,7 +485,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			heartAnim.transformMatrix.getValues(array1);
 			reconfigureMatrix.setValues(array1);
 			heartAnim.setStartMatrix(reconfigureMatrix);
-			heartAnim.setTranslate(0, 0, 3200);
+			heartAnim.setTranslate(0, 0, 1500);
 			heartAnim.setRepeatTimes(1);
 			heartAnim.start(true);
 			heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -507,74 +512,86 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			girlAnim.transformMatrix.getValues(array);
 			reconfigureMatrix.setValues(array);
 			girlAnim.setStartMatrix(reconfigureMatrix);
-			girlAnim.setTranslate(0, 0, 1000);
+			girlAnim.setTranslate(0, 0, 2000);
 			girlAnim.setRepeatTimes(1);
 			girlAnim.start(true);
 			girlAnim.setCallback(new CanvasAnimation.Callback() {
 
 				@Override
 				public void onEnd() {
-					float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-					girlAnim.transformMatrix.getValues(array);
-					reconfigureMatrix.setValues(array);
+					girlAnim.setCallback(null);
+					gameEnded = true;
+					girlAnim.setElements(girlBitmaps.get(0), new Paint());
+					reconfigureMatrix.reset();
 					girlAnim.setStartMatrix(reconfigureMatrix);
-					girlAnim.setTranslate(-100, 100, 500);
+					girlAnim.setTranslate(0, 0, 10);
 					girlAnim.setRepeatTimes(1);
 					girlAnim.start(true);
-					girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-						@Override
-						public void onEnd() {
-							float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-							girlAnim.transformMatrix.getValues(array);
-							reconfigureMatrix.setValues(array);
-							girlAnim.setStartMatrix(reconfigureMatrix);
-							girlAnim.setTranslate(240, 240, 1200);
-							girlAnim.setRepeatTimes(1);
-							girlAnim.start(true);
-							girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-								@Override
-								public void onEnd() {
-									float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-									girlAnim.transformMatrix.getValues(array);
-									reconfigureMatrix.setValues(array);
-									girlAnim.setStartMatrix(reconfigureMatrix);
-									girlAnim.setTranslate(100, -100, 500);
-									girlAnim.setRepeatTimes(1);
-									girlAnim.start(true);
-									girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-										@Override
-										public void onEnd() {
-											float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-											girlAnim.transformMatrix.getValues(array);
-											reconfigureMatrix.setValues(array);
-											girlAnim.setStartMatrix(reconfigureMatrix);
-											girlAnim.setTranslate(-240, -240, 1200);
-											girlAnim.setRepeatTimes(1);
-											girlAnim.start(true);
-											girlAnim.setCallback(new CanvasAnimation.Callback() {
-
-												@Override
-												public void onEnd() {
-													gameEnded = true;
-													girlAnim.setElements(girlBitmaps.get(0), new Paint());
-													reconfigureMatrix.reset();
-													girlAnim.setStartMatrix(reconfigureMatrix);
-													girlAnim.setTranslate(0, 0, 1000);
-													girlAnim.setRepeatTimes(1);
-													girlAnim.start(true);
-													girlAnim.setCallback(null);
-												}
-											});
-
-										}
-									});
-								}
-							});
-						}
-					});
+					girlAnim.setCallback(null);
+					
+//					float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+//					girlAnim.transformMatrix.getValues(array);
+//					reconfigureMatrix.setValues(array);
+//					girlAnim.setStartMatrix(reconfigureMatrix);
+//					girlAnim.setTranslate(-100, 100, 500);
+//					girlAnim.setRepeatTimes(1);
+//					girlAnim.start(true);
+//					girlAnim.setCallback(new CanvasAnimation.Callback() {
+//
+//						@Override
+//						public void onEnd() {
+//							float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+//							girlAnim.transformMatrix.getValues(array);
+//							reconfigureMatrix.setValues(array);
+//							girlAnim.setStartMatrix(reconfigureMatrix);
+//							girlAnim.setTranslate(240, 240, 1200);
+//							girlAnim.setRepeatTimes(1);
+//							girlAnim.start(true);
+//							girlAnim.setCallback(new CanvasAnimation.Callback() {
+//
+//								@Override
+//								public void onEnd() {
+//									float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+//									girlAnim.transformMatrix.getValues(array);
+//									reconfigureMatrix.setValues(array);
+//									girlAnim.setStartMatrix(reconfigureMatrix);
+//									girlAnim.setTranslate(100, -100, 500);
+//									girlAnim.setRepeatTimes(1);
+//									girlAnim.start(true);
+//									girlAnim.setCallback(new CanvasAnimation.Callback() {
+//	
+//										@Override
+//										public void onEnd() {
+//											
+//											
+//											float[] array = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+//											girlAnim.transformMatrix.getValues(array);
+//											reconfigureMatrix.setValues(array);
+//											girlAnim.setStartMatrix(reconfigureMatrix);
+//											girlAnim.setTranslate(-240, -240, 1200);
+//											girlAnim.setRepeatTimes(1);
+//											girlAnim.start(true);
+//											girlAnim.setCallback(new CanvasAnimation.Callback() {
+//
+//												@Override
+//												public void onEnd() {
+//													gameEnded = true;
+//													girlAnim.setElements(girlBitmaps.get(0), new Paint());
+//													reconfigureMatrix.reset();
+//													girlAnim.setStartMatrix(reconfigureMatrix);
+//													girlAnim.setTranslate(0, 0, 1000);
+//													girlAnim.setRepeatTimes(1);
+//													girlAnim.start(true);
+//													girlAnim.setCallback(null);
+//												}
+//											});
+//
+//										}
+//									});
+//								}
+//							});
+//						}
+//					});
 				}
 			});
 			Paint paint1 = new Paint();
@@ -584,7 +601,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			heartAnim.transformMatrix.getValues(array2);
 			reconfigureMatrix.setValues(array2);
 			heartAnim.setStartMatrix(reconfigureMatrix);
-			heartAnim.setTranslate(0, 0, 6000);
+			heartAnim.setTranslate(0, 0, 2050);
 			heartAnim.setRepeatTimes(1);
 			heartAnim.start(true);
 			heartAnim.setCallback(new CanvasAnimation.Callback() {
@@ -640,16 +657,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
-					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-					// Log.v(TAG,
-					// "remainTranslateDistance = "+remainTranslateDistance);
-					// Log.v(TAG,
-					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
-					// Log.v(TAG,
-					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
-					// Log.v(TAG, "vectorX = "+vectorX);
-					// Log.v(TAG, "vectorY = "+vectorY);
+				
 				}
 
 			} else if (targetCenter[0] > mWidth - heartAnim.mAnimBitmapWidth / 2) {
@@ -664,16 +672,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
-					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-					// Log.v(TAG,
-					// "remainTranslateDistance = "+remainTranslateDistance);
-					// Log.v(TAG,
-					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
-					// Log.v(TAG,
-					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
-					// Log.v(TAG, "vectorX = "+vectorX);
-					// Log.v(TAG, "vectorY = "+vectorY);
+					
 				}
 			} else if (targetCenter[1] < heartAnim.mAnimBitmapHeight / 2) {
 				// targetIsInScreen = false;
@@ -687,16 +686,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
-					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-					// Log.v(TAG,
-					// "remainTranslateDistance = "+remainTranslateDistance);
-					// Log.v(TAG,
-					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
-					// Log.v(TAG,
-					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
-					// Log.v(TAG, "vectorX = "+vectorX);
-					// Log.v(TAG, "vectorY = "+vectorY);
+					
 				}
 			} else if (targetCenter[1] > mHeight - 200) {
 				if (insecuritySpaceDown == false) {
@@ -709,16 +699,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					girlAnim.setTranslate((int) vectorX, (int) vectorY, 1000 * remainTranslateDistance / targetTranslateDistance);
 					targetNewStartPosition[0] = targetCenter[0];
 					targetNewStartPosition[1] = targetCenter[1];
-					// Log.v(TAG, "targetCenter[0] = "+targetCenter[0]);
-					// Log.v(TAG, "targetCenter[1] = "+targetCenter[1]);
-					// Log.v(TAG,
-					// "remainTranslateDistance = "+remainTranslateDistance);
-					// Log.v(TAG,
-					// "targetMoveDirection[0] = "+targetMoveDirection[0]);
-					// Log.v(TAG,
-					// "targetMoveDirection[1] = "+targetMoveDirection[1]);
-					// Log.v(TAG, "vectorX = "+vectorX);
-					// Log.v(TAG, "vectorY = "+vectorY);
+					
 				}
 			}
 		} else {
@@ -742,7 +723,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		heartAnim.transformModel(mCanvas);
 		drawBackground();
 		reconfigureAnimationInstance();
-		targetBorderConflictProbe();
+//		targetBorderConflictProbe();
 
 		if (handAnim != null)
 			handAnim.transformModel(mCanvas);
@@ -789,7 +770,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initBulletCounter();
 
 		targetLocationStateJudge();
-		bulletTrackBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
+//		bulletTrackBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
 
 		// Optimize mThread start
 		isRunning = true;
@@ -1029,6 +1010,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public boolean powerTubeEnable = false;
 	public boolean bulletEnable = false;
 	public boolean achieved = false;
+	public boolean isRecyclingPicture = false;
 	public float startX = 0;
 	public float startY = 0;
 	public double moveLength = 0;
@@ -1096,6 +1078,12 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			vector[0] = array2[2] - rotateCenter[0];
 			vector[1] = array2[5] - rotateCenter[1];
 			bulletAnim = new CanvasAnimation();
+			if (bulletTrackBm != null){
+				isRecyclingPicture = true;
+				bulletTrackBm.recycle();
+				bulletTrackBm = null;
+				isRecyclingPicture = false;
+			}
 			bulletTrackBm = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Config.ARGB_8888);
 			bulletAnim.setCallback(new CanvasAnimation.Callback() {
 
