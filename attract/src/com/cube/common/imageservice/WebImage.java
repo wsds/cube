@@ -106,6 +106,13 @@ public class WebImage {
 					fin = new FileInputStream(saveFile);
 				}
 			}
+			else{
+				try {
+					fin = mContext.getResources().getAssets().open(fileName);
+					}
+					catch (Exception ex) {
+					}
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

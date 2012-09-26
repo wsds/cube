@@ -234,7 +234,7 @@ public class CupidCannonActivity extends Activity {
 			}
 		});
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -358,6 +358,12 @@ public class CupidCannonActivity extends Activity {
 		} else {
 			return super.onKeyDown(keyCode, event);
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		System.gc();
 	}
 
 }

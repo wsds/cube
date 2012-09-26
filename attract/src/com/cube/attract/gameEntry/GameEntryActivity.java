@@ -188,7 +188,7 @@ public class GameEntryActivity extends Activity {
 
 					game1.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
 					mContext.startActivity(game1);
-					// mActivity.finish();
+					mActivity.finish();
 					break;
 				case 2:
 					sceneState.isSelected[1] = false;
@@ -203,7 +203,7 @@ public class GameEntryActivity extends Activity {
 					game2.putExtra("weibo", weibo2);
 					game2.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(game2);
-					// mActivity.finish();
+					mActivity.finish();
 
 					break;
 				case 3:
@@ -279,6 +279,12 @@ public class GameEntryActivity extends Activity {
 		} else {
 			return super.onKeyDown(keyCode, event);
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		System.gc();
 	}
 
 }
