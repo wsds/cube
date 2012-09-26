@@ -70,13 +70,30 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	public ArrayList<Bitmap> girlBitmaps = new ArrayList<Bitmap>();
 
 	public Bitmap powerTube1 = null;
+	public float powerTube1Width = 0.0f;
+	public float powerTube1Height = 0.0f;
 	public Bitmap powerTube2 = null;
+	public float powerTube2Width = 0.0f;
+	public float powerTube2Height = 0.0f;
 	public Bitmap powerTube3 = null;
+	public float powerTube3Width = 0.0f;
+	public float powerTube3Height = 0.0f;
 	public Bitmap heartBm = null;
+	public float heartBmWidth = 0.0f;
+	public float heartBmHeight = 0.0f;
 	public Bitmap bulletBm = null;
+	public float bulletBmWidth = 0.0f;
+	public float bulletBmHeight = 0.0f;
 	public Bitmap bulletTrackBm = null;
+	public float bulletTrackBmWidth = 0.0f;
+	public float bulletTrackBmHeight = 0.0f;
 	public Bitmap boomBm = null;
+	public float boomBmWidth = 0.0f;
+	public float boomBmHeight = 0.0f;
 	public Bitmap popMaskBm = null;
+	public float popMaskBmWidth = 0.0f;
+	public float popMaskBmHeight = 0.0f;
+	public Bitmap tempBm = null;
 
 	public float[] powerTubeBaseAdress = { 0.0f, 0.0f };
 	public final int POWERSENSITY = 10;
@@ -131,13 +148,25 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		handBm = BitmapFactory.decodeResource(getResources(), R.drawable.hand);
 
 		powerTube1 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part1);
+		powerTube1Width = powerTube1.getWidth();
+		powerTube1Height = powerTube1.getHeight();
 		powerTube2 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part2);
+		powerTube2Width = powerTube2.getWidth();
+		powerTube2Height = powerTube2.getHeight();
 		powerTube3 = BitmapFactory.decodeResource(getResources(), R.drawable.blue_part3);
+		powerTube3Width = powerTube3.getWidth();
+		powerTube3Height = powerTube3.getHeight();
 		heartBm = BitmapFactory.decodeResource(getResources(), R.drawable.heart_3_s);
+		
 		bulletBm = BitmapFactory.decodeResource(getResources(), R.drawable.bullet);
+		bulletBmWidth = bulletBm.getWidth();
+		bulletBmHeight = bulletBm.getHeight();
 		boomBm = BitmapFactory.decodeResource(getResources(), R.drawable.blast_f09);
+		
 		popMaskBm = BitmapFactory.decodeResource(getResources(), R.drawable.popmask);
-
+		
+		
+		
 		numbersBm[0] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_0);
 		numbersBm[1] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_1);
 		numbersBm[2] = BitmapFactory.decodeResource(getResources(), R.drawable.little_w_num_2);
@@ -211,6 +240,12 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 
 		girlAnim = new CanvasAnimation();
 		girlAnim.setElements(girlBitmaps.get(0), new Paint());
+		
+		sceneState.x1 = (long)((float)sceneState.x1/480*girlBitmaps.get(0).getWidth());
+		sceneState.y1 = (long)((float)sceneState.y1/800*girlBitmaps.get(0).getHeight());
+		sceneState.x2 = (long)((float)sceneState.x2/480*girlBitmaps.get(0).getWidth());
+		sceneState.y2 = (long)((float)sceneState.y2/800*girlBitmaps.get(0).getHeight());
+		
 		initMatrix.setTranslate(0, 0);
 		girlAnim.setStartMatrix(initMatrix);
 		girlAnim.setTranslate(0, 0, 0);
@@ -249,7 +284,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		artilleryAnimOdd.setStartMatrix(initMatrix);
 		// configure the artillery even trace matrix
-		initMatrix.setTranslate(207, 650);
+		initMatrix.setTranslate(rotateCenter[0]-0.075f*backgroundStageWidth, rotateCenter[1]-0.527f*backgroundStageHeight);
 		initMatrix.postRotate(-90, rotateCenter[0], rotateCenter[1]);
 		artilleryAnimOdd.setTraceMatrix(initMatrix);
 
@@ -272,7 +307,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		artilleryAnimEven.setStartMatrix(initMatrix);
 		// configure the artillery even trace matrix
-		initMatrix.setTranslate(207, 650);
+		initMatrix.setTranslate(rotateCenter[0]-0.075f*backgroundStageWidth, rotateCenter[1]-0.527f*backgroundStageHeight);
 		initMatrix.postRotate(90, rotateCenter[0], rotateCenter[1]);
 		artilleryAnimEven.setTraceMatrix(initMatrix);
 
@@ -341,7 +376,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 	private void initConflictData() {
 		targetTranslateDistance = 5 * mWidth / 2;
 		remainTranslateDistance = targetTranslateDistance;
-		if ((sceneState.x2 >= heartAnim.mAnimBitmapWidth / 2 + 5) && (sceneState.x2 <= mWidth - heartAnim.mAnimBitmapWidth / 2 - 5) && (sceneState.y2 <= mHeight - 200 - 5) && (sceneState.x2 >= heartAnim.mAnimBitmapHeight / 2 + 5))
+		if ((sceneState.x2 >= heartAnim.mAnimBitmapWidth / 2 + 5) && (sceneState.x2 <= mWidth - heartAnim.mAnimBitmapWidth / 2 - 5) 
+				&& (sceneState.y2 <= mHeight - 200 - 5) && (sceneState.x2 >= heartAnim.mAnimBitmapHeight / 2 + 5))
 			targetIsInScreen = true;
 		else
 			targetIsInScreen = false;
@@ -387,10 +423,10 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1]);
 			mCanvas.drawBitmap(powerTube1, testMatrix, new Paint());
 			for (int i = 1; i <= tubeLength; i++) {
-				testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - i * 7);
+				testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - i * powerTube2Height);
 				mCanvas.drawBitmap(powerTube2, testMatrix, new Paint());
 			}
-			testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - tubeLength * 7 - 14);
+			testMatrix.setTranslate(powerTubeBaseAdress[0], powerTubeBaseAdress[1] - tubeLength * powerTube2Height - powerTube3Height);
 			mCanvas.drawBitmap(powerTube3, testMatrix, new Paint());
 		}
 
@@ -419,6 +455,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		}
 		if ((isRecyclingPicture == false)&&(targetIsMoving == false) && (achievedCounter < 1) && (bulletTrackBm != null))
 			mCanvas.drawBitmap(bulletTrackBm, 0, 0, new Paint());
+		
 	}
 
 	public int achievedCounter = -1;
@@ -439,15 +476,15 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 			girlAnim.setStartMatrix(reconfigureMatrix);
 			girlAnim.setTranslate(0, 0, 1000);
 			girlAnim.setRepeatTimes(1);
-			reconfigureMatrix.setTranslate(sceneState.x2, sceneState.y2);
+			reconfigureMatrix.setTranslate(sceneState.x2,
+					sceneState.y2);
 			girlAnim.setTraceMatrix(reconfigureMatrix);
 			girlAnim.start(true);
 			girlAnim.setCallback(new CanvasAnimation.Callback() {
 
 				@Override
 				public void onEnd() {
-					girlAnim.setCallback(null);
-					targetIsMoving = false;
+					girlAnim.setCallback(null);				
 					
 //					targetIsMoving = true;
 					lastTargetCenter[0] = targetCenter[0];
@@ -504,7 +541,15 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 					heartAnim.setTranslate(targetCenter[0] - lastTargetCenter[0], targetCenter[1] - lastTargetCenter[1], 1000);
 					heartAnim.setRepeatTimes(1);
 					heartAnim.start(true);
-					heartAnim.setCallback(null);
+					heartAnim.setCallback(new CanvasAnimation.Callback() {
+		
+						@Override
+						public void onEnd() {
+							targetIsMoving = false;
+							heartAnim.setCallback(null);
+							
+						}
+					});
 					targetLocationStateJudge();
 
 				}
@@ -754,8 +799,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		mHeight = this.getHeight();
 		backgroundStageWidth = backgroundStage.getWidth();
 		backgroundStageHeight = backgroundStage.getHeight();
-		powerTubeBaseAdress[0] = mWidth / 2 - 212;
-		powerTubeBaseAdress[1] = mHeight - 30;
+		powerTubeBaseAdress[0] = mWidth / 2 - 0.442f*backgroundStageWidth;
+		powerTubeBaseAdress[1] = mHeight - 0.1f*backgroundStageHeight;
 		rotateCenter[0] = mWidth / 2 + 3;
 		rotateCenter[1] = mHeight + 3;
 		memBm = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
@@ -763,7 +808,8 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 		backgroundStagePosition[0] = -(backgroundStageWidth - mWidth) / 2;
 		backgroundStagePosition[1] = mHeight - backgroundStageHeight;
 		bulletTrackBm = Bitmap.createBitmap(mWidth, mHeight, Config.ARGB_8888);
-
+		popMaskBm = Bitmap.createScaledBitmap(popMaskBm, (int) (mWidth * 1.0f), (int) (mHeight * 1.0f), false);
+		initBackgroundBm = Bitmap.createScaledBitmap(initBackgroundBm, (int) (mWidth * 1.0f), (int) (mHeight * 1.0f), false);
 		initGirlBitmaps();
 		initAnimationInstance();
 		initSound();
@@ -951,7 +997,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						MobclickAgent.onEvent(mContext, "cupidGameFailed");
 						// Mask
 						Paint mPaint = new Paint();
-						mPaint.setAlpha(0xaa);
+						mPaint.setAlpha(0xff);
 						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
 					}
@@ -964,7 +1010,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						MobclickAgent.onEvent(mContext, "cupidGameFailed");
 						// Mask
 						Paint mPaint = new Paint();
-						mPaint.setAlpha(0xaa);
+						mPaint.setAlpha(0xff);
 						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
 					}
@@ -982,7 +1028,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 						MobclickAgent.onEvent(mContext, "cupidGameWin", String.valueOf(achievedTime));
 						// Mask
 						Paint mPaint = new Paint();
-						mPaint.setAlpha(0xaa);
+						mPaint.setAlpha(0xff);
 						mCanvas.drawBitmap(popMaskBm, 0, 0, mPaint);
 						trigger = true;
 					}
@@ -1270,7 +1316,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback, Run
 				tubeLength = 32;
 			if (tubeLength == 0)
 				tubeLength = 1;
-			bulletAnim.setAccelerate(vector[0], vector[1], -0.0064f, 50 * (float) Math.sqrt(tubeLength));
+			bulletAnim.setAccelerate(vector[0], vector[1], -0.0064f, 1.8f * (float) Math.sqrt(tubeLength*mHeight));
 			bulletAnim.setRepeatTimes(1);
 			bulletAnim.start(true);
 			bulletEnable = false;
