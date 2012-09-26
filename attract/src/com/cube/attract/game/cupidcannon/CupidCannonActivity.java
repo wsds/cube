@@ -1,14 +1,20 @@
 package com.cube.attract.game.cupidcannon;
 
+import java.io.ByteArrayOutputStream;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -128,24 +134,61 @@ public class CupidCannonActivity extends Activity {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
+				ConnectivityManager cwjManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE); 
+				NetworkInfo info = cwjManager.getActiveNetworkInfo();
+				String typeName = "none";
+				if (info != null)
+					typeName = info.getTypeName().toLowerCase(); // WIFI/MOBILE
 				isShared = "false";
 				if (onClickButton == "shareSina") {
 					isShared = "true";
 					if (gameState == WIN) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩@魔方石诱惑 ，使用丘比特之炮，只用了" + gameTime
-										+ "秒就获得了美女" + weibo
-										+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。" +
-										"http://cubeservice.sinaapp.com/attract/", null);
+						if (typeName.equals("wifi")){
+							Bitmap sharedBm = animView.girlBitmaps.get(1);
+							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							sharedBm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+							byte[] picture = baos.toByteArray();
+							UMSnsService.shareToSina(CupidCannonActivity.this, picture,
+									"我在玩@魔方石诱惑 ，使用丘比特之炮，只用了" + gameTime
+									+ "秒就获得了美女" + weibo
+									+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。" +
+									"http://cubeservice.sinaapp.com/attract/", null);	
+						}else{
+							UMSnsService.shareToSina(CupidCannonActivity.this,
+									"我在玩@魔方石诱惑 ，使用丘比特之炮，只用了" + gameTime
+											+ "秒就获得了美女" + weibo
+											+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。" +
+											"http://cubeservice.sinaapp.com/attract/", null);
+						}
 						Log.v("SINA", "Share with sina");
 					} else if (gameState == TIME_OUT) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
-								"http://cubeservice.sinaapp.com/attract/", null);
+						if (typeName.equals("wifi")){
+							Bitmap sharedBm = animView.girlBitmaps.get(1);
+							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							sharedBm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+							byte[] picture = baos.toByteArray();
+							UMSnsService.shareToSina(CupidCannonActivity.this, picture,
+									"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
+									"http://cubeservice.sinaapp.com/attract/", null);	
+						}else{
+							UMSnsService.shareToSina(CupidCannonActivity.this,
+									"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
+									"http://cubeservice.sinaapp.com/attract/", null);
+						}
 					} else if (gameState == NO_BULLET_LEFT) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
-								"http://cubeservice.sinaapp.com/attract/", null);
+						if (typeName.equals("wifi")){
+							Bitmap sharedBm = animView.girlBitmaps.get(1);
+							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							sharedBm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+							byte[] picture = baos.toByteArray();
+							UMSnsService.shareToSina(CupidCannonActivity.this, picture,
+									"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
+									"http://cubeservice.sinaapp.com/attract/", null);	
+						}else{
+							UMSnsService.shareToSina(CupidCannonActivity.this,
+									"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
+									"http://cubeservice.sinaapp.com/attract/", null);
+						}
 					}
 				} else if (onClickButton == "button_return") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
