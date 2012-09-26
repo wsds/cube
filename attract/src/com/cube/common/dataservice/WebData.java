@@ -76,6 +76,17 @@ public class WebData {
 				result = new JSONObject(str);
 				str = result.optString("data");
 			}
+			else{
+				String str = "";
+				InputStream fin = mContext.getResources().getAssets().open(key + ".json");
+				int length = fin.available();
+				byte[] buffer = new byte[length];
+				fin.read(buffer);
+				str = EncodingUtils.getString(buffer, "UTF-8");
+				fin.close();
+				result = new JSONObject(str);
+				str = result.optString("data");
+			}
 		} catch (Exception ex) {
 
 		}

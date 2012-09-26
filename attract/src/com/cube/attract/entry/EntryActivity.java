@@ -314,4 +314,10 @@ public class EntryActivity extends Activity {
 			}
 		}
 	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		System.gc();
+	}
 }
