@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -350,33 +348,14 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 		mosquitosPool.initaize();
 		soundPool.play(startSound, 0.2f, 0.2f, 1, 0, 1f);
-		// test();
 	}
 
 	long drawCount = 0;
 	long lastMillis = 0;
 
-	void test() {
-		paint1 = new Paint();
-		matrix1 = new Matrix();
-
-		ArrayList<Bitmap> flight1Bitmaps = new ArrayList<Bitmap>();
-		flight1Bitmaps.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_flight11));
-		flight1Bitmaps.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_flight13));
-		flight1Bitmaps.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_flight12));
-		flight1Bitmaps.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.game2_flight13));
-
-		flight1 = animationDynamicManager.addAnimationBitmaps(flight1Bitmaps);
-	}
-
-	AnimationBitmap flight1;
-	Paint paint1;
-	Matrix matrix1 = null;
-
 	// Bitmap flight1;
 
 	private void drawAnimationInstance() {
-
 		mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 		animationManager.drawStatic();
 		animationDynamicManager.draw();
@@ -443,6 +422,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if (isShow) {
+			return true;
+		}
 		int action = event.getAction();
 		float currentX = 0;
 		float currentY = 0;
@@ -456,7 +438,6 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_MOVE:
 			currentX = event.getX();
 			currentY = event.getY();
-
 			break;
 		case MotionEvent.ACTION_UP:
 			currentX = event.getX();
@@ -557,15 +538,18 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		enlarge.addNextAnimation(shrink);
 
 		CanvasAnimation2 up = new CanvasAnimation2();
-		up.setTranslate(100, -250, 2500);
+		up.setTranslate(100, -250, 500);
 		shrink.addNextAnimation(up);
 
 		CanvasAnimation2 shrink1 = new CanvasAnimation2();
-		shrink1.setScale(0.1f, 189, 166, 1500);
+		shrink1.setScale(0.1f, 189, 166, 400);
 		shrink.addNextAnimation(shrink1);
 		up.setCallback(new Callback() {
 			@Override
 			public void onEnd() {
+				animationManager.setSaturation(0.5f);
+				animationDynamicManager.setSaturation(0.5f);
+				animationDynamicManager1.setSaturation(0.5f);
 				Message msgMessage = new Message();
 				msgMessage.what = WIN;
 				handler.sendMessage(msgMessage);
@@ -578,6 +562,9 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 		isShow = false;
 		toNext = true;
 		sceneState.girlNumber = (sceneState.girlNumber + 1) % sceneState.girlsSize;
+		animationManager.setSaturation(1f);
+		animationDynamicManager.setSaturation(1f);
+		animationDynamicManager1.setSaturation(1f);
 		// initAnimationInstance();
 	}
 

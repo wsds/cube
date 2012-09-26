@@ -6,6 +6,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 
@@ -103,8 +105,16 @@ public class AnimationManager {
 			refreshMemBitmap();
 			needRefreshMemory = false;
 		}
-		mCanvas.drawBitmap(memoryBitmap, memoryMatrix, paint);
 
+		mCanvas.drawBitmap(memoryBitmap, memoryMatrix, paint);
+	}
+
+	public void setSaturation(float Saturation) {
+		ColorMatrix colorMatrix = new ColorMatrix();
+		colorMatrix.reset();
+		colorMatrix.setScale(Saturation, Saturation, Saturation, 1);
+		ColorMatrixColorFilter colorMatrixColorFilter = new ColorMatrixColorFilter(colorMatrix);
+		paint.setColorFilter(colorMatrixColorFilter);
 	}
 
 	public void refreshMemBitmap() {
