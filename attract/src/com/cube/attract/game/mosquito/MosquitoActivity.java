@@ -1,5 +1,8 @@
 package com.cube.attract.game.mosquito;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,8 +10,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,8 +29,14 @@ import android.widget.RelativeLayout;
 
 import com.cube.attract.R;
 import com.cube.common.LocalData;
+import com.cube.common.LocalData.Game.ActiveGirl;
+import com.cube.common.ServerData.Girl.Picture;
+import com.cube.common.imageservice.BitmapPool;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.api.exp.UMSNSException;
 import com.umeng.api.sns.UMSnsService;
+import com.umeng.api.sns.UMSnsService.DataSendCallbackListener;
+import com.umeng.api.sns.UMSnsService.RETURN_STATUS;
 
 public class MosquitoActivity extends Activity {
 
@@ -39,10 +51,13 @@ public class MosquitoActivity extends Activity {
 	Animation fromleftAnimation = null;
 	Animation fromrightAnimation = null;
 	public String onClickButton = "null";
+	public String isShared = "None";
 
+	public ArrayList<Bitmap> girlBitmaps = new ArrayList<Bitmap>();
 	public LocalData localData = LocalData.getInstance();
 	public SceneState sceneState = SceneState.getInstance();
-
+	public BitmapPool bitmapPool = BitmapPool.getInstance();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -114,7 +129,57 @@ public class MosquitoActivity extends Activity {
 			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
 				if (onClickButton == "shareSina") {
-					UMSnsService.shareToSina(MosquitoActivity.this, "我在玩@魔方石诱惑 ，使用激光大炮，获得了美女" + sceneState.weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。http://cubeservice.sinaapp.com/attract/", null);
+
+					DataSendCallbackListener listener = new DataSendCallbackListener() {
+						@Override
+						public void onDataSendFailedWithException(UMSNSException exception, UMSnsService.SHARE_TO userPlatform) {
+							if (isShared == "None") {
+								isShared = "false";
+							}
+						}
+
+						@Override
+						public void onDataSendFinished(RETURN_STATUS returnStatus, UMSnsService.SHARE_TO userPlatform) {
+							switch (returnStatus) {
+							case UPDATED:
+								if (isShared == "None") {
+									isShared = "true";
+								}
+								Log.i("Log", "Success!");
+								break;
+							case REPEATED:
+								if (isShared == "None") {
+									isShared = "false";
+								}
+								Log.i("Log", "Repeated!");
+								break;
+							default:
+								if (isShared == "None") {
+									isShared = "false";
+								}
+								break;
+							}
+						}
+					};
+					
+					ConnectivityManager cwjManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE); 
+					NetworkInfo info = cwjManager.getActiveNetworkInfo();
+					String typeName = "none";
+					if (info != null)
+						typeName = info.getTypeName().toLowerCase(); // WIFI/MOBILE
+					if (typeName.equals("wifi")){
+						ActiveGirl activegirl = localData.game.activeGirls.get(sceneState.girlNumber);
+						Picture pictures = activegirl.girl.pictures.get(2);
+						String url = pictures.url;
+						String filename = url.substring(url.lastIndexOf("/") + 1);
+						Bitmap sharedBm = bitmapPool.get(filename);
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						sharedBm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+						byte[] picture = baos.toByteArray();
+						UMSnsService.shareToSina(MosquitoActivity.this, picture, "我在玩@魔方石诱惑 ，使用激光大炮，获得了美女" + sceneState.weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。http://cubeservice.sinaapp.com/attract/", listener);
+					} else {
+						UMSnsService.shareToSina(MosquitoActivity.this, "我在玩@魔方石诱惑 ，使用激光大炮，获得了美女" + sceneState.weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。http://cubeservice.sinaapp.com/attract/", listener);
+					}
 				} else if (onClickButton == "button_return") {
 					Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 					gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -150,30 +215,28 @@ public class MosquitoActivity extends Activity {
 		button_return.setVisibility(0);
 	}
 
-
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if(animView.gameEnded ==true){
+			if (animView.gameEnded == true) {
 				Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 				gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 				mContext.startActivity(gameEntry);
 				finish();
 				return true;
-			}
-			else{
+			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	
+
 				builder.setIcon(R.drawable.cupid);
-	
+
 				builder.setTitle("再点击一次退出");
-	
+
 				builder.setMessage("真的要走吗，亲？");
-	
+
 				builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
-	
+
 					public void onClick(DialogInterface dialog, int whichButton) {
 						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 						gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -182,23 +245,23 @@ public class MosquitoActivity extends Activity {
 						finish();
 					}
 				});
-	
+
 				builder.setNeutralButton("继续", new DialogInterface.OnClickListener() {
-	
+
 					public void onClick(DialogInterface dialog, int whichButton) {
 					}
 				});
-	
+
 				builder.setNegativeButton("重试", new DialogInterface.OnClickListener() {
-	
+
 					public void onClick(DialogInterface dialog, int whichButton) {
 						animView.next();
 					}
-	
+
 				});
-			
-				builder.setOnCancelListener(new OnCancelListener(){
-	
+
+				builder.setOnCancelListener(new OnCancelListener() {
+
 					@Override
 					public void onCancel(DialogInterface arg0) {
 						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
@@ -207,14 +270,33 @@ public class MosquitoActivity extends Activity {
 						mContext.startActivity(gameEntry);
 						finish();
 					}
-					
+
 				});
 				builder.create().show();
-				return true;				
+				return true;
 			}
 
 		} else {
 			return super.onKeyDown(keyCode, event);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+		Log.v(TAG, "Run in onResume");
+		if (isShared == "None") {
+
+		} else if (isShared == "false") {
+			isShared = "None";
+		} else if (isShared == "true") {
+			isShared = "None";
+			Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+			gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+			mContext.startActivity(gameEntry);
+			((Activity) mContext).finish();
 		}
 	}
 
