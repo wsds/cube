@@ -35,7 +35,7 @@ public class EntryActivity extends Activity {
 	Context context;
 	Settings settings = Settings.getInstance();
 	LocalData localData = LocalData.getInstance();
-//	Context mContext = null;
+	// Context mContext = null;
 	Activity mActivity = null;
 
 	private GestureDetector gestureDetector;
@@ -44,7 +44,7 @@ public class EntryActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
 		UmengUpdateAgent.update(this);
 		UmengUpdateAgent.setUpdateAutoPopup(false);
 		UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
@@ -72,7 +72,6 @@ public class EntryActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-
 		TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
 		localData.nativePhoneNumber = telephonyManager.getLine1Number();
@@ -86,9 +85,8 @@ public class EntryActivity extends Activity {
 
 		Log.d(TAG, "nativePhoneNumber is " + localData.nativePhoneNumber + " and IMSI is " + localData.IMSI);
 		startServices();
-		
-		add3ActiveGirls();
 
+		add3ActiveGirls();
 
 		gestureDetector = new GestureDetector(this, new GlAppGestureListener());
 
@@ -119,7 +117,7 @@ public class EntryActivity extends Activity {
 
 	void add3ActiveGirls() {
 		int i = 0;
-		Log.d(TAG, "============"+localData.game.loadedGirls.size());
+		Log.d(TAG, "============" + localData.game.loadedGirls.size());
 		for (ActiveGirl girl : localData.game.loadedGirls) {
 			for (ActiveGirl activeGirl : localData.game.activeGirls) {
 				if (activeGirl.id == girl.id) {
@@ -153,6 +151,9 @@ public class EntryActivity extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
+			return true;
+		}
+		if (renderer.status != "Working") {
 			return true;
 		}
 
@@ -231,6 +232,7 @@ public class EntryActivity extends Activity {
 			return super.onKeyDown(keyCode, event);
 		}
 	}
+
 	public void startServices() {
 		Intent dataService = new Intent();
 		dataService.setClassName("com.cube.attract", "com.cube.common.dataservice.DataService");
@@ -246,6 +248,7 @@ public class EntryActivity extends Activity {
 		context.startService(imageService);
 		Log.d(TAG, "imageService Started");
 	}
+
 	private class GlAppGestureListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -260,7 +263,7 @@ public class EntryActivity extends Activity {
 		}
 	}
 
-//	public LocalData localData = LocalData.getInstance();
+	// public LocalData localData = LocalData.getInstance();
 
 	public class startActivity extends Thread {
 
@@ -291,37 +294,23 @@ public class EntryActivity extends Activity {
 
 		void showPrompt() {
 			Log.v(TAG, "showPrompt");
-			if (sceneState.picked != -1) {
-				if (localData.game.choice > 0) {
 
-					Log.i(TAG, "sceneState.picked=" + sceneState.picked);
-					final ActiveGirl girl = renderer.cubeGirls.get(pickIndex[sceneState.picked]);
-					// String url = girl.girl.pictures.get(0).url;
-					new AlertDialog.Builder(context).setIcon(R.drawable.cupid).setTitle(R.string.app_name).setMessage("你今日还有" + localData.game.choice + "次选择机会，确认选择该美女吗，亲？！").setNegativeButton("取消", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							renderer.isShownPrompt = false;
-							renderer.isPicking = false;
-						}
-					}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int whichButton) {
-							renderer.promptID = renderer.ADDGIRL;
-							renderer.isShownPrompt = true;
-							renderer.promptAnimation1.reset();
-							localData.game.choice--;
-							for (ActiveGirl activeGirl : localData.game.activeGirls) {
-								if (activeGirl.id == girl.id) {
-									return;
-								}
-							}
-							localData.game.activeGirls.add(girl);
-						}
-					}).show();
-				} else {
-					renderer.promptID = renderer.RULESELECTED;
-					renderer.isShownPrompt = true;
-					renderer.promptAnimation1.reset();
+			if (sceneState.picked != -1) {
+				if (renderer.status == "Working") {
+					renderer.status = "EnteringGameEntry";
+					renderer.button.addAnimation(renderer.flyawayButton);
 				}
+
+				ActiveGirl girl = renderer.cubeGirls.get(pickIndex[sceneState.picked]);
+
+				for (ActiveGirl activeGirl : localData.game.activeGirls) {
+					if (activeGirl.id == girl.id) {
+						localData.game.activeGirls.remove(activeGirl);
+						localData.game.activeGirls.add(0, girl);
+						return;
+					}
+				}
+				localData.game.activeGirls.add(0, girl);
 			}
 		}
 	}

@@ -54,10 +54,10 @@ public class ImageService extends IntentService {
 	public void initializeImage() {
 		WebImage.initializeWebData(this);
 		localData.game.loadedGirls.clear();
-		for(int i=0;i<serverData.girls.size();i++){
+		for (int i = 0; i < serverData.girls.size(); i++) {
 			ServerData.Girl girl = serverData.girls.get(i);
-		
-//		for (ServerData.Girl girl : serverData.girls) {
+
+			// for (ServerData.Girl girl : serverData.girls) {
 			boolean isGirlLoaded = true;
 			for (ServerData.Girl.Picture picture : girl.pictures) {
 				String url = picture.url;
@@ -74,10 +74,18 @@ public class ImageService extends IntentService {
 				}
 			}
 			if (isGirlLoaded == true) {
-				ActiveGirl loadedGirl = new LocalData().new Game().new ActiveGirl();
-				loadedGirl.id = girl.id;
-				loadedGirl.girl = girl;
-				localData.game.loadedGirls.add(loadedGirl);
+				ActiveGirl loadingGirl = new LocalData().new Game().new ActiveGirl();
+				loadingGirl.id = girl.id;
+				loadingGirl.girl = girl;
+				boolean needAdd = true;
+				for (ActiveGirl loadedGirl : localData.game.loadedGirls) {
+					if (loadingGirl.id == loadedGirl.id) {
+						needAdd = false;
+					}
+				}
+				if (needAdd == true) {
+					localData.game.loadedGirls.add(loadingGirl);
+				}
 			}
 		}
 	}

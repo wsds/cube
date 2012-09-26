@@ -190,7 +190,8 @@ public class GlRenderer implements Renderer {
 
 	public GLAnimation rotate1Animation = new GLAnimation();
 	public GLAnimation rotate2Animation = new GLAnimation();
-	public GLAnimation cube1Animation = new GLAnimation();
+	public GLAnimation cubeFlyIn = new GLAnimation();
+	public GLAnimation cubeRotate = new GLAnimation();
 	public GLAnimation cube2Animation = new GLAnimation();
 
 	public GLAnimation promptAnimation1 = new GLAnimation();
@@ -209,8 +210,17 @@ public class GlRenderer implements Renderer {
 		switchGirlsBuffer();
 		changeCubeTexture(gl);
 
-		cube1Animation.setTranslate(0.0f, -0.0f, 8.0f, 3000.0f);
-		cube2Animation.setTranslate(0.0f, -0.5f, -1.0f, 3000.0f);
+		cubeFlyIn.setTranslate(0.0f, -0.0f, 8.0f, 2000.0f);
+		cubeRotate.setRotate(720f, 0, 1f, 0f, 2000f);
+		cubeRotate.setCallback(new GLAnimation.Callback() {
+			public void onEnd() {
+				if (status == "None") {
+					status = "Working";
+					sceneState.dxSpeed_CUB = 1;
+					sceneState.dySpeed_CUB = 0.5f;
+				}
+			}
+		});
 
 		rotate1Animation.setRotate(360f, 0, 0f, -1f, 30000f);
 		rotate1Animation.setRepeatTimes(GLAnimation.INFINITE);
@@ -266,6 +276,7 @@ public class GlRenderer implements Renderer {
 	AnimationManager animationManager = new AnimationManager();
 	GLAnimation2 rotateLogo = null;
 	GLAnimation2 rotateButton = null;
+	GLAnimation2 flyawayButton = null;
 	AnimationGl logo = null;
 	AnimationGl button = null;
 
@@ -288,6 +299,7 @@ public class GlRenderer implements Renderer {
 		rotateLogo.setCallback(new GLAnimation2.Callback() {
 			@Override
 			public void onEnd() {
+
 				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
 			}
 		});
@@ -308,7 +320,7 @@ public class GlRenderer implements Renderer {
 			@Override
 			public void onEnd() {
 				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
-				if(status=="EnteringGameEntry"){
+				if (status == "EnteringGameEntry") {
 					status = "None";
 					Intent activity = new Intent(Intent.ACTION_MAIN);
 					activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -316,7 +328,26 @@ public class GlRenderer implements Renderer {
 					context.startActivity(activity);
 					mActivity.finish();
 				}
-			
+
+			}
+		});
+
+		flyawayButton = new GLAnimation2();
+		flyawayButton.setTranslate(8f, 0f, 0f, 200);
+//		button.addAnimation(flyawayButton);
+		flyawayButton.setCallback(new GLAnimation2.Callback() {
+			@Override
+			public void onEnd() {
+				soundPool.play(effect_tick, 0.2f, 0.2f, 1, 0, 1f);
+				if (status == "EnteringGameEntry") {
+					status = "None";
+					Intent activity = new Intent(Intent.ACTION_MAIN);
+					activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					activity.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
+					context.startActivity(activity);
+					mActivity.finish();
+				}
+
 			}
 		});
 
@@ -410,7 +441,8 @@ public class GlRenderer implements Renderer {
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 
 		gl.glTranslatef(0, 0, -8);
-		cube1Animation.transformModel(gl);
+		cubeFlyIn.transformModel(gl);
+		cubeRotate.transformModel(gl);
 
 		sceneState.rotateModel(gl);
 
@@ -470,7 +502,8 @@ public class GlRenderer implements Renderer {
 
 		gl.glTranslatef(0, 0, -8);
 		gl.glTranslatef(0, 0, -7);
-		cube1Animation.transformModel(gl);
+		cubeFlyIn.transformModel(gl);
+		cubeRotate.transformModel(gl);
 		sceneState.rotateModel(gl);
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -628,17 +661,17 @@ public class GlRenderer implements Renderer {
 		@SuppressWarnings("unchecked")
 		ArrayList<ActiveGirl> loadedGirls = (ArrayList<ActiveGirl>) localData.game.loadedGirls.clone();
 		cubeGirlsBuffer = new ArrayList<ActiveGirl>();
-
+		ActiveGirl girl = null;
 		for (int i = 0; i < 6; i++) {
 			int size = loadedGirls.size();
 			int id = 0;
 			if (size > 0) {
 				id = random.nextInt(size);
+				girl = loadedGirls.get(id);
+				loadedGirls.remove(girl);
 			}
 			Log.v(TAG, "size is loaded: " + size + " and id is " + id);
-			ActiveGirl girl = loadedGirls.get(id);
 			cubeGirlsBuffer.add(girl);
-			loadedGirls.remove(girl);
 		}
 
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -647,7 +680,7 @@ public class GlRenderer implements Renderer {
 
 		for (int i = 0; i < 6; i++) {
 			Bitmap texture = null;
-			ActiveGirl girl = cubeGirlsBuffer.get(i);
+			girl = cubeGirlsBuffer.get(i);
 			girl.cubeID = i;
 			String url = girl.girl.pictures.get(0).url;
 			String filename = url.substring(url.lastIndexOf("/") + 1);

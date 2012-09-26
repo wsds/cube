@@ -44,12 +44,13 @@ public class GameEntryActivity extends Activity {
 		setContentView(surface);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		sceneState.pictureViewGallary.frontViewIndex = 0;
 
 	}
 
 	@Override
 	protected void onPause() {
-//		sceneState.isSelected = new boolean[]{false,false,false,false,false,false};
+		// sceneState.isSelected = new boolean[]{false,false,false,false,false,false};
 		super.onPause();
 		surface.onPause();
 	}
@@ -57,7 +58,7 @@ public class GameEntryActivity extends Activity {
 	@Override
 	protected void onResume() {
 		sceneState.notJustComeIn = false;
-//		sceneState.isSelected = new boolean[]{false,false,false,false,false,false};
+		// sceneState.isSelected = new boolean[]{false,false,false,false,false,false};
 		super.onResume();
 		surface.onResume();
 	}
@@ -106,13 +107,13 @@ public class GameEntryActivity extends Activity {
 
 			float normalY = startY * 800 / sceneState.screenHeight;
 			float normalX = startX * 480 / sceneState.screenWidth;
-			
-			if(normalY < 105&&normalY>50&&normalX>65 &&normalX<181){
+
+			if (normalY < 105 && normalY > 50 && normalX > 65 && normalX < 181) {
 				GAMENUMBER = 7;
 				sceneState.isReturn = true;
 			}
 
-			if ((normalY < 440)||(normalY>2.09*normalX+369)||(1258.7-1.77*normalX<normalY)) {
+			if ((normalY < 440) || (normalY > 2.09 * normalX + 369) || (1258.7 - 1.77 * normalX < normalY)) {
 				sceneState.eventType = sceneState.GIRL;
 				if (sceneState.state == "None") {
 					sceneState.state = "TouchDown_Girl";
@@ -187,7 +188,7 @@ public class GameEntryActivity extends Activity {
 
 					game1.setClassName("com.cube.attract", "com.cube.attract.game.mosquito.MosquitoActivity");
 					mContext.startActivity(game1);
-//					mActivity.finish();
+					// mActivity.finish();
 					break;
 				case 2:
 					sceneState.isSelected[1] = false;
@@ -202,7 +203,7 @@ public class GameEntryActivity extends Activity {
 					game2.putExtra("weibo", weibo2);
 					game2.setClassName("com.cube.attract", "com.cube.attract.game.cupidcannon.CupidCannonActivity");
 					mContext.startActivity(game2);
-//					mActivity.finish();
+					// mActivity.finish();
 
 					break;
 				case 3:
