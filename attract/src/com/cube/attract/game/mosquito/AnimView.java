@@ -385,6 +385,7 @@ public class AnimView extends SurfaceView implements SurfaceHolder.Callback {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		isShow = false;
 		mWidth = this.getWidth();
 		mHeight = this.getHeight();
 		Log.e(TAG, "mHeight is " + mHeight + "  mWidth is " + mWidth);

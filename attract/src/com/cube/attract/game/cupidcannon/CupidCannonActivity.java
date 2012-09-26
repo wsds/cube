@@ -24,7 +24,10 @@ import android.widget.RelativeLayout;
 import com.cube.attract.R;
 import com.cube.common.LocalData;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.api.exp.UMSNSException;
 import com.umeng.api.sns.UMSnsService;
+import com.umeng.api.sns.UMSnsService.DataSendCallbackListener;
+import com.umeng.api.sns.UMSnsService.RETURN_STATUS;
 
 public class CupidCannonActivity extends Activity {
 	private static final String TAG = "CupidCannonActivity";
@@ -108,12 +111,9 @@ public class CupidCannonActivity extends Activity {
 		});
 
 		toleftAnimation = AnimationUtils.loadAnimation(mContext, R.anim.toleft);
-		torightAnimation = AnimationUtils.loadAnimation(mContext,
-				R.anim.toright);
-		fromleftAnimation = AnimationUtils.loadAnimation(mContext,
-				R.anim.fromleft);
-		fromrightAnimation = AnimationUtils.loadAnimation(mContext,
-				R.anim.fromright);
+		torightAnimation = AnimationUtils.loadAnimation(mContext, R.anim.toright);
+		fromleftAnimation = AnimationUtils.loadAnimation(mContext, R.anim.fromleft);
+		fromrightAnimation = AnimationUtils.loadAnimation(mContext, R.anim.fromright);
 
 		toleftAnimation.setAnimationListener(new AnimationListener() {
 
@@ -128,30 +128,51 @@ public class CupidCannonActivity extends Activity {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				MobclickAgent.onEvent(mContext, "event");
-				isShared = "false";
 				if (onClickButton == "shareSina") {
-					isShared = "true";
+
+					DataSendCallbackListener listener = new DataSendCallbackListener() {
+						@Override
+						public void onDataSendFailedWithException(UMSNSException exception, UMSnsService.SHARE_TO userPlatform) {
+							if (isShared == "None") {
+								isShared = "false";
+							}
+						}
+
+						@Override
+						public void onDataSendFinished(RETURN_STATUS returnStatus, UMSnsService.SHARE_TO userPlatform) {
+							switch (returnStatus) {
+							case UPDATED:
+								if (isShared == "None") {
+									isShared = "true";
+								}
+								Log.i("Log", "Success!");
+								break;
+							case REPEATED:
+								if (isShared == "None") {
+									isShared = "false";
+								}
+								Log.i("Log", "Repeated!");
+								break;
+							default:
+								if (isShared == "None") {
+									isShared = "false";
+								}
+								break;
+							}
+						}
+					};
 					if (gameState == WIN) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩@魔方石诱惑 ，使用丘比特之炮，只用了" + gameTime
-										+ "秒就获得了美女" + weibo
-										+ " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。" +
-										"http://cubeservice.sinaapp.com/attract/", null);
+						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩@魔方石诱惑 ，使用丘比特之炮，只用了" + gameTime + "秒就获得了美女" + weibo + " 的芳心，成功搭讪，展现了超人的魅力，哇哈哈哈。" + "http://cubeservice.sinaapp.com/attract/", listener);
 						Log.v("SINA", "Share with sina");
 					} else if (gameState == TIME_OUT) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
-								"http://cubeservice.sinaapp.com/attract/", null);
+						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" + "http://cubeservice.sinaapp.com/attract/", null);
 					} else if (gameState == NO_BULLET_LEFT) {
-						UMSnsService.shareToSina(CupidCannonActivity.this,
-								"我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" +
-								"http://cubeservice.sinaapp.com/attract/", null);
+						UMSnsService.shareToSina(CupidCannonActivity.this, "我在玩@魔方石诱惑 ，使用丘比特之炮，展现了超人的魅力，哇哈哈哈。" + "http://cubeservice.sinaapp.com/attract/", null);
 					}
 				} else if (onClickButton == "button_return") {
 					Intent about = new Intent(Intent.ACTION_MAIN);
 					about.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					about.setClassName("com.cube.attract",
-							"com.cube.attract.gameEntry.GameEntryActivity");
+					about.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 					mContext.startActivity(about);
 					mActivity.finish();
 
@@ -163,7 +184,8 @@ public class CupidCannonActivity extends Activity {
 			}
 		});
 	}
-
+	
+	@Override
 	public void onResume() {
 		super.onResume();
 		MobclickAgent.onResume(this);
@@ -172,17 +194,15 @@ public class CupidCannonActivity extends Activity {
 
 		} else if (isShared == "false") {
 			animView.againChallenge();
-		} else {
-			isShared = "true";
+			isShared = "None";
+		} else if (isShared == "true") {
+			isShared = "None";
 			Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 			gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			gameEntry.setClassName("com.cube.attract",
-					"com.cube.attract.gameEntry.GameEntryActivity");
+			gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 			mContext.startActivity(gameEntry);
 			((Activity) mContext).finish();
 		}
-
-		// animView.initGirlBitmaps();
 	}
 
 	public void onPause() {
@@ -221,29 +241,24 @@ public class CupidCannonActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if(animView.gameEnded==true){
-				Intent gameEntry = new Intent(
-						Intent.ACTION_MAIN);
-				gameEntry
-						.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				gameEntry
-						.setClassName("com.cube.attract",
-								"com.cube.attract.gameEntry.GameEntryActivity");
+			if (animView.gameEnded == true) {
+				Intent gameEntry = new Intent(Intent.ACTION_MAIN);
+				gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				gameEntry.setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity");
 				mContext.startActivity(gameEntry);
 				finish();
 				return true;
-			}
-			else{
+			} else {
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				
+
 				builder.setIcon(R.drawable.cupid);
-	
+
 				builder.setTitle("再点击一次退出");
-	
+
 				builder.setMessage("真的要走吗，亲？");
-	
+
 				builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
-	
+
 					public void onClick(DialogInterface dialog, int whichButton) {
 						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
 						gameEntry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -252,23 +267,23 @@ public class CupidCannonActivity extends Activity {
 						finish();
 					}
 				});
-	
+
 				builder.setNeutralButton("继续", new DialogInterface.OnClickListener() {
-	
+
 					public void onClick(DialogInterface dialog, int whichButton) {
 					}
 				});
-	
+
 				builder.setNegativeButton("重试", new DialogInterface.OnClickListener() {
-	
+
 					public void onClick(DialogInterface dialog, int whichButton) {
 						animView.againChallenge();
 					}
-	
+
 				});
-			
-				builder.setOnCancelListener(new OnCancelListener(){
-	
+
+				builder.setOnCancelListener(new OnCancelListener() {
+
 					@Override
 					public void onCancel(DialogInterface arg0) {
 						Intent gameEntry = new Intent(Intent.ACTION_MAIN);
@@ -277,38 +292,17 @@ public class CupidCannonActivity extends Activity {
 						mContext.startActivity(gameEntry);
 						finish();
 					}
-					
+
 				});
 				builder.create().show();
 				return true;
-/*				new AlertDialog.Builder(this)
-						.setIcon(R.drawable.cupid)
-						.setTitle(R.string.app_name)
-						.setMessage("真的要走吗，亲！")
-						.setNegativeButton("取消",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-									}
-								})
-						.setPositiveButton("确定",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int whichButton) {
-										Intent gameEntry = new Intent(
-												Intent.ACTION_MAIN);
-										gameEntry
-												.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-										gameEntry
-												.setClassName("com.cube.attract",
-														"com.cube.attract.gameEntry.GameEntryActivity");
-										mContext.startActivity(gameEntry);
-										finish();
-									}
-								}).show();
-	
-				return true;*/				
+				/*
+				 * new AlertDialog.Builder(this) .setIcon(R.drawable.cupid) .setTitle(R.string.app_name) .setMessage("真的要走吗，亲！") .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				 * 
+				 * @Override public void onClick(DialogInterface dialog, int which) { } }) .setPositiveButton("确定", new DialogInterface.OnClickListener() { public void onClick(DialogInterface dialog, int whichButton) { Intent gameEntry = new Intent( Intent.ACTION_MAIN); gameEntry .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); gameEntry .setClassName("com.cube.attract", "com.cube.attract.gameEntry.GameEntryActivity"); mContext.startActivity(gameEntry); finish(); } }).show();
+				 * 
+				 * return true;
+				 */
 			}
 
 		} else {
