@@ -73,6 +73,9 @@ public class WebData {
 					str = EncodingUtils.getString(buffer, "UTF-8");
 					fin.close();
 				}
+				
+				int start = str.indexOf(123);
+				str = str.substring(start);//work around here to normalize the JSONStr
 				result = new JSONObject(str);
 				str = result.optString("data");
 			}
@@ -84,6 +87,9 @@ public class WebData {
 				fin.read(buffer);
 				str = EncodingUtils.getString(buffer, "UTF-8");
 				fin.close();
+				
+				int start = str.indexOf(123);
+				str = str.substring(start);//work around here to normalize the JSONStr
 				result = new JSONObject(str);
 				str = result.optString("data");
 			}
