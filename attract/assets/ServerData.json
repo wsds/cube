@@ -1,0 +1,688 @@
+﻿
+{
+	"apiversion" : "1.0",
+	"updateTime" : "2012.09.01",
+	"activeGames" : ["game1", "game2"],
+	"girls" : [
+		{
+			"name" : "李净鋆carina",
+			"weibo" : "@李净鋆carina",
+			"id" : 1,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_1_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_1_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 240,
+							"y" : 320,
+							"status" : ""
+						},
+						{
+							"x" : 240,
+							"y" : 520,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_1_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 240,
+							"y" : 320,
+							"status" : ""
+						},
+						{
+							"x" : 240,
+							"y" : 520,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_1_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 240,
+							"y" : 320,
+							"status" : ""
+						},
+						{
+							"x" : 240,
+							"y" : 520,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "王小敏0o",
+			"weibo" : "@王小敏0o",
+			"id" : 2,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_2_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_2_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 300,
+							"y" : 224,
+							"status" : ""
+						},
+						{
+							"x" : 320,
+							"y" : 386,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_2_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 300,
+							"y" : 224,
+							"status" : ""
+						},
+						{
+							"x" : 320,
+							"y" : 386,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_2_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 300,
+							"y" : 224,
+							"status" : ""
+						},
+						{
+							"x" : 320,
+							"y" : 386,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "徐苗Xm",
+			"weibo" : "@徐苗Xm",
+			"id" : 3,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_3_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_3_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 250,
+							"y" : 100,
+							"status" : ""
+						},
+						{
+							"x" : 320,
+							"y" : 680,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_3_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 250,
+							"y" : 100,
+							"status" : ""
+						},
+						{
+							"x" : 320,
+							"y" : 680,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_3_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 250,
+							"y" : 100,
+							"status" : ""
+						},
+						{
+							"x" : 320,
+							"y" : 680,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "侯嘉译",
+			"weibo" : "@侯嘉译",
+			"id" : 4,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 170,
+							"y" : 310,
+							"status" : ""
+						},
+						{
+							"x" : 280,
+							"y" : 730,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 170,
+							"y" : 310,
+							"status" : ""
+						},
+						{
+							"x" : 280,
+							"y" : 730,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 170,
+							"y" : 310,
+							"status" : ""
+						},
+						{
+							"x" : 280,
+							"y" : 730,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "小惡魔Linsey",
+			"weibo" : "@小惡魔Linsey",
+			"id" : 5,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_5_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_5_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 200,
+							"y" : 190,
+							"status" : ""
+						},
+						{
+							"x" : 230,
+							"y" : 670,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_5_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 200,
+							"y" : 190,
+							"status" : ""
+						},
+						{
+							"x" : 230,
+							"y" : 670,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_5_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 200,
+							"y" : 190,
+							"status" : ""
+						},
+						{
+							"x" : 230,
+							"y" : 670,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "卡布奇诺小姐姐",
+			"weibo" : "@卡布奇诺小姐姐",
+			"id" : 6,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_6_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_6_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 300,
+							"y" : 160,
+							"status" : ""
+						},
+						{
+							"x" : 380,
+							"y" : 400,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_6_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 300,
+							"y" : 160,
+							"status" : ""
+						},
+						{
+							"x" : 380,
+							"y" : 400,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_6_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 300,
+							"y" : 160,
+							"status" : ""
+						},
+						{
+							"x" : 380,
+							"y" : 400,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "张小仙ciciuss",
+			"weibo" : "@张小仙ciciuss",
+			"id" : 7,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_7_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_7_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 50,
+							"y" : 50,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_7_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 50,
+							"y" : 50,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_7_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 50,
+							"y" : 50,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "啊篍oqr",
+			"weibo" : "@啊篍oqr",
+			"id" : 8,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_8_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_8_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 326,
+							"y" : 91,
+							"status" : ""
+						},
+						{
+							"x" : 370,
+							"y" : 619,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_8_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 326,
+							"y" : 91,
+							"status" : ""
+						},
+						{
+							"x" : 270,
+							"y" : 619,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_8_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 326,
+							"y" : 91,
+							"status" : ""
+						},
+						{
+							"x" : 270,
+							"y" : 619,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "若澜第二",
+			"weibo" : "@若澜第二",
+			"id" : 9,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_9_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_9_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 389,
+							"y" : 80,
+							"status" : ""
+						},
+						{
+							"x" : 387,
+							"y" : 593,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_9_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 389,
+							"y" : 80,
+							"status" : ""
+						},
+						{
+							"x" : 387,
+							"y" : 593,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_9_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 389,
+							"y" : 80,
+							"status" : ""
+						},
+						{
+							"x" : 387,
+							"y" : 593,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "怡可人儿j",
+			"weibo" : "@怡可人儿j",
+			"id" : 10,
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326
+			},
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_10_entry.jpg",
+					"status" : ""
+				},
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_10_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 354,
+							"y" : 107,
+							"status" : ""
+						},
+						{
+							"x" : 305,
+							"y" : 548,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_10_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 354,
+							"y" : 107,
+							"status" : ""
+						},
+						{
+							"x" : 305,
+							"y" : 548,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_10_3.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 354,
+							"y" : 107,
+							"status" : ""
+						},
+						{
+							"x" : 305,
+							"y" : 548,
+							"status" : ""
+						}
+					]
+				}
+			]
+		}
+	]
+}

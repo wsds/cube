@@ -1,0 +1,100 @@
+﻿
+{
+	"apiversion" : "1.0",
+	"updateTime" : "2012.09.01",
+	"activeGames" : ["game1", "game2"],
+	"girls" : [
+		{
+			"name" : "小悦悦",
+			"weibo" : "@小悦悦",
+			"mSNSIndex" :
+			{
+				"liked" : 1213,
+				"shared" : 326,
+			},
+			
+			"pictures" : [
+				{
+					"id" : 0,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_1.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 50,
+							"y" : 50,
+							"status" : ""
+						}
+					]
+				},
+				{
+					"id" : 1,
+					"url" : "http://cubeservice.sinaapp.com/girls/girl_4_2.jpg",
+					"status" : "",
+					"points" : [
+						{
+							"x" : 0,
+							"y" : 0,
+							"status" : ""
+						},
+						{
+							"x" : 50,
+							"y" : 50,
+							"status" : ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "小凤凤
+						" weibo " : " @ 小凤凤 ",
+						" mSNSIndex " :
+						{
+							" liked " : 1213,
+							" shared " : 326,
+						},
+			
+						" pictures " : [
+							{
+								" id " : 0,
+								" url " : " http : //cubeservice.sinaapp.com/girls/girl_5_1.jpg",
+			"status" : "",
+			"points" : [
+				{
+					"x" : 0,
+					"y" : 0,
+					"status" : ""
+				},
+				{
+					"x" : 50,
+					"y" : 50,
+					"status" : ""
+				}
+			]
+		},
+		{
+			"id" : 1,
+			"url" : "http://cubeservice.sinaapp.com/girls/girl_5_2.jpg",
+			"status" : "",
+			"points" : [
+				{
+					"x" : 0,
+					"y" : 0,
+					"status" : ""
+				},
+				{
+					"x" : 50,
+					"y" : 50,
+					"status" : ""
+				}
+			]
+		}
+	]
+}
+]
+}

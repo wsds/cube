@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # built application files
 *.apk
 *.ap_
@@ -18,3 +19,10 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+=======
+*.class
+jarlist.cache
+/attract/bin/*
+/attract/bin/*/
+/attract/gen/*/
+>>>>>>> 420f8dcf35af05acaa68b80491c66449a096d668
